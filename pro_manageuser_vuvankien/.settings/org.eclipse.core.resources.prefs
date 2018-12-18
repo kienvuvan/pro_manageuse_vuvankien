@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+encoding//WebContent/WEB-INF/classes/config.properties=UTF-8
+encoding//WebContent/WEB-INF/classes/database.properties=UTF-8
+encoding//WebContent/WEB-INF/classes/message.properties=UTF-8
+encoding//WebContent/WEB-INF/classes/messageerror.properties=UTF-8
+encoding//src/manageuser/dao/BaseDao.java=UTF-8
+encoding//src/manageuser/dao/TblUserDao.java=UTF-8
+encoding//src/manageuser/dao/impl/BaseDaoImpl.java=UTF-8
+encoding//src/manageuser/utils/DatabaseProperties.java=UTF-8
+encoding//src/manageuser/utils/MessageErrorProperties.java=UTF-8
+encoding//src/manageuser/utils/MessageProperties.java=UTF-8
+encoding/<project>=UTF-8

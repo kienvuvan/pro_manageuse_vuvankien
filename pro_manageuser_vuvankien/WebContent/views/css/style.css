@@ -1,0 +1,90 @@
+@CHARSET "UTF-8";
+
+.tbl {
+	font-size: 12px;
+	border: 1px solid #cccccc;
+	background-image: none;
+	border-collapse: collapse;
+}
+
+.tbl_input {
+	border: none;
+}
+
+.errMsg {
+	font-weight: bold;
+	color: #FF0000;
+	text-align: left;
+}
+
+.txBox {
+	background-color: #ffffff;
+	padding: 2px;
+	border: 1px solid #aaaaaa;
+	font-size: 13px;
+}
+.tr2, .td2 {
+	background-image: url(views/images/bg_td2.gif);
+	background-repeat:repeat-x;
+	background-position:center;
+	font-weight: normal;
+	background-color: #f0f0f0;
+	padding: 3px;
+	color: #000000;
+}
+.btn {
+	font-size: 11px;
+	font-weight: normal;
+	background-image: url(views/images/btn_bg.gif);
+	background-repeat:no-repeat;
+	width: 50px;
+	height: 18px;
+	border: 0px;
+	cursor: pointer;
+	padding-top: 2px;
+}
+.btn.btn_wider {
+	background-image: url(views/images/btn_wider_bg.gif);
+	width: 75px;
+}
+
+.algn-l{
+	text-align: left;
+}
+
+.algn-r{
+	text-align: right;
+}
+
+.algn-c{
+	text-align: center;
+}
+.lbl_left {
+	font-weight: bold;
+	color: #000000;
+	text-align: left;
+	font-size: 13px;
+	width: 120px;
+}
+
+.tbl_list {
+	font-size: 12px;
+	border: 1px solid #cccccc;
+	background-image: none;
+	border-collapse: collapse;	
+}
+.lbl_paging {
+	color: #000000;
+	text-align: left;
+	font-size: 12px;
+}
+
+.lbl_footer {
+	font-size: 11px;
+	font-weight: bold;
+	color: #000000;
+	text-align: center;
+	width: 850px;
+}
+
+
