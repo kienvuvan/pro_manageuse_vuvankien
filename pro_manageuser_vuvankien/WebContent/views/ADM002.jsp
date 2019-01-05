@@ -3,6 +3,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -16,6 +17,7 @@
 	<!-- End vung header -->	
 <!-- Begin vung dieu kien tim kiem -->
 <form action="listUser.do" method="get" name="mainform">
+<input type="hidden" value="search" name="typeShow">
 	<table  class="tbl_input" border="0" width="90%"  cellpadding="0" cellspacing="0" >		
 		<tr>
 			<td>
@@ -33,7 +35,7 @@
 					<tr>
 						<td class="lbl_left">氏名:</td>
 						<td align="left">
-						<input class="txBox" type="text" name="fullname" value="${fullname}"
+						<input class="txBox" type="text" name="fullname" value="${fn:escapeXml(fullname)}"
 							size="20" onfocus="this.style.borderColor='#0066ff';"
 							onblur="this.style.borderColor='#aaaaaa';" />
 						</td>
@@ -43,6 +45,7 @@
 						<td class="lbl_left">グループ:</td>
 						<td align="left" width="80px">
 							<select name="groupId">
+								<option value="0">全て</option>
 								<c:forEach items="${listAllGroups}" var="group">
 									<option value="${fn:escapeXml(group.groupId)}" <c:if test="${groupId == group.groupId}">selected</c:if>>
 										${fn:escapeXml(group.groupName)}
@@ -52,7 +55,7 @@
 						</td>
 						<td align="left">
 							<input class="btn" type="submit" value="検索" />
-							<input class="btn" type="button" value="新規追加" />							
+							<a href="addUserInput.do"><input class="btn" type="button" value="新規追加"/></a>							
 						</td>
 					</tr>
 				</table>
@@ -70,9 +73,9 @@
 			</th>
 			<th align="left">
 				氏名 
-				<a href = "listUser.do?typeShow=sort_full_name">
+				<a href = "listUser.do?typeShow=sort&typeSort=full_name&sortByFullName=${sortByFullName}">
 				<c:choose>
-					<c:when test="${typeSortName == 'ASC'}">▲▽
+					<c:when test="${sortByFullName == 'ASC'}">▲▽
 				    </c:when>
 				    <c:otherwise>△▼
 				    </c:otherwise>
@@ -92,9 +95,9 @@
 				電話番号
 			</th>
 			<th align="left">
-				日本語能力  <a href = "listUser.do?typeShow=sort_code_level">
+				日本語能力  <a href = "listUser.do?typeShow=sort&typeSort=code_level&sortByCodeLevel=${sortByCodeLevel}">
 					<c:choose>
-						<c:when test="${typeSortCodeLevel == 'ASC'}">▲▽
+						<c:when test="${sortByCodeLevel == 'ASC'}">▲▽
 					    </c:when>
 					    <c:otherwise>△▼
 					    </c:otherwise>
@@ -102,9 +105,9 @@
 				</a>
 			</th>
 			<th align="left">
-				失効日 <a href = "listUser.do?typeShow=sort_end_date">
+				失効日 <a href = "listUser.do?typeShow=sort&typeSort=end_date&sortByEndDate=${sortByEndDate}">
 					<c:choose>
-						<c:when test="${typeSortEndDate == 'ASC'}">▲▽
+						<c:when test="${sortByEndDate == 'ASC'}">▲▽
 					    </c:when>
 					    <c:otherwise>△▼
 					    </c:otherwise>
@@ -143,7 +146,7 @@
 			</td>
 			<td align="right">
 				<c:choose>
-					<c:when test="${userInfor.totalScore == 0}">
+					<c:when test="${userInfor.totalScore == '0'}">
 				    </c:when>
 				    <c:otherwise>
 				      ${fn:escapeXml(userInfor.totalScore)}
@@ -165,9 +168,16 @@
 		<tr>
 			<td class = "lbl_paging">
 				<c:forEach items="${listPaging}" var="paging" varStatus="status">
-					<c:if test="${paging > listPaging.size() && status.index == 0}"><a href = "listUser.do?typeShow=show_paning&page=${paging-1}"><c:out value="<<"/></a></c:if>
-					<a href = "listUser.do?typeShow=show_paning&page=${paging}">${fn:escapeXml(paging)}</a> &nbsp;
-					<c:if test="${paging < totalUser/limit && paging == listPaging.size()}"><a href = "listUser.do?typeShow=show_paning&page=${paging+1}"><c:out value=">>"/></a></c:if>
+					<c:if test="${paging > listPaging.size() && status.index == 0}"><a href = "listUser.do?typeShow=show_paning&page=${paging-limit}"><c:out value="<<"/></a></c:if>
+					<c:choose>
+						<c:when test="${paging == pagingCurrent}">
+							${fn:escapeXml(paging)} &nbsp;
+					    </c:when>
+					    <c:otherwise>
+					      	<a href = "listUser.do?typeShow=show_paning&page=${paging}">${fn:escapeXml(paging)}</a> &nbsp;
+					    </c:otherwise>
+					</c:choose>
+					<c:if test="${paging < totalUser/limit && status.index == listPaging.size()-1}"><a href = "listUser.do?typeShow=show_paning&page=${paging+1}"><c:out value=">>"/></a></c:if>
 				</c:forEach>
 			</td>
 		</tr>
@@ -177,7 +187,8 @@
 	<!-- Begin vung footer -->
 		<%@include file="/views/footer/footer.jsp" %>
 	<!-- End vung footer -->
-
+<%
+response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+%>
 </body>
-
 </html>

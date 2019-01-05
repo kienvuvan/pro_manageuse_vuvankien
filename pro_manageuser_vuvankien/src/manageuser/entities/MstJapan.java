@@ -5,7 +5,7 @@
 package manageuser.entities;
 
 /**
- * Class đối tượng LevelJapan
+ * Class đối tượng MstJapan
  * 
  * @author kien vu
  *

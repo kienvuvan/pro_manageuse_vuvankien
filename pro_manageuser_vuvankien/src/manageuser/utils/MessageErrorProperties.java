@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
+ * Class thực hiện chức đọc file messageerror.properties
+ * 
  * @author kien vu
  *
  */
@@ -25,7 +27,8 @@ public class MessageErrorProperties {
 		Properties properties = new Properties();
 		try {
 			properties.load(new InputStreamReader(
-					Thread.currentThread().getContextClassLoader().getResourceAsStream("messageerror.properties"),"UTF-8"));
+					Thread.currentThread().getContextClassLoader().getResourceAsStream("messageerror.properties"),
+					"UTF-8"));
 		} catch (IOException e) {
 			e.getMessage();
 		}
@@ -46,9 +49,11 @@ public class MessageErrorProperties {
 	 */
 	public static String getData(String key) {
 		String value = "";
+		// Nếu trong map có tồn tại giá trị key thì lấy giá trị trong map
 		if (hashMapMessageError.containsKey(key)) {
 			value = hashMapMessageError.get(key);
 		}
+		// Trả ra giá trị nếu không có thì trả về chuỗi ""
 		return value;
 	}
 }

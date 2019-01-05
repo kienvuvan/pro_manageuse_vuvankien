@@ -16,10 +16,11 @@ import manageuser.utils.Constant;
 
 /**
  * Class thực hiện chức năng logout
+ * 
  * @author kien vu
  *
  */
-public class LogoutController extends HttpServlet{
+public class LogoutController extends HttpServlet {
 
 	/**
 	 * 
@@ -28,16 +29,23 @@ public class LogoutController extends HttpServlet{
 
 	/**
 	 * Phương thức thực hiện xóa session và chuyển về trang đăng nhập hệ thống
+	 * 
 	 * @param request
 	 * @param response
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		// Xóa hết session
-		session.invalidate();
-		// Chuyển về màn hình login
-		response.sendRedirect(Constant.LOGIN_URL);
+		try {
+			HttpSession session = request.getSession();
+			// Xóa hết session
+			session.invalidate();
+			// Chuyển về màn hình login
+			response.sendRedirect(Constant.LOGIN_URL);
+		} catch (Exception e) {
+			e.getMessage();
+			// Chuyển đến màn hình lỗi System_Error.jsp
+			response.sendRedirect(Constant.ERROR_URL);
+		}
 	}
 }

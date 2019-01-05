@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -13,7 +14,7 @@
 	<!-- End vung header -->	
 
 <!-- Begin vung input-->	
-	<form action="ADM002" method="post" name="inputform">
+	<form action="listUser.do" method="get" name="inputform">
 	<table  class="tbl_input"   border="0" width="80%"  cellpadding="0" cellspacing="0" >	
 		<tr>
 			<td align="center" colspan="2">
@@ -22,7 +23,7 @@
 		</tr>
 		<tr>
 			<td align="center" colspan="2">
-				ユーザの登録が完了しました。 or ユーザの更新が完了しました。 or ユーザの削除が完了しました。
+				${fn:escapeXml(message)}
 			</td>
 		</tr>
 		<tr>

@@ -12,6 +12,7 @@ import manageuser.entities.TblUser;
 import manageuser.entities.UserInfor;
 
 /**
+ * Interface TblUserDao
  * @author kien vu
  *
  */
@@ -59,9 +60,12 @@ public interface TblUserDao extends BaseDao {
 	 * @param sortType
 	 *            Kiểu giá trị sắp xếp ưu tiên (Constant.FULL_NAME_COLUMN,
 	 *            Constant.CODE_LEVEL_COLUMN, Constant.END_DATE_COLUMN)
-	 * @param sortByFullName giá trị sắp xếp theo tên (ASC hoặc DESC)
-	 * @param sortByCodeLevel giá trị sắp xếp theo trình độ (ASC hoặc DESC)
-	 * @param sortByEndDate giá trị sắp xếp theo ngày hết hạn (ASC hoặc DESC)
+	 * @param sortByFullName
+	 *            giá trị sắp xếp theo tên (ASC hoặc DESC)
+	 * @param sortByCodeLevel
+	 *            giá trị sắp xếp theo trình độ (ASC hoặc DESC)
+	 * @param sortByEndDate
+	 *            giá trị sắp xếp theo ngày hết hạn (ASC hoặc DESC)
 	 * @return ArrayList<UserInfor> danh sách thông tin user
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
@@ -69,4 +73,35 @@ public interface TblUserDao extends BaseDao {
 	public ArrayList<UserInfor> getListUsers(int offset, int limit, int groupId, String fullName, String sortType,
 			String sortByFullName, String sortByCodeLevel, String sortByEndDate)
 			throws ClassNotFoundException, SQLException;
+
+	/**
+	 * Phương thức kiểm tra tài khoản đã tồn tại trong CSDL hay chưa?
+	 * 
+	 * @param userName
+	 *            chuỗi tài khoản cần kiểm tra
+	 * @return true nếu đã tồn tại và ngược lại
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	public boolean checkExitsUsername(String userName) throws ClassNotFoundException, SQLException;
+
+	/**
+	 * Phương thức kiểm tra email đã tồn tại trong CSDL hay chưa?
+	 * 
+	 * @param email
+	 *            chuỗi email cần kiểm tra
+	 * @return true nếu tồn tại và ngược lại
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	public boolean checkExitsEmail(String email) throws ClassNotFoundException, SQLException;
+	
+	/**
+	 * Phương thức thực hiện thêm 1 đối tượng TblUser vào trong CSDL
+	 * @param tblUser đối tượng tblUser cần thêm vào CSDL
+	 * @return -1 nếu thêm bị lỗi và ngược lại trả về giá trị id của trường user_id trong CSDL
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
+	 */
+	public int insertUser(TblUser tblUser) throws SQLException;
 }

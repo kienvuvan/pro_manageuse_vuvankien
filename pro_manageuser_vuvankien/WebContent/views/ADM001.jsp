@@ -11,7 +11,7 @@
 <title>ユーザ管理</title>
 </head>
 <body style="text-align: center">
-	<form action="login.do" method="post" onsubmit="return checkAccount()">
+	<form action="login.do" method="post">
 		<center>
 			<table class="tbl_input" cellpadding="4" cellspacing="0"
 				width="400px">

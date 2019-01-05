@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2018 Luvina Academy
- * LoginFilter.java Dec 18, 2018, Vu Van Kien
+ * CharacterEnCodingFilter.java Dec 21, 2018, Vu Van Kien
  */
 package manageuser.filter;
 
@@ -14,18 +14,16 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import manageuser.utils.Common;
 import manageuser.utils.Constant;
 
 /**
- * Class thực hiện chức năng kiểm tra tình trạng đăng nhập
+ * Class thực hiện chức năng set kiểu UTF-8 cho request và response
  * 
  * @author kien vu
  *
  */
-public class LoginFilter implements Filter {
+public class CharacterEnCodingFilter implements Filter {
 
 	/*
 	 * (non-Javadoc)
@@ -50,19 +48,11 @@ public class LoginFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
 		try {
 			HttpServletRequest request = (HttpServletRequest) servletRequest;
-			HttpSession session = request.getSession(true);
-			String loginRequest = request.getRequestURL().toString();
-			// Nếu đường dẫn đến file index.jsp hoặc đường dẫn đến trang đăng
-			// nhập hoặc người dùng đã đăng nhập thì cho qua
-			if (loginRequest.equals(Constant.LOGIN_URL) || loginRequest.equals(Constant.LOGIN_URL1)
-					|| Common.checkLogin(session)) {
-				filterChain.doFilter(servletRequest, servletResponse);
-				// Ngược lại chuyển về màn hình đăng nhập
-			} else {
-				response.sendRedirect(Constant.LOGIN_URL1);
-			}
+			request.setCharacterEncoding("UTF-8");
+			response.setCharacterEncoding("UTF-8");
+			filterChain.doFilter(servletRequest, servletResponse);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			e.getMessage();
 			// Chuyển về màn hình lỗi
 			response.sendRedirect(Constant.ERROR_URL);
 		}

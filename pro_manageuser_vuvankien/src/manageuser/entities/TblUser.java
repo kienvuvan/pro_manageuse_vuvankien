@@ -7,7 +7,7 @@ package manageuser.entities;
 import java.sql.Date;
 
 /**
- * Class đối tượng User
+ * Class đối tượng TblUser
  * 
  * @author kien vu
  *

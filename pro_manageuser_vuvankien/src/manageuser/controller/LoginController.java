@@ -17,7 +17,7 @@ import manageuser.utils.Constant;
 import manageuser.validates.UserValidate;
 
 /**
- * Class thực hiện chức năng
+ * Class thực hiện chức năng hiển thị màn hình đăng nhập
  * 
  * @author kien vu
  *
@@ -44,8 +44,6 @@ public class LoginController extends HttpServlet {
 			// Nếu không có lỗi
 			if (message.isEmpty()) {
 				HttpSession session = request.getSession(true);
-				// Set timeout
-				session.setMaxInactiveInterval(Constant.TIME_OUT);
 				session.setAttribute("usernameLogin", username);
 				// Chuyển đến trang ADM002.jsp
 				response.sendRedirect(Constant.LIST_USER_URL);
@@ -66,6 +64,7 @@ public class LoginController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
+		// Chuyển về màn hình đăng nhập ADM001
 		request.getRequestDispatcher(Constant.VIEW_ADM001).forward(request, response);
 	}
 }

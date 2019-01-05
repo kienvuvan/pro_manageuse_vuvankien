@@ -4,22 +4,29 @@
  */
 package manageuser.entities;
 
-import java.sql.Date;
-
 /**
+ * Class đối tượng UserInfor
+ * 
  * @author kien vu
  *
  */
 public class UserInfor {
 	private int userId;
+	private String loginName;
+	private int groupId;
 	private String fullName;
-	private Date birthday;
+	private String fullNameKana;
+	private String password;
+	private String passwordAgain;
+	private String birthday;
 	private String groupName;
 	private String email;
 	private String tel;
+	private String codeLevel;
 	private String nameLevel;
-	private Date endDate;
-	private int totalScore;
+	private String startDate;
+	private String endDate;
+	private String totalScore;
 
 	/**
 	 * @return the userId
@@ -34,6 +41,36 @@ public class UserInfor {
 	 */
 	public void setUserId(int userId) {
 		this.userId = userId;
+	}
+
+	/**
+	 * @return the loginName
+	 */
+	public String getLoginName() {
+		return loginName;
+	}
+
+	/**
+	 * @param loginName
+	 *            the loginName to set
+	 */
+	public void setLoginName(String loginName) {
+		this.loginName = loginName;
+	}
+
+	/**
+	 * @return the groupId
+	 */
+	public int getGroupId() {
+		return groupId;
+	}
+
+	/**
+	 * @param groupId
+	 *            the groupId to set
+	 */
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
 	}
 
 	/**
@@ -52,9 +89,54 @@ public class UserInfor {
 	}
 
 	/**
+	 * @return the fullNameKana
+	 */
+	public String getFullNameKana() {
+		return fullNameKana;
+	}
+
+	/**
+	 * @param fullNameKana
+	 *            the fullNameKana to set
+	 */
+	public void setFullNameKana(String fullNameKana) {
+		this.fullNameKana = fullNameKana;
+	}
+
+	/**
+	 * @return the passWord
+	 */
+	public String getPassword() {
+		return password;
+	}
+
+	/**
+	 * @param passWord
+	 *            the passWord to set
+	 */
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	/**
+	 * @return the passwordAgain
+	 */
+	public String getPasswordAgain() {
+		return passwordAgain;
+	}
+
+	/**
+	 * @param passwordAgain
+	 *            the passwordAgain to set
+	 */
+	public void setPasswordAgain(String passwordAgain) {
+		this.passwordAgain = passwordAgain;
+	}
+
+	/**
 	 * @return the birthday
 	 */
-	public Date getBirthday() {
+	public String getBirthday() {
 		return birthday;
 	}
 
@@ -62,7 +144,7 @@ public class UserInfor {
 	 * @param birthday
 	 *            the birthday to set
 	 */
-	public void setBirthday(Date birthday) {
+	public void setBirthday(String birthday) {
 		this.birthday = birthday;
 	}
 
@@ -112,6 +194,21 @@ public class UserInfor {
 	}
 
 	/**
+	 * @return the codeLevel
+	 */
+	public String getCodeLevel() {
+		return codeLevel;
+	}
+
+	/**
+	 * @param codeLevel
+	 *            the codeLevel to set
+	 */
+	public void setCodeLevel(String codeLevel) {
+		this.codeLevel = codeLevel;
+	}
+
+	/**
 	 * @return the nameLevel
 	 */
 	public String getNameLevel() {
@@ -127,9 +224,24 @@ public class UserInfor {
 	}
 
 	/**
+	 * @return the startDate
+	 */
+	public String getStartDate() {
+		return startDate;
+	}
+
+	/**
+	 * @param startDate
+	 *            the startDate to set
+	 */
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	/**
 	 * @return the endDate
 	 */
-	public Date getEndDate() {
+	public String getEndDate() {
 		return endDate;
 	}
 
@@ -137,14 +249,14 @@ public class UserInfor {
 	 * @param endDateLevelJapan
 	 *            the endDateLevelJapan to set
 	 */
-	public void setEndDate(Date endDate) {
+	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
 
 	/**
 	 * @return the totalScore
 	 */
-	public int getTotalScore() {
+	public String getTotalScore() {
 		return totalScore;
 	}
 
@@ -152,7 +264,7 @@ public class UserInfor {
 	 * @param totalScore
 	 *            the totalScore to set
 	 */
-	public void setTotalScore(int totalScore) {
+	public void setTotalScore(String totalScore) {
 		this.totalScore = totalScore;
 	}
 

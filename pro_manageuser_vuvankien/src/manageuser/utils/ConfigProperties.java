@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Properties;
 
 /**
+ * Class thực hiện đọc file config.properties
+ * 
  * @author kien vu
  *
  */
@@ -46,9 +48,11 @@ public class ConfigProperties {
 	 */
 	public static int getData(String key) {
 		int value = 0;
+		// Nếu trong map có tồn tại giá trị key thì lấy giá trị trong map
 		if (hashMapConfig.containsKey(key)) {
 			value = hashMapConfig.get(key);
 		}
+		// Trả ra giá trị nếu không có thì trả về chuỗi ""
 		return value;
 	}
 }

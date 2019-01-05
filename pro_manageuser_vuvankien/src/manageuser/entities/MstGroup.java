@@ -5,7 +5,7 @@
 package manageuser.entities;
 
 /**
- * Class đối tượng Group
+ * Class đối tượng MstGroup
  * 
  * @author kien vu
  *

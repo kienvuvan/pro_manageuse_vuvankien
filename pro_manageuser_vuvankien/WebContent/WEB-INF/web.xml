@@ -34,6 +34,42 @@
 		<servlet-name>listUser</servlet-name>
 		<url-pattern>/listUser.do</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>addUserInput</servlet-name>
+		<servlet-class>manageuser.controller.AddUserInputController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>addUserInput</servlet-name>
+		<url-pattern>/addUserInput.do</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>addUserValidate</servlet-name>
+		<servlet-class>manageuser.controller.AddUserInputController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>addUserValidate</servlet-name>
+		<url-pattern>/addUserValidate.do</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>addUserConfirm</servlet-name>
+		<servlet-class>manageuser.controller.AddUserConfirmController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>addUserConfirm</servlet-name>
+		<url-pattern>/addUserConfirm.do</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>message</servlet-name>
+		<servlet-class>manageuser.controller.SuccessController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>message</servlet-name>
+		<url-pattern>/message.do</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>error</servlet-name>
@@ -41,7 +77,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>error</servlet-name>
-		<url-pattern>/error.do</url-pattern>
+		<url-pattern>/error</url-pattern>
 	</servlet-mapping>
 	
 	<session-config>
@@ -55,8 +91,18 @@
 
 	<filter-mapping>
 		<filter-name>logFilter</filter-name>
+		<url-pattern>*.do</url-pattern>
+		<url-pattern>/</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>characterEnCoding</filter-name>
+		<filter-class>manageuser.filter.CharacterEnCodingFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>characterEnCoding</filter-name>
 		<url-pattern>/*</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
 	<error-page>

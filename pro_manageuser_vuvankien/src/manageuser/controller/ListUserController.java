@@ -25,6 +25,8 @@ import manageuser.utils.Constant;
 import manageuser.utils.MessageProperties;
 
 /**
+ * Class thực hiện chức năng hiển thị màn hình ADM002
+ * 
  * @author kien vu
  *
  */
@@ -49,143 +51,182 @@ public class ListUserController extends HttpServlet {
 			request.setAttribute("listAllGroups", listAllGroups);
 			// Lấy giá trị hiển thị tối đa số bản trên 1 page
 			int limit = ConfigProperties.getData("SIZE_RECORD");
-			// Lấy giá trị hiển thị số lượng page
-			int sizePaging = ConfigProperties.getData("SIZE_PANNING");
+			// Danh sách paging
 			ArrayList<Integer> listPaging = new ArrayList<>();
+			// Danh sách User
 			ArrayList<UserInfor> listUserInfor = new ArrayList<>();
+			// Biến tổng số User
 			int totalUser = 0;
-			// Lấy giá trị kiểu sắp xếp theo tên được truyền từ bên view
-			// ADM002.jsp
-			String typeSortName = (String) session.getAttribute("typeSortName");
-			// Nếu không có giá trị thì gán mặc định là sắp xếp tăng
-			if (typeSortName == null) {
-				typeSortName = Constant.SORTASC;
-			}
-			// Lấy giá trị kiểu sắp xếp theo trình độ tiếng nhật được truyền
-			// từ bên view ADM002.jsp
-			String typeSortCodeLevel = (String) session.getAttribute("typeSortCodeLevel");
-			// Nếu không có giá trị thì gán mặc định là sắp xếp giảm
-			if (typeSortCodeLevel == null) {
-				typeSortCodeLevel = Constant.SORTDESC;
-			}
-			// Lấy giá trị kiểu sắp xếp theo ngày hết hạn được truyền từ bên
-			// view ADM002.jsp
-			String typeSortEndDate = (String) session.getAttribute("typeSortEndDate");
-			// Nếu không có giá trị thì gán mặc định là sắp xếp tăng
-			if (typeSortEndDate == null) {
-				typeSortEndDate = Constant.SORTDESC;
-			}
-			// Lấy giá trị kiểu hiển thị màn hình ADM002.jsp
-			String typeShow = (String) request.getParameter("typeShow");
-			// Nếu không có giá trị mặc định là kiểu đăng nhập hoặc tìm kiếm
-			if (typeShow == null) {
-				typeShow = Constant.TYPE_LOGIN_OR_SEARCH;
-			}
+			// Giá trị groupId mặc định
 			int groupId = 0;
-			TblUserLogic tblUserLogic = new TblUserLogicImpl();
-			// Lấy giá trị groupId từ selectBox
-			String groupIdString = request.getParameter("groupId");
-			// Lấy giá trị name từ text tìm kiếm
-			String fullname = request.getParameter("fullname");
-			groupId = 0;
-			// Chuyển giá trị groupId sang giá trị số
-			if (groupIdString != null) {
-				groupId = Integer.parseInt(groupIdString);
-			}
-			// Giá trị trang hiện tại
-			int paningCurrent = 1;
-			// Giá trị cột sắp xếp ưu tiên
-			String columnFirst = Constant.FULL_NAME_COLUMN;
-			// Vị trị lấy kết quả mặc định từ 0
+			// Giá trị tên tìm kiếm mặc định
+			String fullname = "";
+			// Giá trị trang mặc định = 1
+			int pagingCurrent = 1;
+			// Vị trị lấy bản ghi mặc định = 0
 			int offset = 0;
-			// Nếu kiểu vào để hiển thị màn hình ADM002.jsp là login hoặc
-			// search
-			if (Constant.TYPE_LOGIN_OR_SEARCH.equals(typeShow)) {
-				// Giá trị sắp xếp ưu tiên là tên
-				columnFirst = Constant.FULL_NAME_COLUMN;
-			} else {
-				// Lấy giá trị tìm kiếm tên
-				fullname = (String) session.getAttribute("fullname");
-				// Lấy giá trị tìm kiếm theo nhóm
-				groupId = (int) session.getAttribute("groupId");
-				// Nếu là trường hợp sắp xếp
-				if (typeShow.startsWith("sort")) {
-					switch (typeShow) {
-					// Nếu sắp xếp theo tên
-					case Constant.TYPE_SORT_FULL_NAME:
-						// Đổi kiểu sắp xếp tên hiện tại thành ngược lại
-						typeSortName = Common.changeSort(typeSortName);
-						// Giá trị sắp xếp ưu tiên là tên
-						columnFirst = Constant.FULL_NAME_COLUMN;
-						break;
-					// Nếu sắp xếp theo trình độ tiếng nhật
-					case Constant.TYPE_SORT_CODE_LEVEL:
-						// Đổi kiểu sắp xếp trình độ tiếng nhật hiện tại
-						// thành ngược lại
-						typeSortCodeLevel = Common.changeSort(typeSortCodeLevel);
-						// Giá trị sắp xếp ưu tiên là trình độ tiếng nhật
-						columnFirst = Constant.CODE_LEVEL_COLUMN;
-						break;
-					// Nếu sắp xếp theo ngày hết hạn
-					case Constant.TYPE_SORT_END_DATE:
-						// Đổi kiểu sắp xếp ngày hết hạn hiện tại thành
-						// ngược lại
-						typeSortEndDate = Common.changeSort(typeSortEndDate);
-						// Giá trị sắp xếp ưu tiên là ngày hết hạn
-						columnFirst = Constant.END_DATE_COLUMN;
-						break;
-					}
-					// Nếu là trường hợp paging
-				} else if (Constant.TYPE_PANING.equals(typeShow)) {
-					// Lấy giá trị page cần chuyển
-					String page = request.getParameter("page");
-					// Giá trị trang cần chuyển
-					paningCurrent = Integer.parseInt(page);
-					// Vị trí đầu tiên cần lấy bản ghi
-					offset = (paningCurrent - 1) * limit;
-				}
-			}
-			// Lấy giá trị tổng bản ghi tìm kiếm được
-			totalUser = tblUserLogic.getTotalUsers(groupId, fullname);
-			// Nếu số lượng > 0
-			if (totalUser > 0) {
-				// Lấy danh sách phân trang
-				listPaging = Common.getListPaging(totalUser, limit, paningCurrent);
-				// Lấy danh sách thông tin user
-				listUserInfor = tblUserLogic.getListUsers(offset, limit, groupId, fullname, columnFirst, typeSortName,
-						typeSortCodeLevel, typeSortEndDate);
-				// Set các biến giá trị sắp xếp ưu tiên, kiểu sắp xếp tên, kiểu
-				// sắp xếp trình độ tiếng nhật, ngày hết hạn lên session
-				session.setAttribute("columnFirst", columnFirst);
-				session.setAttribute("typeSortName", typeSortName);
-				session.setAttribute("typeSortCodeLevel", typeSortCodeLevel);
-				session.setAttribute("typeSortEndDate", typeSortEndDate);
+			// Giá trị cột sắp xếp ưu tiên mặc định là cột fullname
+			String columnSort = Constant.FULL_NAME_COLUMN;
+			// Giá trị sắp xếp theo tên mặc định là tăng
+			String sortByFullName = Constant.SORTASC;
+			// Giá trị sắp xếp theo trình độ là giảm
+			String sortByCodeLevel = Constant.SORTASC;
+			// Giá trị sắp xếp theo ngày hết hạn mặc định là giảm
+			String sortByEndDate = Constant.SORTDESC;
+			TblUserLogic tblUserLogic = new TblUserLogicImpl();
 
-				// Set các biến giá trị tìm kiếm theo tên, theo group lên
-				// session
+			// Giá trị kiểu hiển thị màn hình ADM002
+			String typeShow = Common.formatString((String) request.getParameter("typeShow"),
+					Constant.TYPE_LOGIN_OR_TOP);
+			// Trường hợp login + top
+			if (Constant.TYPE_LOGIN_OR_TOP.equals(typeShow)) {
+				// Xóa hết các biến lưu ở session trừ tên người dùng
+				removeSessionSearch(session);
+				// Trường hợp search
+			} else if (Constant.TYPE_SEARCH.equals(typeShow)) {
+				// Lấy giá trị fullname từ request và format định dạng
+				fullname = Common.formatString(request.getParameter("fullname"), "");
+				// Lấy giá trị groupId từ request và chuyển về kiểu số
+				groupId = Common.convertNumberInteger(request.getParameter("groupId"));
+				// Set các giá trị lên session
 				session.setAttribute("fullname", fullname);
 				session.setAttribute("groupId", groupId);
-				// Set các biến trang hiện tại, tổng bản ghi lên request
-				request.setAttribute("paningCurrent", paningCurrent);
-				request.setAttribute("totalUser", totalUser);
+				// Trường hợp sort + paging + back
+			} else {
+				// Lấy giá trị fullname từ session
+				fullname = Common.formatString((String) session.getAttribute("fullname"), "");
+				// Lấy giá trị groupId từ session
+				if (session.getAttribute("groupId") != null) {
+					groupId = (int) session.getAttribute("groupId");
+				}
+				// Trường hợp sort
+				if (Constant.TYPE_SORT.equals(typeShow)) {
+					// Lấy giá trị cột sắp xếp ưu tiên
+					String typeSort = request.getParameter("typeSort");
+					// Giá trị kiểu sắp xếp cột fullname
+					sortByFullName = Common.formatString(request.getParameter("sortByFullName"), Constant.SORTASC);
+					// Giá trị kiểu sắp xếp cột codeLevel
+					sortByCodeLevel = Common.formatString(request.getParameter("sortByCodeLevel"), Constant.SORTASC);
+					// Giá trị kiểu sắp xếp cột endDate
+					sortByEndDate = Common.formatString(request.getParameter("sortByEndDate"), Constant.SORTDESC);
+
+					switch (typeSort) {
+					// Sắp xếp theo tên
+					case Constant.TYPE_SORT_FULL_NAME:
+						// Cột sắp xếp ưu tiên là fullname
+						columnSort = Constant.FULL_NAME_COLUMN;
+						// Thay đổi giá trị sắp xếp hiện tại
+						sortByFullName = Common.changeSort(sortByFullName);
+						break;
+					// Sắp xếp theo trình độ tiếng nhật
+					case Constant.TYPE_SORT_CODE_LEVEL:
+						// Cột sắp xếp ưu tiên là trình độ
+						columnSort = Constant.CODE_LEVEL_COLUMN;
+						// Thay đổi giá trị sắp xếp hiện tại
+						sortByCodeLevel = Common.changeSort(sortByCodeLevel);
+						break;
+					// Sắp xếp theo ngày hết hạn
+					case Constant.TYPE_SORT_END_DATE:
+						// Cột sắp xếp ưu tiên là ngày hết hạn
+						columnSort = Constant.END_DATE_COLUMN;
+						// Thay đổi giá trị sắp xếp hiện tại
+						sortByEndDate = Common.changeSort(sortByEndDate);
+						break;
+					}
+					// Set các giá trị cột sắp xếp ưu tiên, kiểu sắp xếp tên,
+					// trình độ, ngày hết hạn lên session
+					session.setAttribute("columnSort", columnSort);
+					session.setAttribute("sortByFullName", sortByFullName);
+					session.setAttribute("sortByCodeLevel", sortByCodeLevel);
+					session.setAttribute("sortByEndDate", sortByEndDate);
+					// Trường hợp paging + back
+				} else {
+					// Lấy giá trị cột sắp xếp ưu tiên từ session
+					columnSort = Common.formatString((String) session.getAttribute("columnSort"),
+							Constant.FULL_NAME_COLUMN);
+					// Lấy giá trị kiểu sắp xếp fullname từ session
+					sortByFullName = Common.formatString((String) session.getAttribute("sortByFullName"),
+							Constant.SORTASC);
+					// Lấy giá trị kiểu sắp xếp codelevel từ session
+					sortByCodeLevel = Common.formatString((String) session.getAttribute("sortByCodeLevel"),
+							Constant.SORTASC);
+					// Lấy giá trị kiểu sắp xếp enddate từ session
+					sortByEndDate = Common.formatString((String) session.getAttribute("sortByEndDate"),
+							Constant.SORTDESC);
+					switch (typeShow) {
+					// Trường hợp paging
+					case Constant.TYPE_PAGING:
+						// Lấy giá trị trang hiện tại từ request
+						pagingCurrent = Common.convertNumberInteger(request.getParameter("page"));
+						// Set giá trị trang hiện tại lên session
+						session.setAttribute("pagingCurrent", pagingCurrent);
+						break;
+					// Trường hợp back
+					case Constant.TYPE_BACK:
+						// Lấy giá trị trang hiện tại từ session
+						if (session.getAttribute("pagingCurrent") != null) {
+							pagingCurrent = (int) session.getAttribute("pagingCurrent");
+						}
+						break;
+					}
+					if (pagingCurrent > 0) {
+						// Tính toán vị trí đầu tiên lấy bản ghi
+						offset = (pagingCurrent - 1) * limit;
+					}
+				}
+			}
+			if (groupId >= 0) {
+				// Lấy giá trị tổng bản ghi tìm kiếm được
+				totalUser = tblUserLogic.getTotalUsers(groupId, fullname);
+			}
+			// Nếu số lượng > 0
+			if (totalUser > 0 && Common.checkNumberPage(pagingCurrent, limit, totalUser)) {
+				// Lấy danh sách phân trang
+				listPaging = Common.getListPaging(totalUser, limit, pagingCurrent);
+				// Lấy danh sách thông tin user
+				listUserInfor = tblUserLogic.getListUsers(offset, limit, groupId, fullname, columnSort, sortByFullName,
+						sortByCodeLevel, sortByEndDate);
+				request.setAttribute("pagingCurrent", pagingCurrent);
 				// Set giá trị bản ghi tối đa/page, kích thước paging, danh sách
-				// paging, danh sách user lên request
+				// paging, danh sách user, các kiểu sắp xếp lên request
+				request.setAttribute("totalUser", totalUser);
 				request.setAttribute("limit", limit);
-				request.setAttribute("sizePaging", sizePaging);
 				request.setAttribute("listPaging", listPaging);
 				request.setAttribute("listUserInfor", listUserInfor);
+				request.setAttribute("sortByFullName", sortByFullName);
+				request.setAttribute("sortByCodeLevel", sortByCodeLevel);
+				request.setAttribute("sortByEndDate", sortByEndDate);
 				// Ngược lại, không có bản ghi nào được tìm thấy
 			} else {
 				// Gửi 1 thông báo rằng không có kết quả được tìm thấy
 				request.setAttribute("listEmpty", MessageProperties.getData("LIST_EMPTY"));
 			}
 			request.getRequestDispatcher(Constant.VIEW_ADM002).forward(request, response);
-			// Nếu có lỗi
 		} catch (Exception e) {
-			e.getMessage();
+			System.out.println("Error : " + e.getMessage());
 			// Chuyển về màn hình lỗi
 			response.sendRedirect(Constant.ERROR_URL);
 		}
+	}
+
+	/**
+	 * Phương thức remove các biến lưu trữ trên session trừ biến người dùng
+	 * 
+	 * @param session
+	 */
+	private void removeSessionSearch(HttpSession session) {
+		// Xóa giá trị cột sắp xếp ưu tiên khỏi session
+		session.removeAttribute("typeSort");
+		// Xóa giá trị kiểu sắp xếp fullname khỏi session
+		session.removeAttribute("sortByFullName");
+		// Xóa giá trị kiểu sắp xếp codelevel khỏi session
+		session.removeAttribute("sortByCodeLevel");
+		// Xóa giá trị kiểu sắp xếp enddate khỏi session
+		session.removeAttribute("sortByEndDate");
+		// Xóa giá trị fullname khỏi session
+		session.removeAttribute("fullname");
+		// Xóa giá trị groupId khỏi session
+		session.removeAttribute("groupId");
 	}
 
 }

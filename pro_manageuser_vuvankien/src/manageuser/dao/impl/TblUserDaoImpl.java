@@ -4,13 +4,13 @@
  */
 package manageuser.dao.impl;
 
-import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.PreparedStatement;
 
 import manageuser.dao.TblUserDao;
@@ -19,20 +19,16 @@ import manageuser.entities.UserInfor;
 import manageuser.utils.Constant;
 
 /**
+ * Class thực thi interface TblUserDao đê thực hiện các thao tác CSDL với đối
+ * tượng TblUser
+ * 
  * @author kien vu
  *
  */
 public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
-	/**
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 */
-	public TblUserDaoImpl() throws ClassNotFoundException, SQLException {
-		super();
-	}
-
-	private Connection connection;
-	private static final String GET_USER_BY_ID = "SELECT pass, salt FROM tbl_user WHERE rule = 0 AND login_name = ?";
+	private static final String GET_USER_ADMIN_BY_ID = "SELECT pass, salt FROM tbl_user WHERE rule = 0 AND login_name = ?";
+	private static final String CHECK_EXITS_USERNAME = "SELECT COUNT(*) FROM tbl_user WHERE login_name = ?";
+	private static final String CHECK_EXITS_EMAIL = "SELECT COUNT(*) FROM tbl_user WHERE email = ?";
 	private static final String GET_TOTAL_USERS = "SELECT COUNT(*) as number " + "FROM tbl_user "
 			+ "INNER JOIN mst_group " + "ON mst_group.group_id = tbl_user.group_id "
 			+ "LEFT JOIN (tbl_detail_user_japan " + "INNER JOIN mst_japan "
@@ -45,18 +41,14 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			+ "LEFT JOIN (tbl_detail_user_japan "
 			+ "INNER JOIN mst_japan  ON mst_japan.code_level = tbl_detail_user_japan.code_level )"
 			+ " ON tbl_user.user_id = tbl_detail_user_japan.user_id WHERE 1=1 ";
+	private static final String INSERT_USER = "INSERT INTO tbl_user(group_id, login_name,pass, full_name, full_name_kana, tel, email, birthday, rule,salt) VALUES(?,?,?,?,?,?,?,?,?,?);";
 
-	/**
-	 * Phương thức kiểm tra tài khoản có tồn tại không?
-	 * 
-	 * @param username
-	 *            Tên tài khoản người dùng nhập
-	 * @param password
-	 *            Mật khẩu người dùng nhập
-	 * @return true Nếu tài khoản đúng và ngược lại
-	 * @exception NoSuchAlgorithmException
-	 * @exception ClassNotFoundException
-	 * @exception SQLException
+	private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+	private static HashMap<Integer, String> hashMapColumnSort = new HashMap<>();
+
+	/*
+	 * (non-Javadoc)
+	 * @see manageuser.dao.TblUserDao#getUserByLogIn(java.lang.String)
 	 */
 	@Override
 	public TblUser getUserByLogIn(String username) throws ClassNotFoundException, SQLException {
@@ -68,7 +60,8 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			if (connection != null) {
 				// Tạo lệnh truy vấn lấy ra tài khoản có tên tài khoản tồn tại
 				// trong CSDL và có quyền admin
-				PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(GET_USER_BY_ID);
+				PreparedStatement preparedStatement = (PreparedStatement) connection
+						.prepareStatement(GET_USER_ADMIN_BY_ID);
 				preparedStatement.setString(1, username);
 				// Trả về bản truy vấn
 				ResultSet resultSet = preparedStatement.executeQuery();
@@ -85,6 +78,9 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.getMessage();
 			throw e;
+		// Đóng kết nối
+		} finally {
+			closeConnection();
 		}
 		// Tài khoản hoặc mật khẩu sai
 		return tblUser;
@@ -134,6 +130,9 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.getMessage();
 			throw e;
+		// Đóng kết nối
+		} finally {
+			closeConnection();
 		}
 		return 0;
 	}
@@ -168,8 +167,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 					stringBuilderQueryUser.append(" AND tbl_user.full_name LIKE ?");
 				}
 				// Thêm phần sắp xếp và vị trị lấy bản ghi
-				stringBuilderQueryUser
-						.append(" ORDER BY " + getOrderBy(sortType, sortByFullName, sortByCodeLevel, sortByEndDate));
+				stringBuilderQueryUser.append(getOrderBy(sortType, sortByFullName, sortByCodeLevel, sortByEndDate));
 				stringBuilderQueryUser.append(" LIMIT " + offset + " , " + limit);
 				PreparedStatement preparedStatement = (PreparedStatement) connection
 						.prepareStatement(stringBuilderQueryUser.toString());
@@ -199,13 +197,21 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 					UserInfor userInfor = new UserInfor();
 					userInfor.setUserId(userId);
 					userInfor.setFullName(name);
-					userInfor.setBirthday(birthday);
+					if (birthday != null) {
+						userInfor.setBirthday(simpleDateFormat.format(birthday));
+					} else {
+						userInfor.setBirthday("");
+					}
 					userInfor.setGroupName(groupName);
 					userInfor.setEmail(email);
 					userInfor.setTel(tel);
 					userInfor.setNameLevel(nameLevel);
-					userInfor.setEndDate(endDate);
-					userInfor.setTotalScore(total);
+					if (endDate != null) {
+						userInfor.setEndDate(simpleDateFormat.format(endDate));
+					} else {
+						userInfor.setEndDate("");
+					}
+					userInfor.setTotalScore(total + "");
 					// Thêm vào danh sách
 					listUserInfor.add(userInfor);
 				}
@@ -214,6 +220,9 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.getMessage();
 			throw e;
+		// Đóng kết nối
+		} finally {
+			closeConnection();
 		}
 		// Trả về danh sách UserInfor
 		return listUserInfor;
@@ -231,32 +240,173 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	 * @param sortByEndDate
 	 *            Kiểu sắp xếp theo ngày hết hạn (ASC, DESC)
 	 * @return Chuỗi sắp xêp
+	 * @throws ClassNotFoundException,
+	 *             SQLException
 	 */
-	private String getOrderBy(String sortType, String sortByFullName, String sortByCodeLevel, String sortByEndDate) {
+	private String getOrderBy(String sortType, String sortByFullName, String sortByCodeLevel, String sortByEndDate)
+			throws ClassNotFoundException, SQLException {
 		String orderBy = "";
-		switch (sortType) {
-		case Constant.FULL_NAME_COLUMN:
-			orderBy = " " + getData(Constant.FULL_NAME_COLUMN) + " " + sortByFullName + " , "
-					+ getData(Constant.CODE_LEVEL_COLUMN) + " " + sortByCodeLevel + " , "
-					+ getData(Constant.END_DATE_COLUMN) + " " + sortByEndDate;
-			break;
-		// Nếu giá trị cột sắp xếp ưu tiên là trình độ
-		case Constant.CODE_LEVEL_COLUMN:
-			// Cột code_level sẽ được xếp lên đầu
-			orderBy = " " + getData(Constant.CODE_LEVEL_COLUMN) + " " + sortByCodeLevel + " , "
-					+ getData(Constant.FULL_NAME_COLUMN) + " " + sortByFullName + " , "
-					+ getData(Constant.END_DATE_COLUMN) + " " + sortByEndDate;
-			break;
-		// Nếu giá trị cột sắp xếp ưu tiên là ngày hết hạn
-		case Constant.END_DATE_COLUMN:
-			// Cột end_date sẽ được xếp lên đầu
-			orderBy = " " + getData(Constant.END_DATE_COLUMN) + " " + sortByEndDate + " , "
-					+ getData(Constant.CODE_LEVEL_COLUMN) + " " + sortByCodeLevel + " , "
-					+ getData(Constant.FULL_NAME_COLUMN) + " " + sortByFullName;
-			break;
+		try {
+			// Nếu hashMap rỗng
+			if (hashMapColumnSort.isEmpty()) {
+				// Get map
+				hashMapColumnSort = getColumnSort();
+			}
+			switch (sortType) {
+			case Constant.FULL_NAME_COLUMN:
+				orderBy = " ORDER BY " + getData(Constant.FULL_NAME_COLUMN) + " " + sortByFullName + " , "
+						+ getData(Constant.CODE_LEVEL_COLUMN) + " " + sortByCodeLevel + " , "
+						+ getData(Constant.END_DATE_COLUMN) + " " + sortByEndDate;
+				break;
+			// Nếu giá trị cột sắp xếp ưu tiên là trình độ
+			case Constant.CODE_LEVEL_COLUMN:
+				// Cột code_level sẽ được xếp lên đầu
+				orderBy = " ORDER BY " + getData(Constant.CODE_LEVEL_COLUMN) + " " + sortByCodeLevel + " , "
+						+ getData(Constant.FULL_NAME_COLUMN) + " " + sortByFullName + " , "
+						+ getData(Constant.END_DATE_COLUMN) + " " + sortByEndDate;
+				break;
+			// Nếu giá trị cột sắp xếp ưu tiên là ngày hết hạn
+			case Constant.END_DATE_COLUMN:
+				// Cột end_date sẽ được xếp lên đầu
+				orderBy = " ORDER BY " + getData(Constant.END_DATE_COLUMN) + " " + sortByEndDate + " , "
+						+ getData(Constant.CODE_LEVEL_COLUMN) + " " + sortByCodeLevel + " , "
+						+ getData(Constant.FULL_NAME_COLUMN) + " " + sortByFullName;
+				break;
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			e.getMessage();
+			throw e;
 		}
 		// Trả về chuỗi sắp xếp
 		return orderBy;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see manageuser.dao.TblUserDao#checkExitsUsername(java.lang.String)
+	 */
+	@Override
+	public boolean checkExitsUsername(String userName) throws ClassNotFoundException, SQLException {
+		try {
+			// Tạo kết nối với database
+			connection = connectDatabase();
+			// Nếu thành công
+			if (connection != null) {
+				// Tạo lệnh truy vấn lấy ra tài khoản có tên tài khoản tồn tại
+				// trong CSDL và có quyền admin
+				PreparedStatement preparedStatement = (PreparedStatement) connection
+						.prepareStatement(CHECK_EXITS_USERNAME);
+				preparedStatement.setString(1, userName);
+				// Trả về bản truy vấn
+				ResultSet resultSet = preparedStatement.executeQuery();
+				// Nếu tài khoản tồn tại
+				if (resultSet.next()) {
+					// Nếu tồn tại
+					if (resultSet.getInt(1) > 0) {
+						return true;
+					}
+				}
+			}
+			// Lỗi
+		} catch (ClassNotFoundException | SQLException e) {
+			e.getMessage();
+			throw e;
+		// Đóng kết nối
+		} finally {
+			closeConnection();
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see manageuser.dao.TblUserDao#checkExitsEmail(java.lang.String)
+	 */
+	@Override
+	public boolean checkExitsEmail(String email) throws ClassNotFoundException, SQLException {
+		try {
+			// Tạo kết nối với database
+			connection = connectDatabase();
+			// Nếu thành công
+			if (connection != null) {
+				// Tạo lệnh truy vấn lấy ra tài khoản có tên tài khoản tồn tại
+				// trong CSDL và có quyền admin
+				PreparedStatement preparedStatement = (PreparedStatement) connection
+						.prepareStatement(CHECK_EXITS_EMAIL);
+				preparedStatement.setString(1, email);
+				// Trả về bản truy vấn
+				ResultSet resultSet = preparedStatement.executeQuery();
+				// Nếu tài khoản tồn tại
+				if (resultSet.next()) {
+					// Nếu tồn tại
+					if (resultSet.getInt(1) > 0) {
+						return true;
+					}
+				}
+			}
+			// Lỗi
+		} catch (SQLException | ClassNotFoundException e) {
+			e.getMessage();
+			throw e;
+			// Đóng kết nối
+		} finally {
+			closeConnection();
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see manageuser.dao.TblUserDao#insertUser(manageuser.entities.TblUser)
+	 */
+	@Override
+	public int insertUser(TblUser tblUser) throws SQLException {
+		try {
+			// Nếu thành công
+			if (connection != null) {
+				// Tạo lệnh truy vấn thêm User vào trong CSDL
+				PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(INSERT_USER);
+				int index = 1;
+				// Gán các giá trị cho các tham số của câu lệnh truy vấn
+				preparedStatement.setInt(index++, tblUser.getGroupId());
+				preparedStatement.setString(index++, tblUser.getLoginName());
+				preparedStatement.setString(index++, tblUser.getPassword());
+				preparedStatement.setString(index++, tblUser.getFullName());
+				preparedStatement.setString(index++, tblUser.getFullNameKana());
+				preparedStatement.setString(index++, tblUser.getTel());
+				preparedStatement.setString(index++, tblUser.getEmail());
+				preparedStatement.setDate(index++, tblUser.getBirthday());
+				preparedStatement.setInt(index++, tblUser.getRule());
+				preparedStatement.setString(index++, tblUser.getSalt());
+				// Nếu truy vấn thêm thành công
+				if (preparedStatement.executeUpdate() > 0) {
+					// Trả về giá trị id cuối cùng vừa thêm vào
+					return (int) preparedStatement.getLastInsertID();
+				}
+			}
+			// Lỗi
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			throw e;
+		}
+		return -1;
+	}
+
+	/**
+	 * Phương thức lấy ra giá trị trong map
+	 * 
+	 * @param value
+	 *            giá trị kiểm tra để lấy
+	 * @return giá trị trong map
+	 */
+	public static String getData(String value) {
+		String result = "";
+		if (hashMapColumnSort.containsValue(value)) {
+			result = value;
+		}
+		return result;
+	}
 }

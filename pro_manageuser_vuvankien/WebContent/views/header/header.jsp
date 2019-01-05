@@ -8,7 +8,7 @@
 					alt="Luvina" />
 				<td>
 				<td align="left"><a href="logout.do">ログアウト</a> &nbsp; <a
-					href="ADM002">トップ</a>
+					href="listUser.do">トップ</a>
 				<td>
 			</tr>
 		</table>

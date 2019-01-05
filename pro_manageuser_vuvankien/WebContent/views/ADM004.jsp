@@ -1,11 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <style><%@include file="/views/css/style.css"%></style>
-<script type="text/javascript" src="../js/user.js"></script>
+<script type="text/javascript" src="<c:url value="/views/js/user.js"/>"></script>
 <title>ユーザ管理</title>
 </head>
 <body>
@@ -14,7 +16,7 @@
 	<!-- End vung header -->
 
 	<!-- Begin vung input-->
-	<form action="ADM006" method="post" name="inputform">
+	<form action="addUserConfirm.do?session=${keySession}" method="post" name="inputform">
 		<table class="tbl_input" border="0" width="75%" cellpadding="0"
 			cellspacing="0">
 			<tr>
@@ -32,50 +34,57 @@
 							cellspacing="0">
 							<tr>
 								<td class="lbl_left">アカウント名:</td>
-								<td align="left">ntmhuong</td>
+								<td align="left">${fn:escapeXml(userInfor.loginName)}</td>
 							</tr>
 							<tr>
 								<td class="lbl_left">グループ:</td>
-								<td align="left">Nhóm 1</td>
+								<td align="left">${fn:escapeXml(userInfor.groupName)}</td>
 							</tr>
 							<tr>
 								<td class="lbl_left">氏名:</td>
-								<td align="left">Nguyễn Thị Mai Hương</td>
+								<td align="left">${fn:escapeXml(userInfor.fullName)}</td>
 							</tr>
 							<tr>
 								<td class="lbl_left">カタカナ氏名:</td>
-								<td align="left">名カナ</td>
+								<td align="left">${fn:escapeXml(userInfor.fullNameKana)}</td>
 							</tr>
 							<tr>
 								<td class="lbl_left">生年月日:</td>
-								<td align="left">1983/07/08</td>
+								<td align="left">${fn:replace(userInfor.birthday, '-','/')}</td>
 							</tr>
 							<tr>
 								<td class="lbl_left">メールアドレス:</td>
-								<td align="left">ntmhuong@luvina.net</td>
+								<td align="left">${fn:escapeXml(userInfor.email)}</td>
 							</tr>
 							<tr>
 								<td class="lbl_left">電話番号:</td>
-								<td align="left">0914326386</td>
+								<td align="left">${fn:escapeXml(userInfor.tel)}</td>
 							</tr>
 							<tr>
-								<th colspan="2"><a href="#">日本語能力</a></th>
+								<th colspan="2"><a href="#" onclick="showOrHideLevelJapan()">日本語能力</a></th>
 							</tr>
-							<tr>
+							<tr class ="japan">
 								<td class="lbl_left">資格:</td>
-								<td align="left">Trình độ tiếng nhật cấp 1</td>
+								<td align="left">${fn:escapeXml(userInfor.nameLevel)}</td>
 							</tr>
-							<tr>
+							<tr class ="japan">
 								<td class="lbl_left">資格交付日:</td>
-								<td align="left">2010/07/08</td>
+								<td align="left"><c:if test="${userInfor.nameLevel != ''}">${fn:replace(userInfor.startDate, '-','/')}</c:if></td>
 							</tr>
-							<tr>
+							<tr class ="japan">
 								<td class="lbl_left">失効日:</td>
-								<td align="left">2011/07/08</td>
+								<td align="left"><c:if test="${userInfor.nameLevel != ''}">${fn:replace(userInfor.endDate, '-','/')}</c:if></td>
 							</tr>
-							<tr>
+							<tr class ="japan">
 								<td class="lbl_left">点数:</td>
-								<td align="left">290</td>
+								<td align="left">
+									<c:choose>
+										<c:when test="${userInfor.totalScore > 0}">${fn:escapeXml(userInfor.totalScore)}
+									    </c:when>
+									    <c:otherwise>
+									    </c:otherwise>
+									</c:choose>
+								</td>
 							</tr>
 						</table>
 					</div>
@@ -89,7 +98,7 @@
 				<tr>
 					<th width="200px" align="center">&nbsp;</th>
 					<td><input class="btn" type="submit" value="OK" /></td>
-					<td><input class="btn" type="button" value="戻る" /></td>
+					<td><a href="addUserValidate.do?typeShow=back_adm003&session=${keySession}"><input class="btn" type="button" value="戻る" /></a></td>
 				</tr>
 			</table>
 		</div>
