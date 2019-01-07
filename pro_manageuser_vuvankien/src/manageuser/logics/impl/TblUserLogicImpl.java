@@ -30,7 +30,9 @@ public class TblUserLogicImpl implements TblUserLogic {
 
 	/*
 	 * (non-Javadoc)
-	 * @see manageuser.logics.TblUserLogic#checkExitsAccount(java.lang.String, java.lang.String)
+	 * 
+	 * @see manageuser.logics.TblUserLogic#checkExitsAccount(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
 	public boolean checkExitsAccount(String username, String password)
@@ -144,7 +146,9 @@ public class TblUserLogicImpl implements TblUserLogic {
 
 	/*
 	 * (non-Javadoc)
-	 * @see manageuser.logics.TblUserLogic#creatUser(manageuser.entities.UserInfor)
+	 * 
+	 * @see
+	 * manageuser.logics.TblUserLogic#creatUser(manageuser.entities.UserInfor)
 	 */
 	@Override
 	public boolean creatUser(UserInfor userInfor)
@@ -173,13 +177,14 @@ public class TblUserLogicImpl implements TblUserLogic {
 					userInfor.setUserId(lastId);
 					// Nếu thêm thành công thông tin chi tiết User
 					tblDetailUserDao.insertDetailUserJapan(Common.creatTblDetailUserJapanFromUserInfor(userInfor));
-					tblUserDaoImpl.commit();
-					return true;
 				}
+				// Tiến hành commit
+				tblUserDaoImpl.commit();
+				return true;
 			}
 			// Nếu có lỗi
 		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			System.out.println(e.getMessage());
 			// Tiến hành rollback
 			tblUserDaoImpl.rollBack();
 			throw e;

@@ -49,8 +49,9 @@ public class TblDetailUserDaoImpl extends BaseDaoImpl implements TblDetailUserDa
 					return true;
 				}
 			}
+		// Nếu có lỗi
 		} catch (SQLException e) {
-			e.getMessage();
+			System.out.println(e.getMessage());
 			throw e;
 		}
 		return false;

@@ -79,7 +79,7 @@
 								<td class="lbl_left">点数:</td>
 								<td align="left">
 									<c:choose>
-										<c:when test="${userInfor.totalScore > 0}">${fn:escapeXml(userInfor.totalScore)}
+										<c:when test="${userInfor.totalScore > 0 && userInfor.nameLevel != ''}">${fn:escapeXml(userInfor.totalScore)}
 									    </c:when>
 									    <c:otherwise>
 									    </c:otherwise>
@@ -110,5 +110,4 @@
 		<%@include file="/views/footer/footer.jsp" %>
 	<!-- End vung footer -->
 </body>
-
 </html>

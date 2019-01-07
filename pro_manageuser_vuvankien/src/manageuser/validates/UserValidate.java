@@ -272,7 +272,6 @@ public class UserValidate {
 				}
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			// TODO Auto-generated catch block
 			e.getMessage();
 			throw e;
 		}

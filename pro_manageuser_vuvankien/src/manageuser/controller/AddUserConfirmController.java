@@ -19,6 +19,7 @@ import manageuser.logics.TblUserLogic;
 import manageuser.logics.impl.MstGroupLogicImpl;
 import manageuser.logics.impl.MstJapanLogicImpl;
 import manageuser.logics.impl.TblUserLogicImpl;
+import manageuser.utils.Common;
 import manageuser.utils.Constant;
 import manageuser.validates.UserValidate;
 
@@ -41,8 +42,15 @@ public class AddUserConfirmController extends HttpServlet {
 			// Khởi tạo session
 			HttpSession session = request.getSession();
 			// Lấy ra giá trị keySession
-			String keySession = request.getParameter("session");
-			UserInfor userInfor = (UserInfor) session.getAttribute(keySession);
+			String keySession = Common.formatString(request.getParameter("session"), "");
+			UserInfor userInfor;
+			// Lấy ra đối tượng UserInfor trên session
+			userInfor = (UserInfor) session.getAttribute(keySession);
+			// Nếu đối tượng không có trên session
+			if(userInfor == null){
+				// Khởi tạo đối tượng
+				userInfor = new UserInfor();
+			}
 			// Khởi tạo đối tượng MstGroupLogicImpl
 			MstGroupLogic mstGroupLogicImpl = new MstGroupLogicImpl();
 			// Lấy ra giá trị tên nhóm từ giá trị groupId
@@ -64,7 +72,7 @@ public class AddUserConfirmController extends HttpServlet {
 			request.getRequestDispatcher(Constant.VIEW_ADM004).forward(request, response);
 			// Nếu có lỗi xảy ra chuyển đến trang SysstemError
 		} catch (Exception e) {
-			e.getMessage();
+			System.out.println(e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp
 			response.sendRedirect(Constant.ERROR_URL);
 		}

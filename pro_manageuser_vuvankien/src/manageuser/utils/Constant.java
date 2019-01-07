@@ -79,7 +79,7 @@ public class Constant {
 	public static final int TIME_OUT = 5 * 60;
 
 	// Năm bắt đầu
-	public static final int FROM_YEAR = 1990;
+	public static final int FROM_YEAR = 1980;
 
 	// Định dạng ngày tháng năm
 	public static final String DATE_FORMAT = "yyyy-M-d";

@@ -91,6 +91,7 @@ public class AddUserInputController extends HttpServlet {
 				response.sendRedirect(Constant.ADD_USER_CONFIRMS + "?session=" + keySession);
 			}
 		} catch (Exception e) {
+			System.out.println(e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp
 			response.sendRedirect(Constant.ERROR_URL);
 		}

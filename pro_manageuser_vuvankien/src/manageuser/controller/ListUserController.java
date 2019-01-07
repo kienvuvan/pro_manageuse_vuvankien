@@ -51,6 +51,8 @@ public class ListUserController extends HttpServlet {
 			request.setAttribute("listAllGroups", listAllGroups);
 			// Lấy giá trị hiển thị tối đa số bản trên 1 page
 			int limit = ConfigProperties.getData("SIZE_RECORD");
+			// Lấy giá trị hiển thị số paging
+			int sizePaging = ConfigProperties.getData("SIZE_PANNING");
 			// Danh sách paging
 			ArrayList<Integer> listPaging = new ArrayList<>();
 			// Danh sách User
@@ -191,6 +193,7 @@ public class ListUserController extends HttpServlet {
 				// paging, danh sách user, các kiểu sắp xếp lên request
 				request.setAttribute("totalUser", totalUser);
 				request.setAttribute("limit", limit);
+				request.setAttribute("sizePaging", sizePaging);
 				request.setAttribute("listPaging", listPaging);
 				request.setAttribute("listUserInfor", listUserInfor);
 				request.setAttribute("sortByFullName", sortByFullName);

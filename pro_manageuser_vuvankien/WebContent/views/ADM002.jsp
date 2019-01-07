@@ -168,7 +168,7 @@
 		<tr>
 			<td class = "lbl_paging">
 				<c:forEach items="${listPaging}" var="paging" varStatus="status">
-					<c:if test="${paging > listPaging.size() && status.index == 0}"><a href = "listUser.do?typeShow=show_paning&page=${paging-limit}"><c:out value="<<"/></a></c:if>
+					<c:if test="${paging > listPaging.size() && status.index == 0}"><a href = "listUser.do?typeShow=show_paning&page=${paging-sizePaging}"><c:out value="<<"/></a></c:if>
 					<c:choose>
 						<c:when test="${paging == pagingCurrent}">
 							${fn:escapeXml(paging)} &nbsp;
@@ -187,8 +187,6 @@
 	<!-- Begin vung footer -->
 		<%@include file="/views/footer/footer.jsp" %>
 	<!-- End vung footer -->
-<%
-response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-%>
+<%response.addHeader("Cache-Control", "no-cache, no-store, must-revalidate");%>
 </body>
 </html>

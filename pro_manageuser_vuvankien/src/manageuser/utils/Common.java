@@ -454,6 +454,7 @@ public class Common {
 	 * @return true nếu đúng định dạng và ngược lại
 	 */
 	public static boolean checkFormatLoginName(String loginName) {
+		// Chuỗi so khớp loginName
 		String regex = "[a-z,A-Z,_]\\w+";
 		return loginName.matches(regex);
 	}
@@ -466,7 +467,8 @@ public class Common {
 	 * @return true nếu chuỗi có định dạng email và ngược lại
 	 */
 	public static boolean checkFormatEmail(String email) {
-		String regex = "[_A-Za-z][_A-Za-z0-9]+(\\.[_A-Za-z0-9]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})";
+		// Chuỗi so khớp email
+		String regex = "[_A-Za-z]([_A-Za-z0-9]+)*(\\.[_A-Za-z0-9]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})";
 		return email.matches(regex);
 	}
 
@@ -478,7 +480,8 @@ public class Common {
 	 * @return true nếu chuỗi có định dạng tel và ngược lại
 	 */
 	public static boolean checkFormatTel(String tel) {
-		String regex = "\\d{1-4}-\\d{1-4}-\\d{1-4}";
+		// Chuỗi so khớp số điện thoại
+		String regex = "[0-9]{1,4}-[0-9]{1,4}-[0-9]{1,4}";
 		return tel.matches(regex);
 	}
 
@@ -489,8 +492,11 @@ public class Common {
 	 * @return true nếu là ký tự kana, false nếu không.
 	 */
 	public static boolean checkKana(String input) {
+		// So khớp kí tự kana nếu đúng
 		if (input.matches("[\u30a0-\u30ff]+")) {
+			// Trả về true
 			return true;
+		// Nếu không phải kí tự kana trả về false
 		} else {
 			return false;
 		}

@@ -365,7 +365,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	@Override
 	public int insertUser(TblUser tblUser) throws SQLException {
 		try {
-			// Nếu thành công
+			// Nếu connection khác null
 			if (connection != null) {
 				// Tạo lệnh truy vấn thêm User vào trong CSDL
 				PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(INSERT_USER);
