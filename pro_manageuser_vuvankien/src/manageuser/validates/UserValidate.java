@@ -72,36 +72,43 @@ public class UserValidate {
 	}
 
 	/**
-	 * Phương thức kiểm tra định dạng các trường của đối tượng UserInfor
+	 * Phương thức kiểm tra định dạng các trường của đối tượng UserInfor khi
+	 * thêm mới
 	 * 
 	 * @param userInfor
 	 *            đối tượng UserInfor cần kiểm tra
-	 * @return mảng lỗi
+	 * @return ArrayList<String> danh sách các lỗi
 	 */
 	public ArrayList<String> validateUserInfor(UserInfor userInfor) throws ClassNotFoundException, SQLException {
 		// Tạo danh sách chứa các thông báo lỗi
 		ArrayList<String> message = new ArrayList<>();
 		try {
+			// Tạo đối tượng TblUserLogicImpl
 			TblUserLogic tblUserLogicImpl = new TblUserLogicImpl();
-			// Check loginName
-			// Lấy giá trị loginName
-			String loginName = userInfor.getLoginName();
-			// Nếu loginName rỗng
-			if (Common.isEmpty(loginName)) {
-				// Thêm thông báo lỗi tài khoản trống
-				message.add(MessageErrorProperties.getData("ER001_USERNAME"));
-				// Nếu độ dài không nằm trong khoảng từ 6-15 ký tự
-			} else if (!Common.checkLengthLimit(Constant.MIN_LOGIN_NAME_LENGTH, Constant.MAX_LOGIN_NAME_LENGTH,
-					loginName)) {
-				// Thêm thông báo lỗi về độ dài
-				message.add(MessageErrorProperties.getData("ER007_USERNAME"));
-			} else if (!Common.checkFormatLoginName(loginName)) {
-				// Thêm thông báo lỗi tài khoản sai định dạng
-				message.add(MessageErrorProperties.getData("ER019_USERNAME"));
-				// Nếu tài khoản đã tồn tại
-			} else if (tblUserLogicImpl.checkExitsUsername(loginName)) {
-				// Thêm thông báo lỗi tài khoản đã tồn tại
-				message.add(MessageErrorProperties.getData("ER003_USERNAME"));
+			// Lấy giá trị userId
+			int userId = userInfor.getUserId();
+			// Nếu là trường hợp addUser thì mới check trường loginName
+			if (userId == Constant.ID_ADD_USER) {
+				// Check loginName
+				// Lấy giá trị loginName
+				String loginName = userInfor.getLoginName();
+				// Nếu loginName rỗng
+				if (Common.isEmpty(loginName)) {
+					// Thêm thông báo lỗi tài khoản trống
+					message.add(MessageErrorProperties.getData("ER001_USERNAME"));
+					// Nếu độ dài không nằm trong khoảng từ 6-15 ký tự
+				} else if (!Common.checkLengthLimit(Constant.MIN_LOGIN_NAME_LENGTH, Constant.MAX_LOGIN_NAME_LENGTH,
+						loginName)) {
+					// Thêm thông báo lỗi về độ dài
+					message.add(MessageErrorProperties.getData("ER007_USERNAME"));
+				} else if (!Common.checkFormatLoginName(loginName)) {
+					// Thêm thông báo lỗi tài khoản sai định dạng
+					message.add(MessageErrorProperties.getData("ER019_USERNAME"));
+					// Nếu tài khoản đã tồn tại
+				} else if (tblUserLogicImpl.checkExitsUsername(loginName)) {
+					// Thêm thông báo lỗi tài khoản đã tồn tại
+					message.add(MessageErrorProperties.getData("ER003_USERNAME"));
+				}
 			}
 
 			MstGroupLogic mstGroupLogicImpl = new MstGroupLogicImpl();
@@ -130,14 +137,14 @@ public class UserValidate {
 			// Check fullNameKana
 			String fullNameKana = userInfor.getFullNameKana();
 			// Nếu fullNameKana có nhập thì kiểm tra
-			if(!Common.isEmpty(fullNameKana)){
+			if (!Common.isEmpty(fullNameKana)) {
 				// Kiểm tra độ dài
 				// Nếu độ dài lớn hơn độ dài lớn nhất cho phép
-				if(!Common.checkMaxLength(Constant.MAX_LENGTH, fullNameKana)){
+				if (!Common.checkMaxLength(Constant.MAX_LENGTH, fullNameKana)) {
 					// Thêm thông báo lỗi về độ dài
 					message.add(MessageErrorProperties.getData("ER006_FULLNAME_KANA"));
-				// Nếu chuỗi không phải ký tự kana
-				}else if(!Common.checkKana(fullNameKana)){
+					// Nếu chuỗi không phải ký tự kana
+				} else if (!Common.checkKana(fullNameKana)) {
 					// Thêm thông báo lỗi về ký tự Kana
 					message.add(MessageErrorProperties.getData("ER009_FULLNAME_KANA"));
 				}
@@ -167,10 +174,27 @@ public class UserValidate {
 			} else if (!Common.checkFormatEmail(email)) {
 				// Thêm thông báo lỗi sai định dạng email
 				message.add(MessageErrorProperties.getData("ER005_EMAIL"));
-				// Nếu email tồn tại
-			} else if (tblUserLogicImpl.checkExitsEmail(email)) {
-				// Thêm thông báo lỗi email đã tồn tại
-				message.add(MessageErrorProperties.getData("ER003_EMAIL"));
+			} else {
+				// Lấy ra giá trị userId từ email trong CSDL
+				int userIdOfEmail = tblUserLogicImpl.checkExitsEmail(email);
+				// Nếu là trường hợp addUser thì kiểm tra email tồn tại
+				if (userId == Constant.ID_ADD_USER) {
+					// Nếu email tồn tạ
+					if (userIdOfEmail != Constant.ID_NOT_EXISTED_EMAIL) {
+						// Thêm thông báo lỗi email đã tồn tại
+						message.add(MessageErrorProperties.getData("ER003_EMAIL"));
+					}
+					// Ngược lại thì kiểm tra nếu email đó khác so với email cũ
+					// thì kiểm tra tồn tại nếu không khác thì không kiểm tra
+					// tồn tại
+				} else {
+					// Nếu email đó tồn tại và userId của email trong CSDL không
+					// phải của người đó
+					if (userIdOfEmail != userInfor.getUserId() && userIdOfEmail != Constant.ID_NOT_EXISTED_EMAIL) {
+						// Thêm thông báo lỗi email đã tồn tại
+						message.add(MessageErrorProperties.getData("ER003_EMAIL"));
+					}
+				}
 			}
 
 			// Check phone
@@ -190,34 +214,38 @@ public class UserValidate {
 				message.add(MessageErrorProperties.getData("ER005_TEL"));
 			}
 
-			// Check password
-			// Lấy giá trị password
-			String password = userInfor.getPassword();
-			// Nếu password trống
-			if (Common.isEmpty(password)) {
-				// Thêm thông báo lỗi password trống
-				message.add(MessageErrorProperties.getData("ER001_PASSWORD"));
-				// Nếu độ dài không nằm trong khoảng từ 8-15
-			} else if (!Common.checkLengthLimit(Constant.MIN_PASSWORD_LENGTH, Constant.MAX_PASSWORD_LENGTH, password)) {
-				// Thêm thông báo lỗi về độ dài
-				message.add(MessageErrorProperties.getData("ER007_PASSWORD"));
-				// Nếu password không đúng định dạng halfSize
-			} else if (!Common.checkHalfSize(password)) {
-				// Thêm thông báo lỗi định dạng
-				message.add(MessageErrorProperties.getData("ER008_PASSWORD"));
-			}
+			// Nếu là trường hợp addUser thì mới check trường loginName
+			if (userId == Constant.ID_ADD_USER) {
+				// Check password
+				// Lấy giá trị password
+				String password = userInfor.getPassword();
+				// Nếu password trống
+				if (Common.isEmpty(password)) {
+					// Thêm thông báo lỗi password trống
+					message.add(MessageErrorProperties.getData("ER001_PASSWORD"));
+					// Nếu độ dài không nằm trong khoảng từ 8-15
+				} else if (!Common.checkLengthLimit(Constant.MIN_PASSWORD_LENGTH, Constant.MAX_PASSWORD_LENGTH,
+						password)) {
+					// Thêm thông báo lỗi về độ dài
+					message.add(MessageErrorProperties.getData("ER007_PASSWORD"));
+					// Nếu password không đúng định dạng halfSize
+				} else if (!Common.checkHalfSize(password)) {
+					// Thêm thông báo lỗi định dạng
+					message.add(MessageErrorProperties.getData("ER008_PASSWORD"));
+				}
 
-			// Check passwordAgain
-			// Lấy giá trị passwordAgain
-			String passwordAgain = userInfor.getPasswordAgain();
-			// Nếu passwordAgain trống
-			if (Common.isEmpty(passwordAgain)) {
-				// Thêm thông báo lỗi passwordAgain trống
-				message.add(MessageErrorProperties.getData("ER001_PASSWORD_AGAIN"));
-				// Nếu passwordAgain không trùng với password
-			} else if (!password.equals(passwordAgain)) {
-				// Thêm thông báo lỗi mật khẩu xác nhận không đúng
-				message.add(MessageErrorProperties.getData("ER017"));
+				// Check passwordAgain
+				// Lấy giá trị passwordAgain
+				String passwordAgain = userInfor.getPasswordAgain();
+				// Nếu passwordAgain trống
+				if (Common.isEmpty(passwordAgain)) {
+					// Thêm thông báo lỗi passwordAgain trống
+					message.add(MessageErrorProperties.getData("ER001_PASSWORD_AGAIN"));
+					// Nếu passwordAgain không trùng với password
+				} else if (!password.equals(passwordAgain)) {
+					// Thêm thông báo lỗi mật khẩu xác nhận không đúng
+					message.add(MessageErrorProperties.getData("ER017"));
+				}
 			}
 
 			MstJapanLogic mstJapanLogicImpl = new MstJapanLogicImpl();
@@ -265,7 +293,7 @@ public class UserValidate {
 				if (Common.isEmpty(totalScore)) {
 					// Thêm thông báo lỗi không nhập điểm tiếng Nhật
 					message.add(MessageErrorProperties.getData("ER001_TOTAL_SCORE"));
-				// Nếu điểm không phải là số HalfSize
+					// Nếu điểm không phải là số HalfSize
 				} else if (!Common.checkNumberHalfSize(totalScore)) {
 					// Thêm lỗi không phải số HalfSize
 					message.add(MessageErrorProperties.getData("ER018_TOTAL_SCORE"));

@@ -13,6 +13,7 @@ import manageuser.entities.UserInfor;
 
 /**
  * Interface thực hiện các chức năng logic với đối tượng TblUsers
+ * 
  * @author kien vu
  *
  */
@@ -106,15 +107,55 @@ public interface TblUserLogic {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public boolean checkExitsEmail(String email) throws ClassNotFoundException, SQLException;
+	public int checkExitsEmail(String email) throws ClassNotFoundException, SQLException;
 
 	/**
+	 * Phương thức thêm thông tin người dùng mới vào trong CSDL
 	 * 
 	 * @param userInfor
-	 * @return
+	 *            đối tượng UserInfor
+	 * @return true nếu thêm thành công và ngược lại
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 * @throws NoSuchAlgorithmException
 	 */
 	public boolean creatUser(UserInfor userInfor) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException;
+
+	/**
+	 * Phương thức thực hiện sửa thông tin người dùng trong CSDL
+	 * 
+	 * @param userInfor
+	 *            đối tượng UserInfor
+	 * @param existedDetailUserJapan
+	 *            true nếu người dùng có thông tin chi tiết và ngược lại @return
+	 *            true nếu sửa thành công và ngược lại
+	 * @throws NoSuchAlgorithmException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	public boolean updateUser(UserInfor userInfor, boolean existedDetailUserJapan)
+			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException;
+
+	/**
+	 * Phương thức kiểm tra xem người dùng có tồn tại hay không trong CSDL
+	 * 
+	 * @param userId
+	 *            id của người dùng cần kiểm tra
+	 * @return true nếu người dùng có userId tồn tại trong CSDL và ngược lại
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 */
+	public boolean checkExistedUser(int userId) throws ClassNotFoundException, SQLException;
+
+	/**
+	 * Phương thức lấy ra thông tin người dùng
+	 * 
+	 * @param userId
+	 *            giá trị Id của người dùng trong CSDL
+	 * @return UserInfor thông tin người dùng
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	public UserInfor getUserInforById(int userId) throws ClassNotFoundException, SQLException;
+
 }

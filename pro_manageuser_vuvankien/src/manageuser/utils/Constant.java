@@ -6,6 +6,7 @@ package manageuser.utils;
 
 /**
  * Class chức các hằng số của chương trình
+ * 
  * @author kien vu
  *
  */
@@ -20,10 +21,12 @@ public class Constant {
 	public static final String LIST_USER_URL = ROOT_URL + "/listUser.do";
 	// Đường dẫn hiển thị màn hình ADM003
 	public static final String ADD_USER_INPUT = ROOT_URL + "/addUserInput.do";
-	// Đường dẫn hiển thị màn hình ADM004
+	// Đường dẫn hiển thị màn hình ADM004 với chức năng thêm User
 	public static final String ADD_USER_CONFIRMS = ROOT_URL + "/addUserConfirm.do";
+	// Đường dẫn hiển thị màn hình ADM004 với chức năng cập nhật User
+	public static final String EDIT_USER_CONFIRMS = ROOT_URL + "/editUserConfirm.do";
 	// Đường dẫn hiển thị màn hình thông báo ADM006
-	public static final String MESSAGE = ROOT_URL+"/message.do";
+	public static final String MESSAGE = ROOT_URL + "/message.do";
 	// Đường dẫn hiển thị màn hình System_Error
 	public static final String ERROR_URL = ROOT_URL + "/error";
 
@@ -59,11 +62,13 @@ public class Constant {
 	public static final String TYPE_SEARCH = "search";
 	public static final String TYPE_TOP = "top";
 	public static final String TYPE_BACK = "back";
-	
+
 	// Các kiểu hiển thị màn hình ADM003
-	public static final String TYPE_ADD_OR_VALIDATE = "add_or_validate";
+	public static final String TYPE_ADD_USER = "add_user";
+	public static final String TYPE_VALIDATE_USER = "validate_user";
+	public static final String TYPE_EDIT_USER = "edit_user";
 	public static final String TYPE_BACK_ADM003 = "back_adm003";
-	
+
 	// Các kiểu cột sắp xếp
 	public static final String TYPE_SORT_FULL_NAME = "full_name";
 	public static final String TYPE_SORT_CODE_LEVEL = "code_level";
@@ -102,12 +107,26 @@ public class Constant {
 	public static final String CODE_LEVEL_DEFAULT_VALUE = "0";
 	// Giá trị khi so sánh ngày lớn hơn
 	public static final int AFTER_DAY = 1;
-	
+
 	// Giá trị trả về khi thao tác với CSDL bị lỗi
 	public static final int ERROR_EXCUTE_DATABASE = -1;
+	// Giá trị userId trả về khi email không tồn tại
+	public static final int ID_NOT_EXISTED_EMAIL = -1;
 	// Giá trị rule của user
 	public static final int RULE_USER = 1;
-	
+
 	// Thông báo thêm User thành công
 	public static final String ADD_USER_SUCCES = "success";
+	// Thông báo sửa thông tin User thành công
+	public static final String EDIT_USER_SUCCES = "success";
+
+	// Lỗi hệ thống
+	public static final String SYSTEM_ERROR = "system_error";
+	// Lỗi user không tồn tại
+	public static final String NOT_EXISTED_USER = "not_existed_user";
+
+	// Giá trị userId trong trường hợp thêm người dùng
+	public static final int ID_ADD_USER = 0;
+	// Giá trị codeLevel khi người dùng không có trình độ
+	public static final String CODE_LEVEL_DEFAULT = "0";
 }

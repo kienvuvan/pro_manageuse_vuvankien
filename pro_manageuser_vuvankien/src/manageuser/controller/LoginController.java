@@ -39,7 +39,7 @@ public class LoginController extends HttpServlet {
 			String username = request.getParameter("loginId").trim();
 			// Lấy giá trị trường passwors ở màn hình đăng nhập
 			String password = request.getParameter("password").trim();
-			// Thực hiện check 2 dữ liệu 
+			// Thực hiện check 2 dữ liệu
 			ArrayList<String> message = userValidate.validateLogin(username, password);
 			// Nếu không có lỗi
 			if (message.isEmpty()) {
@@ -47,24 +47,29 @@ public class LoginController extends HttpServlet {
 				session.setAttribute("usernameLogin", username);
 				// Chuyển đến trang ADM002.jsp
 				response.sendRedirect(Constant.LIST_USER_URL);
-			// Nếu có lỗi
+				// Nếu có lỗi
 			} else {
 				// Quay về trang login và giữ nguyên giá trị trường username
 				request.setAttribute("username", username);
 				request.setAttribute("message", message);
 				request.getRequestDispatcher(Constant.VIEW_ADM001).forward(request, response);
 			}
-		// Nếu có lỗi 
+			// Nếu có lỗi
 		} catch (Exception e) {
-			// Chuyển đến màn hình lỗi System_Error.jsp
-			response.sendRedirect(Constant.ERROR_URL);
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
-		// Chuyển về màn hình đăng nhập ADM001
-		request.getRequestDispatcher(Constant.VIEW_ADM001).forward(request, response);
+		try {
+			// Chuyển về màn hình đăng nhập ADM001
+			request.getRequestDispatcher(Constant.VIEW_ADM001).forward(request, response);
+		} catch (Exception e) {
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+		}
 	}
 }

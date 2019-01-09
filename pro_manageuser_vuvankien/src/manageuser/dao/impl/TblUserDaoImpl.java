@@ -28,7 +28,7 @@ import manageuser.utils.Constant;
 public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	private static final String GET_USER_ADMIN_BY_ID = "SELECT pass, salt FROM tbl_user WHERE rule = 0 AND login_name = ?";
 	private static final String CHECK_EXITS_USERNAME = "SELECT COUNT(*) FROM tbl_user WHERE login_name = ?";
-	private static final String CHECK_EXITS_EMAIL = "SELECT COUNT(*) FROM tbl_user WHERE email = ?";
+	private static final String CHECK_EXITS_EMAIL = "SELECT user_id FROM tbl_user WHERE email = ?";
 	private static final String GET_TOTAL_USERS = "SELECT COUNT(*) as number " + "FROM tbl_user "
 			+ "INNER JOIN mst_group " + "ON mst_group.group_id = tbl_user.group_id "
 			+ "LEFT JOIN (tbl_detail_user_japan " + "INNER JOIN mst_japan "
@@ -42,12 +42,23 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			+ "INNER JOIN mst_japan  ON mst_japan.code_level = tbl_detail_user_japan.code_level )"
 			+ " ON tbl_user.user_id = tbl_detail_user_japan.user_id WHERE 1=1 ";
 	private static final String INSERT_USER = "INSERT INTO tbl_user(group_id, login_name,pass, full_name, full_name_kana, tel, email, birthday, rule,salt) VALUES(?,?,?,?,?,?,?,?,?,?);";
+	private static final String EDIT_USER = "UPDATE tbl_user SET group_id = ?, full_name = ?, full_name_kana = ?, tel = ?, email = ?, birthday = ? WHERE user_id = ?";
+	private static final String CHECK_EXISTED_USER = "SELECT COUNT(*) FROM tbl_user WHERE user_id = ?";
+	private static final String GET_USERINFOR_BY_ID = "SELECT tbl_user.login_name,mst_group.group_id,mst_group.group_name,tbl_user.full_name,tbl_user.full_name_kana,"
+			+ "tbl_user.birthday,tbl_user.email,tbl_user.tel,mst_japan.code_level, mst_japan.name_level, "
+			+ "tbl_detail_user_japan.start_date,tbl_detail_user_japan.end_date, tbl_detail_user_japan.total "
+			+ "FROM tbl_user " + "INNER JOIN mst_group " + "ON mst_group.group_id = tbl_user.group_id "
+			+ "LEFT JOIN (tbl_detail_user_japan "
+			+ "INNER JOIN mst_japan  ON mst_japan.code_level = tbl_detail_user_japan.code_level )"
+			+ " ON tbl_user.user_id = tbl_detail_user_japan.user_id WHERE tbl_user.user_id = ?";
 
 	private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+	private static SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
 	private static HashMap<Integer, String> hashMapColumnSort = new HashMap<>();
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see manageuser.dao.TblUserDao#getUserByLogIn(java.lang.String)
 	 */
 	@Override
@@ -78,7 +89,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.getMessage();
 			throw e;
-		// Đóng kết nối
+			// Đóng kết nối
 		} finally {
 			closeConnection();
 		}
@@ -130,7 +141,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.getMessage();
 			throw e;
-		// Đóng kết nối
+			// Đóng kết nối
 		} finally {
 			closeConnection();
 		}
@@ -220,7 +231,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.getMessage();
 			throw e;
-		// Đóng kết nối
+			// Đóng kết nối
 		} finally {
 			closeConnection();
 		}
@@ -312,7 +323,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		} catch (ClassNotFoundException | SQLException e) {
 			e.getMessage();
 			throw e;
-		// Đóng kết nối
+			// Đóng kết nối
 		} finally {
 			closeConnection();
 		}
@@ -325,7 +336,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	 * @see manageuser.dao.TblUserDao#checkExitsEmail(java.lang.String)
 	 */
 	@Override
-	public boolean checkExitsEmail(String email) throws ClassNotFoundException, SQLException {
+	public int checkExitsEmail(String email) throws ClassNotFoundException, SQLException {
 		try {
 			// Tạo kết nối với database
 			connection = connectDatabase();
@@ -340,10 +351,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 				ResultSet resultSet = preparedStatement.executeQuery();
 				// Nếu tài khoản tồn tại
 				if (resultSet.next()) {
-					// Nếu tồn tại
-					if (resultSet.getInt(1) > 0) {
-						return true;
-					}
+					return resultSet.getInt(1);
 				}
 			}
 			// Lỗi
@@ -354,7 +362,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		} finally {
 			closeConnection();
 		}
-		return false;
+		return Constant.ID_NOT_EXISTED_EMAIL;
 	}
 
 	/*
@@ -392,7 +400,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			System.out.println(e.getMessage());
 			throw e;
 		}
-		return -1;
+		return Constant.ERROR_EXCUTE_DATABASE;
 	}
 
 	/**
@@ -409,4 +417,161 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		}
 		return result;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see manageuser.dao.TblUserDao#checkExistedUserInfor(int)
+	 */
+	@Override
+	public boolean checkExistedUser(int userId) throws ClassNotFoundException, SQLException {
+		try {
+			// Tạo kết nối với database
+			connection = connectDatabase();
+			// Nếu thành công
+			if (connection != null) {
+				// Tạo lệnh truy vấn kiểm tra người dùng có userId có tồn trong
+				// CSDL hay không
+				PreparedStatement preparedStatement = (PreparedStatement) connection
+						.prepareStatement(CHECK_EXISTED_USER);
+				preparedStatement.setInt(1, userId);
+				// Trả về bản truy vấn
+				ResultSet resultSet = preparedStatement.executeQuery();
+				// Lấy ra giá trị bản ghi số lượng
+				if (resultSet.next()) {
+					int count = resultSet.getInt(1);
+					// Nếu userId tồn tại
+					if (count > 0) {
+						return true;
+					}
+				}
+			}
+			// Nếu có lỗi
+		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println(e.toString());
+			// Ném ra 1 lỗi
+			throw e;
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see manageuser.dao.TblUserDao#getUserInforById(int)
+	 */
+	@Override
+	public UserInfor getUserInforById(int userId) throws ClassNotFoundException, SQLException {
+		// Tạo đối tượng UserInfor
+		UserInfor userInfor = new UserInfor();
+		try {
+			// Tạo kết nối với database
+			connection = connectDatabase();
+			// Nếu thành công
+			if (connection != null) {
+				// Tạo lệnh truy vấn lấy ra thông tin người dùng có userId
+				PreparedStatement preparedStatement = (PreparedStatement) connection
+						.prepareStatement(GET_USERINFOR_BY_ID);
+				preparedStatement.setInt(1, userId);
+				// Trả về bản truy vấn
+				ResultSet resultSet = preparedStatement.executeQuery();
+				int index = 1;
+				// Lấy ra giá trị bản ghi số lượng
+				if (resultSet.next()) {
+					// Lấy các thông tin từ kết quả truy vấn
+					String loginName = resultSet.getString(index++);
+					int groupId = resultSet.getInt(index++);
+					String groupName = resultSet.getString(index++);
+					String fullName = resultSet.getString(index++);
+					String fullNameKana = resultSet.getString(index++);
+					Date birthday = resultSet.getDate(index++);
+					String email = resultSet.getString(index++);
+					String tel = resultSet.getString(index++);
+					String codeLevel = resultSet.getString(index++);
+					String nameLevel = resultSet.getString(index++);
+					Date startDate = resultSet.getDate(index++);
+					Date endDate = resultSet.getDate(index++);
+					int total = resultSet.getInt(index++);
+					// Set đối tượng UserInfor với các thông số lấy được
+					// Set thuộc tính userId
+					userInfor.setUserId(userId);
+					// Set thuộc tính loginName
+					userInfor.setLoginName(loginName);
+					// Set thuộc tính groupId
+					userInfor.setGroupId(groupId);
+					// Set thuộc tính groupName
+					userInfor.setGroupName(groupName);
+					// Set thuộc tính fullName
+					userInfor.setFullName(fullName);
+					// Set thuộc tính fullNameKana
+					userInfor.setFullNameKana(fullNameKana);
+					if (birthday != null) {
+						userInfor.setBirthday(simpleDateFormat2.format(birthday));
+					} else {
+						userInfor.setBirthday("");
+					}
+					userInfor.setEmail(email);
+					userInfor.setTel(tel);
+					userInfor.setCodeLevel(codeLevel);
+					userInfor.setNameLevel(nameLevel);
+					if (startDate != null) {
+						userInfor.setStartDate(simpleDateFormat2.format(startDate));
+					} else {
+						userInfor.setStartDate("");
+					}
+					if (endDate != null) {
+						userInfor.setEndDate(simpleDateFormat2.format(endDate));
+					} else {
+						userInfor.setEndDate("");
+					}
+					userInfor.setTotalScore(total + "");
+				}
+			}
+			// Nếu có lỗi
+		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println(e.toString());
+			// Ném ra 1 lỗi
+			throw e;
+		}
+		// Trả về đối tượng UserInfor
+		return userInfor;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see manageuser.dao.TblUserDao#editUser(manageuser.entities.TblUser)
+	 */
+	@Override
+	public boolean editUser(TblUser tblUser) throws SQLException {
+		try {
+			// Nếu connection khác null
+			if (connection != null) {
+				// Tạo lệnh truy vấn sửa thông tin User vào trong CSDL
+				PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(EDIT_USER);
+				int index = 1;
+				// Gán các giá trị cho các tham số của câu lệnh truy vấn
+				preparedStatement.setInt(index++, tblUser.getGroupId());
+				preparedStatement.setString(index++, tblUser.getFullName());
+				preparedStatement.setString(index++, tblUser.getFullNameKana());
+				preparedStatement.setString(index++, tblUser.getTel());
+				preparedStatement.setString(index++, tblUser.getEmail());
+				preparedStatement.setDate(index++, tblUser.getBirthday());
+				preparedStatement.setInt(index++, tblUser.getUserId());
+				// Nếu truy vấn thêm thành công
+				if (preparedStatement.executeUpdate() > 0) {
+					// Trả về true
+					return true;
+				}
+			}
+			// Lỗi
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+			throw e;
+		}
+		return false;
+	}
+
 }

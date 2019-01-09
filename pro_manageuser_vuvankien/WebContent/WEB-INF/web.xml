@@ -8,6 +8,7 @@
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
+	<!-- Url xử lí đăng nhập -->
 	<servlet>
 		<servlet-name>login</servlet-name>
 		<servlet-class>manageuser.controller.LoginController</servlet-class>
@@ -17,6 +18,7 @@
 		<url-pattern>/login.do</url-pattern>
 	</servlet-mapping>
 	
+	<!-- Url xử lí đăng xuất  -->
 	<servlet>
 		<servlet-name>logout</servlet-name>
 		<servlet-class>manageuser.controller.LogoutController</servlet-class>
@@ -26,6 +28,7 @@
 		<url-pattern>/logout.do</url-pattern>
 	</servlet-mapping>
 
+	<!-- Url xử lý hiển thị danh sách User ở màn hình ADM002.jsp -->
 	<servlet>
 		<servlet-name>listUser</servlet-name>
 		<servlet-class>manageuser.controller.ListUserController</servlet-class>
@@ -35,6 +38,7 @@
 		<url-pattern>/listUser.do</url-pattern>
 	</servlet-mapping>
 	
+	<!-- Url xử lý chức năng thêm User ở màn hình ADM003.jsp -->
 	<servlet>
 		<servlet-name>addUserInput</servlet-name>
 		<servlet-class>manageuser.controller.AddUserInputController</servlet-class>
@@ -44,6 +48,7 @@
 		<url-pattern>/addUserInput.do</url-pattern>
 	</servlet-mapping>
 	
+	<!-- Url xử lý chức năng kiểm tra dữ liệu User thêm mới ở màn hình ADM003.jsp -->
 	<servlet>
 		<servlet-name>addUserValidate</servlet-name>
 		<servlet-class>manageuser.controller.AddUserInputController</servlet-class>
@@ -53,6 +58,37 @@
 		<url-pattern>/addUserValidate.do</url-pattern>
 	</servlet-mapping>
 	
+	<!-- Url xử lý chức năng sửa thông tin người dùng ở màn hình ADM003.jsp -->
+	<servlet>
+		<servlet-name>editUserInput</servlet-name>
+		<servlet-class>manageuser.controller.EditUserInputController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>editUserInput</servlet-name>
+		<url-pattern>/editUserInput.do</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Url xử lý chức năng kiểm tra dữ liệu User khi sửa ở màn hình ADM003.jsp -->
+	<servlet>
+		<servlet-name>editUserValidate</servlet-name>
+		<servlet-class>manageuser.controller.EditUserInputController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>editUserValidate</servlet-name>
+		<url-pattern>/editUserValidate.do</url-pattern>
+	</servlet-mapping>
+	
+	
+	<servlet>
+		<servlet-name>editUserConfirm</servlet-name>
+		<servlet-class>manageuser.controller.EditUserConfirmController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>editUserConfirm</servlet-name>
+		<url-pattern>/editUserConfirm.do</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Url xử lý chức năng thêm User vào CSDL -->
 	<servlet>
 		<servlet-name>addUserConfirm</servlet-name>
 		<servlet-class>manageuser.controller.AddUserConfirmController</servlet-class>
@@ -62,6 +98,17 @@
 		<url-pattern>/addUserConfirm.do</url-pattern>
 	</servlet-mapping>
 	
+	<!-- Url xử lý chức năng hiển thị chi tiết User -->
+	<servlet>
+		<servlet-name>viewDetailUser</servlet-name>
+		<servlet-class>manageuser.controller.ViewDetailUserController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>viewDetailUser</servlet-name>
+		<url-pattern>/viewDetailUser.do</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Url xử lý chức năng hiển thị thông báo ra màn hình ADM006.jsp -->
 	<servlet>
 		<servlet-name>message</servlet-name>
 		<servlet-class>manageuser.controller.SuccessController</servlet-class>
@@ -71,6 +118,7 @@
 		<url-pattern>/message.do</url-pattern>
 	</servlet-mapping>
 
+	<!-- Url xử lý chức năng hiển thị màn hình lỗi System_Error.jsp  -->
 	<servlet>
 		<servlet-name>error</servlet-name>
 		<servlet-class>manageuser.controller.SystemErrorController</servlet-class>
@@ -80,10 +128,12 @@
 		<url-pattern>/error</url-pattern>
 	</servlet-mapping>
 	
+	<!-- Set timeout cho hệ thống là 5 phút -->
 	<session-config>
 		<session-timeout>5</session-timeout>
 	</session-config>
 	
+	<!-- Tạo filter đăng nhập cho hệ thống -->
 	<filter>
 		<filter-name>logFilter</filter-name>
 		<filter-class>manageuser.filter.LoginFilter</filter-class>
@@ -95,6 +145,7 @@
 		<url-pattern>/</url-pattern>
 	</filter-mapping>
 	
+	<!-- Tạo filter về characterEnCoding UTF-8 cho hệ thống -->
 	<filter>
 		<filter-name>characterEnCoding</filter-name>
 		<filter-class>manageuser.filter.CharacterEnCodingFilter</filter-class>
@@ -105,11 +156,13 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
+	<!-- Url dẫn đến trang xử lý lỗi IOException -->
 	<error-page>
 		<exception-type>java.io.IOException</exception-type>
 		<location>/views/System_Error.jsp</location>
 	</error-page>
 	
+	<!-- Url dẫn đến trang xử lý lỗi ServletException -->
 	<error-page>
 		<exception-type>javax.servlet.ServletException</exception-type>
 		<location>/views/System_Error.jsp</location>

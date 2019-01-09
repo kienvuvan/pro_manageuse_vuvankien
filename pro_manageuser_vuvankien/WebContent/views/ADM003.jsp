@@ -18,7 +18,16 @@
 	<c:set var="startDate" value="${fn:split(userInfor.startDate, '-')}" />
 	<c:set var="endDate" value="${fn:split(userInfor.endDate, '-')}" />
 	<!-- Begin vung input-->
-	<form action="addUserValidate.do" method="post" name="inputform">
+	<form
+		action="<c:choose>
+					<c:when test="${typeShow == 'add_user'}">addUserValidate.do
+				    </c:when>
+				    <c:otherwise>editUserValidate.do
+				    </c:otherwise>
+				</c:choose>"
+		method="post" name="inputform">
+		<input type="hidden" name="typeShow" value="validate_user" >
+		<input type="hidden" name="userId" value="${userInfor.userId}">
 		<table class="tbl_input" border="0" width="75%" cellpadding="0"
 			cellspacing="0">
 			<tr>
@@ -27,11 +36,10 @@
 				</th>
 			</tr>
 			<tr>
-				<td class="errMsg">
-					<c:forEach items="${messages}" var="message">
-						<div style="padding-left: 120px">${message}&nbsp;<br></div>
-					</c:forEach>
-				</td>
+				<td class="errMsg"><c:forEach items="${messages}" var="message">
+						<div style="padding-left: 120px">${message}<br>
+						</div>
+					</c:forEach></td>
 			</tr>
 			<tr>
 				<td align="left">
@@ -40,16 +48,18 @@
 							cellspacing="0">
 							<tr>
 								<td class="lbl_left"><font color="red">*</font> アカウント名:</td>
-								<td align="left"><input class="txBox" type="text" name="loginName"
-									value="${fn:escapeXml(userInfor.loginName)}" size="15" onfocus="this.style.borderColor='#0066ff';"
-									onblur="this.style.borderColor='#aaaaaa';" /></td>
+								<td align="left"><input class="txBox" type="text"
+									name="loginName" value="${fn:escapeXml(userInfor.loginName)}"
+									size="15" onfocus="this.style.borderColor='#0066ff';"
+									onblur="this.style.borderColor='#aaaaaa';"></td>
 							</tr>
 							<tr>
 								<td class="lbl_left"><font color="red">*</font> グループ:</td>
 								<td align="left"><select name="groupId">
 										<option value="0">選択してください</option>
 										<c:forEach items="${listMstGroup}" var="group">
-											<option value="${fn:escapeXml(group.groupId)}" <c:if test="${userInfor.groupId == group.groupId}">selected</c:if>>
+											<option value="${fn:escapeXml(group.groupId)}"
+												<c:if test="${userInfor.groupId == group.groupId}">selected</c:if>>
 												${fn:escapeXml(group.groupName)}</option>
 										</c:forEach>
 								</select> <span>&nbsp;&nbsp;&nbsp;</span></td>
@@ -57,14 +67,15 @@
 							<tr>
 								<td class="lbl_left"><font color="red">*</font> 氏名:</td>
 								<td align="left"><input class="txBox" type="text"
-									name="fullName" value="${fn:escapeXml(userInfor.fullName)}" size="30"
-									onfocus="this.style.borderColor='#0066ff';"
+									name="fullName" value="${fn:escapeXml(userInfor.fullName)}"
+									size="30" onfocus="this.style.borderColor='#0066ff';"
 									onblur="this.style.borderColor='#aaaaaa';" /></td>
 							</tr>
 							<tr>
 								<td class="lbl_left">カタカナ氏名:</td>
 								<td align="left"><input class="txBox" type="text"
-									name="fullNameKana" value="${fn:escapeXml(userInfor.fullNameKana)}" size="30"
+									name="fullNameKana"
+									value="${fn:escapeXml(userInfor.fullNameKana)}" size="30"
 									onfocus="this.style.borderColor='#0066ff';"
 									onblur="this.style.borderColor='#aaaaaa';" /></td>
 							</tr>
@@ -72,21 +83,21 @@
 								<td class="lbl_left"><font color="red">*</font> 生年月日:</td>
 								<td align="left"><select name="yearBirth">
 										<c:forEach items="${listYear}" var="year">
-											<option value="${year}" <c:if test="${dateBirth[0] == year}">selected</c:if>>
-												${year}
-											</option>
+											<option value="${year}"
+												<c:if test="${dateBirth[0] == year}">selected</c:if>>
+												${year}</option>
 										</c:forEach>
 								</select>年 <select name="monthBirth">
 										<c:forEach items="${listMonth}" var="month">
-											<option value="${month}" <c:if test="${dateBirth[1] == month}">selected</c:if>>
-												${month}
-											</option>
+											<option value="${month}"
+												<c:if test="${dateBirth[1] == month}">selected</c:if>>
+												${month}</option>
 										</c:forEach>
 								</select>月 <select name="dayBirth">
 										<c:forEach items="${listDay}" var="day">
-											<option value="${day}" <c:if test="${dateBirth[2] == day}">selected</c:if>>
-												${day}
-											</option>
+											<option value="${day}"
+												<c:if test="${dateBirth[2] == day}">selected</c:if>>
+												${day}</option>
 										</c:forEach>
 								</select>日</td>
 							</tr>
@@ -104,82 +115,88 @@
 									onfocus="this.style.borderColor='#0066ff';"
 									onblur="this.style.borderColor='#aaaaaa';" /></td>
 							</tr>
+							<c:if test="${typeShow == 'add_user'}">
+								<tr>
+									<td class="lbl_left"><font color="red">*</font> パスワード:</td>
+									<td align="left"><input class="txBox" type="password"
+										name="password" value="${fn:escapeXml(userInfor.password)}"
+										size="30" onfocus="this.style.borderColor='#0066ff';"
+										onblur="this.style.borderColor='#aaaaaa';" /></td>
+								</tr>
+								<tr>
+									<td class="lbl_left">パスワード（確認）:</td>
+									<td align="left"><input class="txBox" type="password"
+										name="passwordAgain"
+										value="${fn:escapeXml(userInfor.passwordAgain)}" size="30"
+										onfocus="this.style.borderColor='#0066ff';"
+										onblur="this.style.borderColor='#aaaaaa';" /></td>
+								</tr>
+							</c:if>
 							<tr>
-								<td class="lbl_left"><font color="red">*</font> パスワード:</td>
-								<td align="left"><input class="txBox" type="password"
-									name="password" value="${fn:escapeXml(userInfor.password)}" size="30"
-									onfocus="this.style.borderColor='#0066ff';"
-									onblur="this.style.borderColor='#aaaaaa';" /></td>
+								<th align="left" colspan="2"><a href="#"
+									onclick="showOrHideLevelJapan()">日本語能力</a></th>
 							</tr>
-							<tr>
-								<td class="lbl_left">パスワード（確認）:</td>
-								<td align="left"><input class="txBox" type="password"
-									name="passwordAgain" value="${fn:escapeXml(userInfor.passwordAgain)}" size="30"
-									onfocus="this.style.borderColor='#0066ff';"
-									onblur="this.style.borderColor='#aaaaaa';" /></td>
-							</tr>
-							<tr>
-								<th align="left" colspan="2"><a href="#" onclick="showOrHideLevelJapan()">日本語能力</a></th>	
-							</tr>
-							<tr class ="japan">
+							<tr class="japan">
 								<td class="lbl_left">資格:</td>
 								<td align="left"><select name="codeLevel">
 										<option value="0">選択してください</option>
 										<c:forEach items="${listMstJapan}" var="mstJapan">
-											<option value="${fn:escapeXml(mstJapan.codeLevel)}" <c:if test="${userInfor.codeLevel == mstJapan.codeLevel}">selected</c:if>>
+											<option value="${fn:escapeXml(mstJapan.codeLevel)}"
+												<c:if test="${userInfor.codeLevel == mstJapan.codeLevel}">selected</c:if>>
 												${fn:escapeXml(mstJapan.nameLevel)}</option>
 										</c:forEach>
 								</select></td>
 							</tr>
-							<tr class ="japan">
+							<tr class="japan">
 								<td class="lbl_left">資格交付日:</td>
 								<td align="left"><select name="yearStart">
 										<c:forEach items="${listYear}" var="year">
-											<option value="${year}" <c:if test="${startDate[0] == year}">selected</c:if>>
-												${year}
-											</option>
+											<option value="${year}"
+												<c:if test="${startDate[0] == year}">selected</c:if>>
+												${year}</option>
 										</c:forEach>
 								</select>年 <select name="monthStart">
 										<c:forEach items="${listMonth}" var="month">
-											<option value="${month}" <c:if test="${startDate[1] == month}">selected</c:if>>
-												${month}
-											</option>
+											<option value="${month}"
+												<c:if test="${startDate[1] == month}">selected</c:if>>
+												${month}</option>
 										</c:forEach>
 								</select>月 <select name="dayStart">
 										<c:forEach items="${listDay}" var="day">
-											<option value="${day}" <c:if test="${startDate[2] == day}">selected</c:if>>
-												${day}
-											</option>
+											<option value="${day}"
+												<c:if test="${startDate[2] == day}">selected</c:if>>
+												${day}</option>
 										</c:forEach>
 								</select>日</td>
 							</tr>
-							<tr class ="japan">
+							<tr class="japan">
 								<td class="lbl_left">失効日:</td>
 								<td align="left"><select name="yearEnd">
 										<c:forEach items="${listYearEndDate}" var="year">
-											<option value="${year}" <c:if test="${endDate[0] == year}">selected</c:if>>
-												${year}
-											</option>
+											<option value="${year}"
+												<c:if test="${endDate[0] == year}">selected</c:if>>
+												${year}</option>
 										</c:forEach>
 								</select>年 <select name="monthEnd">
 										<c:forEach items="${listMonth}" var="month">
-											<option value="${month}" <c:if test="${endDate[1] == month}">selected</c:if>>
-												${month}
-											</option>
+											<option value="${month}"
+												<c:if test="${endDate[1] == month}">selected</c:if>>
+												${month}</option>
 										</c:forEach>
 								</select>月 <select name="dayEnd">
 										<c:forEach items="${listDay}" var="day">
-											<option value="${day}" <c:if test="${endDate[2] == day}">selected</c:if>>
-												${day}
-											</option>
+											<option value="${day}"
+												<c:if test="${endDate[2] == day}">selected</c:if>>
+												${day}</option>
 										</c:forEach>
 								</select>日</td>
 							</tr>
-							<tr class ="japan">
+							<tr class="japan">
 								<td class="lbl_left">点数:</td>
 								<td align="left"><input class="txBox" type="text"
-									name="totalScore" value="${fn:escapeXml(userInfor.totalScore)}" size="5"
-									onfocus="this.style.borderColor='#0066ff';"
+									name="totalScore"
+									value="<c:if test="${userInfor.totalScore > 0}">${fn:escapeXml(userInfor.totalScore)}</c:if>"
+									size="5" onfocus="this.style.borderColor='#0066ff';"
 									onblur="this.style.borderColor='#aaaaaa';" /></td>
 							</tr>
 						</table>
