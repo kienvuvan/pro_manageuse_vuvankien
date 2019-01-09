@@ -27,7 +27,8 @@ import manageuser.utils.Constant;
 import manageuser.validates.UserValidate;
 
 /**
- * Class thực hiện chức năng chuyển đến màn hinh ADM003 và thực hiện chức năng validate User để chuyển sang màn hình ADM004
+ * Class thực hiện chức năng chuyển đến màn hinh ADM003 và thực hiện chức năng
+ * validate User để chuyển sang màn hình ADM004
  * 
  * @author kien vu
  *
@@ -47,15 +48,17 @@ public class AddUserInputController extends HttpServlet {
 			setDataLogicADM003(request, response);
 			// Lấy ra đối tượng UserInfor
 			UserInfor userInfor = getDefaultValue(request, response);
-			// Truyền đối tượng UserInfor lên request
+			// Format định dạng các thuộc tính ngày của UserInfor
 			userInfor = Common.formatDateUserInfor(userInfor);
 			// Set đối tượng UserInfor lên request
 			request.setAttribute("userInfor", userInfor);
+			// Set kiểu hiển thị màn hình ADM003.jsp là add_user
+			request.setAttribute("typeShow", Constant.TYPE_ADD_USER);
 			// Chuyển đến màn hình ADM003.jsp
 			request.getRequestDispatcher(Constant.VIEW_ADM003).forward(request, response);
 		} catch (Exception e) {
-			// Chuyển đến màn hình lỗi System_Error.jsp
-			response.sendRedirect(Constant.ERROR_URL);
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
 
@@ -70,11 +73,13 @@ public class AddUserInputController extends HttpServlet {
 			// Kiểm tra để xem trả về danh sách lỗi
 			ArrayList<String> messages = userValidate.validateUserInfor(userInfor);
 			// Nếu có lỗi
-			if (messages.size() > 0) {
+			if (!messages.isEmpty()) {
 				// Set giá trị các trường selectBox
 				setDataLogicADM003(request, response);
 				// Set giá trị UserInfor lên request
 				request.setAttribute("userInfor", userInfor);
+				// Set kiểu hiển thị màn hình ADM003.jsp là add_user
+				request.setAttribute("typeShow", Constant.TYPE_ADD_USER);
 				// Set thông báo lỗi lên request
 				request.setAttribute("messages", messages);
 				// Quay về màn hình ADM003
@@ -87,17 +92,18 @@ public class AddUserInputController extends HttpServlet {
 				HttpSession session = request.getSession();
 				// Set giá trị UserInfor lên session
 				session.setAttribute(keySession, userInfor);
-				// Chuyển đến màn hình ADM004.jsp
+				// Chuyển cho controller AddUserConfirmController xử lý tiếp
 				response.sendRedirect(Constant.ADD_USER_CONFIRMS + "?session=" + keySession);
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
-			// Chuyển đến màn hình lỗi System_Error.jsp
-			response.sendRedirect(Constant.ERROR_URL);
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
 
 	/**
+	 * Phương thức set các giá trị cho các selectbox
 	 * 
 	 * @param request
 	 * @param response
@@ -141,20 +147,20 @@ public class AddUserInputController extends HttpServlet {
 	}
 
 	/**
+	 * Phương thức set các giá trị của đối tượng UserInfor lấy từ request
 	 * 
 	 * @param request
 	 * @param response
-	 * @return
+	 * @return UserInfor đối tượng chứa các thông tin lấy từ request
 	 */
 	private UserInfor getDefaultValue(HttpServletRequest request, HttpServletResponse response) {
 		// Khởi tạo đối tượng UserInfor
 		UserInfor userInfor = new UserInfor();
 		// Lấy giá trị kiểu hiển thị màn hình ADM003
-		String typeShow = Common.formatString(request.getParameter("typeShow"), Constant.TYPE_ADD_OR_VALIDATE);
+		String typeShow = Common.formatString(request.getParameter("typeShow"), Constant.TYPE_ADD_USER);
 		// Nếu kiểu hiển thị từ màn hình ADM002 sang ADM003 hoặc trường hợp
-		// kiểm
-		// tra lỗi quay lại màn hinh ADM003
-		if (Constant.TYPE_ADD_OR_VALIDATE.equals(typeShow)) {
+		// kiểm tra User lỗi quay lại màn hinh ADM003
+		if (Constant.TYPE_ADD_USER.equals(typeShow)|| Constant.TYPE_VALIDATE_USER.equals(typeShow)) {
 			// Lấy giá trị trường loginName từ request
 			String loginName = Common.formatString(request.getParameter("loginName"), "");
 			// Lấy giá trị trường groupId từ request

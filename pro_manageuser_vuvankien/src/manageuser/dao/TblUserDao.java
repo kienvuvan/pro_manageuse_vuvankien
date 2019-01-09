@@ -94,7 +94,7 @@ public interface TblUserDao extends BaseDao {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public boolean checkExitsEmail(String email) throws ClassNotFoundException, SQLException;
+	public int checkExitsEmail(String email) throws ClassNotFoundException, SQLException;
 	
 	/**
 	 * Phương thức thực hiện thêm 1 đối tượng TblUser vào trong CSDL
@@ -104,4 +104,30 @@ public interface TblUserDao extends BaseDao {
 	 * @throws ClassNotFoundException 
 	 */
 	public int insertUser(TblUser tblUser) throws SQLException;
+	
+	/**
+	 * Phương thức thực hiện sửa thông tin người dùng
+	 * @param tblUser thông tin mới cần được sửa
+	 * @return true nếu sửa thành công và ngược lại
+	 * @throws SQLException 
+	 */
+	public boolean editUser(TblUser tblUser) throws SQLException;
+	
+	/**
+	 * Phương thức kiểm tra xem người dùng có tồn tại hay không trong CSDL
+	 * @param userId id của người dùng cần kiểm tra
+	 * @return true nếu người dùng có userId tồn tại trong CSDL và ngược lại
+	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
+	 */
+	public boolean checkExistedUser(int userId) throws ClassNotFoundException, SQLException;
+	
+	/**
+	 * Phương thức lấy ra thông tin người dùng
+	 * @param userId giá trị Id của người dùng trong CSDL
+	 * @return UserInfor thông tin người dùng
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	public UserInfor getUserInforById(int userId) throws ClassNotFoundException, SQLException;
 }

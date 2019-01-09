@@ -30,16 +30,26 @@ public class SuccessController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
-		// Lấy kiểu thông báo
-		String success = request.getParameter("success");
-		// Nếu thông báo là thành công
-		if (Constant.ADD_USER_SUCCES.equals(success)) {
-			// Gán giá trị lên request
-			request.setAttribute("message", MessageProperties.getData("MSG001"));
+		try {
+			// Lấy kiểu thông báo
+			String success = request.getParameter("success");
+			// Nếu thông báo là thêm User thành công
+			if (Constant.ADD_USER_SUCCES.equals(success)) {
+				// Gán giá trị lên request
+				request.setAttribute("message", MessageProperties.getData("MSG001"));
+			// Nếu thông báo là sửa thông tin User thành công
+			}else if(Constant.EDIT_USER_SUCCES.equals(success)){
+				// Gán giá trị lên request
+				request.setAttribute("message", MessageProperties.getData("MSG002"));
+			}
+			// Thực hiện lấy đường dấn đến màn hình hiển thị thông báo ADM006
+			RequestDispatcher requestDispatcher = this.getServletContext().getRequestDispatcher(Constant.VIEW_ADM006);
+			// Chuyển đến trang xử lý lỗi
+			requestDispatcher.forward(request, response);
+		} catch (Exception e) {
+			e.getMessage();
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
-		// Thực hiện lấy đường dấn đến màn hình hiển thị lỗi
-		RequestDispatcher requestDispatcher = this.getServletContext().getRequestDispatcher(Constant.VIEW_ADM006);
-		// Chuyển đến trang xử lý lỗi
-		requestDispatcher.forward(request, response);
 	}
 }

@@ -207,8 +207,8 @@ public class ListUserController extends HttpServlet {
 			request.getRequestDispatcher(Constant.VIEW_ADM002).forward(request, response);
 		} catch (Exception e) {
 			System.out.println("Error : " + e.getMessage());
-			// Chuyển về màn hình lỗi
-			response.sendRedirect(Constant.ERROR_URL);
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
 

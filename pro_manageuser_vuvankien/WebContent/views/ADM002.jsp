@@ -55,7 +55,7 @@
 						</td>
 						<td align="left">
 							<input class="btn" type="submit" value="検索" />
-							<a href="addUserInput.do"><input class="btn" type="button" value="新規追加"/></a>							
+							<a href="addUserInput.do?typeShow=add_user"><input class="btn" type="button" value="新規追加"/></a>							
 						</td>
 					</tr>
 				</table>
@@ -121,7 +121,7 @@
 		<c:forEach items="${listUserInfor}" var="userInfor">
 			<tr>
 				<td align="right">
-				<a href="ADM005">${fn:escapeXml(userInfor.userId)}</a>
+				<a href="viewDetailUser.do?userId=${userInfor.userId}">${fn:escapeXml(userInfor.userId)}</a>
 			</td>
 			<td>
 				${fn:escapeXml(userInfor.fullName)}

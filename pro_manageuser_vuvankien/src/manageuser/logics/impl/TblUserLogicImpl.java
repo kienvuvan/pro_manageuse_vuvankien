@@ -10,10 +10,11 @@ import java.util.ArrayList;
 
 import com.mysql.jdbc.Connection;
 
-import manageuser.dao.TblDetailUserDao;
+import manageuser.dao.TblDetailUserJapanDao;
 import manageuser.dao.TblUserDao;
-import manageuser.dao.impl.TblDetailUserDaoImpl;
+import manageuser.dao.impl.TblDetailUserJapanDaoImpl;
 import manageuser.dao.impl.TblUserDaoImpl;
+import manageuser.entities.TblDetailUserJapan;
 import manageuser.entities.TblUser;
 import manageuser.entities.UserInfor;
 import manageuser.logics.TblUserLogic;
@@ -134,7 +135,7 @@ public class TblUserLogicImpl implements TblUserLogic {
 	 * @see manageuser.logics.TblUserLogic#checkExitsEmail(java.lang.String)
 	 */
 	@Override
-	public boolean checkExitsEmail(String email) throws ClassNotFoundException, SQLException {
+	public int checkExitsEmail(String email) throws ClassNotFoundException, SQLException {
 		try {
 			TblUserDao tblUserDaoImp = new TblUserDaoImpl();
 			return tblUserDaoImp.checkExitsEmail(email);
@@ -160,8 +161,6 @@ public class TblUserLogicImpl implements TblUserLogic {
 			Connection connection = tblUserDaoImpl.connectDatabase();
 			// Gán thuộc tính AutoCommit bằng false
 			tblUserDaoImpl.setAutoCommit(false);
-			// Gán giá trị connection để thực hiện truy vấn
-			tblUserDaoImpl.setConnection(connection);
 			// Thực hiện truy vấn thêm User vào CSDL
 			int lastId = tblUserDaoImpl.insertUser(Common.creatTblUserFromUserInfor(userInfor));
 			// Nếu thêm thành công
@@ -169,14 +168,14 @@ public class TblUserLogicImpl implements TblUserLogic {
 				// Nếu User có trình độ tiếng Nhật
 				if (!Constant.CODE_LEVEL_DEFAULT_VALUE.equals(userInfor.getCodeLevel())) {
 					// Tạo đối tượng TblDetailUserDaoImpl
-					TblDetailUserDao tblDetailUserDao = new TblDetailUserDaoImpl();
+					TblDetailUserJapanDao tblDetailUserDaoImpl = new TblDetailUserJapanDaoImpl();
 					// Gán giá trị connection để thực hiện truy vấn
-					tblDetailUserDao.setConnection(connection);
+					tblDetailUserDaoImpl.setConnection(connection);
 					// Gán giá trị user_id bằng giá trị user_id vừa được trả về
 					// khi thêm vào bảng TblUser trong CSDL
 					userInfor.setUserId(lastId);
 					// Nếu thêm thành công thông tin chi tiết User
-					tblDetailUserDao.insertDetailUserJapan(Common.creatTblDetailUserJapanFromUserInfor(userInfor));
+					tblDetailUserDaoImpl.insertDetailUserJapan(Common.creatTblDetailUserJapanFromUserInfor(userInfor));
 				}
 				// Tiến hành commit
 				tblUserDaoImpl.commit();
@@ -193,6 +192,92 @@ public class TblUserLogicImpl implements TblUserLogic {
 			tblUserDaoImpl.closeConnection();
 		}
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * manageuser.logics.TblUserLogic#updateUser(manageuser.entities.UserInfor)
+	 */
+	@Override
+	public boolean updateUser(UserInfor userInfor, boolean existedDetailUserJapan)
+			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException {
+		// Tạo đối tượng TblUserDaoImpl
+		TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
+		try {
+			// Khởi tạo connection
+			Connection connection = tblUserDaoImpl.connectDatabase();
+			// Gán thuộc tính AutoCommit bằng false
+			tblUserDaoImpl.setAutoCommit(false);
+			// Thực hiện truy vấn sửa thông tin trong bảng TblUser
+			boolean resultEditUser = tblUserDaoImpl.editUser(Common.creatTblUserFromUserInfor(userInfor));
+			// Nếu thêm TblUser thành công
+			if (resultEditUser) {
+				// Tạo đối tượng TblDetailUserJapan từ UserInfor
+				TblDetailUserJapan tblDetailUserJapan = Common.creatTblDetailUserJapanFromUserInfor(userInfor);
+				// Tạo đối tượng TblDetailUserDaoImpl
+				TblDetailUserJapanDao tblDetailUserDaoImpl = new TblDetailUserJapanDaoImpl();
+				// Gán giá trị connection để thực hiện truy vấn
+				tblDetailUserDaoImpl.setConnection(connection);
+				// Lấy ra trình độ tiếng Nhật của đối tượng UserInfor
+				String codeLevel = userInfor.getCodeLevel();
+				// Nếu người dùng có thông tin chi tiết trong CSDL
+				if (existedDetailUserJapan) {
+					// Nếu đối tượng UserInfor có thông tin chi tiết
+					if(!Constant.CODE_LEVEL_DEFAULT.equals(codeLevel)){
+						// Tiến hành sửa thông tin chi tiết
+						tblDetailUserDaoImpl.editDetailUserJapan(tblDetailUserJapan);
+					// Nếu đối tượng UserInfor không có thông tin chi tiết
+					}else{
+						// Tiến hành xóa thông tin chi tiết
+						tblDetailUserDaoImpl.deleteDetailUserJapan(tblDetailUserJapan);
+					}
+				// Nếu người dùng không có thông tin chi tiết trong CSDL
+				}else{
+					// Nếu đối tượng UserInfor có thông tin chi tiết
+					if(!Constant.CODE_LEVEL_DEFAULT.equals(codeLevel)){
+						// Tiến hành thêm thông tin chi tiết
+						tblDetailUserDaoImpl.insertDetailUserJapan(tblDetailUserJapan);
+					}
+				}
+				// Tiến hành commit
+				tblUserDaoImpl.commit();
+				return true;
+			}
+		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
+			System.out.println(e.getMessage());
+			// Tiến hành rollback
+			tblUserDaoImpl.rollBack();
+			throw e;
+			// Đóng kết nối
+		} finally {
+			tblUserDaoImpl.closeConnection();
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see manageuser.logics.TblUserLogic#checkExistedUserInfor(int)
+	 */
+	@Override
+	public boolean checkExistedUser(int userId) throws ClassNotFoundException, SQLException {
+		// Tạo đối tượng TblUserDaoImpl
+		TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
+		return tblUserDaoImpl.checkExistedUser(userId);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see manageuser.logics.TblUserLogic#getUserInforById(int)
+	 */
+	public UserInfor getUserInforById(int userId) throws ClassNotFoundException, SQLException {
+		// Tạo đối tượng TblUserDaoImpl
+		TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
+		return tblUserDaoImpl.getUserInforById(userId);
 	}
 
 }

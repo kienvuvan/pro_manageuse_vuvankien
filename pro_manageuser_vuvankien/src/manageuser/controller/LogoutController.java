@@ -44,8 +44,8 @@ public class LogoutController extends HttpServlet {
 			response.sendRedirect(Constant.LOGIN_URL);
 		} catch (Exception e) {
 			e.getMessage();
-			// Chuyển đến màn hình lỗi System_Error.jsp
-			response.sendRedirect(Constant.ERROR_URL);
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
 }

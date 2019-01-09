@@ -12,11 +12,19 @@
 </head>
 <body>
 	<!-- Begin vung header -->
-	<%@include file="/views/header/header.jsp" %>
+	<%@include file="/views/header/header.jsp"%>
 	<!-- End vung header -->
 
 	<!-- Begin vung input-->
-	<form action="addUserConfirm.do?session=${keySession}" method="post" name="inputform">
+	<form
+		action="<c:choose>
+					<c:when test="${typeShow == 'add_user'}">addUserConfirm.do?session=${keySession}
+				    </c:when>
+				    <c:otherwise>editUserConfirm.do?session=${keySession}
+				    </c:otherwise>
+				</c:choose>"
+		method="post" name="inputform">
+		<input type="hidden" name="typeShow" value="${typeShow}">
 		<table class="tbl_input" border="0" width="75%" cellpadding="0"
 			cellspacing="0">
 			<tr>
@@ -61,30 +69,30 @@
 								<td align="left">${fn:escapeXml(userInfor.tel)}</td>
 							</tr>
 							<tr>
-								<th colspan="2"><a href="#" onclick="showOrHideLevelJapan()">日本語能力</a></th>
+								<th colspan="2"><a href="#"
+									onclick="showOrHideLevelJapan()">日本語能力</a></th>
 							</tr>
-							<tr class ="japan">
+							<tr class="japan">
 								<td class="lbl_left">資格:</td>
 								<td align="left">${fn:escapeXml(userInfor.nameLevel)}</td>
 							</tr>
-							<tr class ="japan">
+							<tr class="japan">
 								<td class="lbl_left">資格交付日:</td>
 								<td align="left"><c:if test="${userInfor.nameLevel != ''}">${fn:replace(userInfor.startDate, '-','/')}</c:if></td>
 							</tr>
-							<tr class ="japan">
+							<tr class="japan">
 								<td class="lbl_left">失効日:</td>
 								<td align="left"><c:if test="${userInfor.nameLevel != ''}">${fn:replace(userInfor.endDate, '-','/')}</c:if></td>
 							</tr>
-							<tr class ="japan">
+							<tr class="japan">
 								<td class="lbl_left">点数:</td>
-								<td align="left">
-									<c:choose>
-										<c:when test="${userInfor.totalScore > 0 && userInfor.nameLevel != ''}">${fn:escapeXml(userInfor.totalScore)}
+								<td align="left"><c:choose>
+										<c:when
+											test="${userInfor.totalScore > 0 && userInfor.nameLevel != ''}">${fn:escapeXml(userInfor.totalScore)}
 									    </c:when>
-									    <c:otherwise>
-									    </c:otherwise>
-									</c:choose>
-								</td>
+										<c:otherwise>
+										</c:otherwise>
+									</c:choose></td>
 							</tr>
 						</table>
 					</div>
@@ -98,7 +106,16 @@
 				<tr>
 					<th width="200px" align="center">&nbsp;</th>
 					<td><input class="btn" type="submit" value="OK" /></td>
-					<td><a href="addUserValidate.do?typeShow=back_adm003&session=${keySession}"><input class="btn" type="button" value="戻る" /></a></td>
+					<td>
+						<a href="
+							<c:choose>
+									<c:when test="${typeShow == 'add_user'}">addUserValidate.do?typeShow=back_adm003&session=${keySession}</c:when>
+					    		<c:otherwise>editUserValidate.do?typeShow=back_adm003&session=${keySession}&userId=${userInfor.userId}
+					    		</c:otherwise>
+							</c:choose>">
+							<input class="btn" type="button" value="戻る" />
+						</a>
+					</td>
 				</tr>
 			</table>
 		</div>
@@ -107,7 +124,7 @@
 	<!-- End vung input -->
 
 	<!-- Begin vung footer -->
-		<%@include file="/views/footer/footer.jsp" %>
+	<%@include file="/views/footer/footer.jsp"%>
 	<!-- End vung footer -->
 </body>
 </html>

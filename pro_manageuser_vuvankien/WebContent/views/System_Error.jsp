@@ -32,7 +32,7 @@
 		</tr>
 		<tr>
 			<td align="center" colspan="2">
-				<font color = "red">システムエラーが発生しました。</font>
+				<font color = "red">${errorMessage}</font>
 			</td>
 		</tr>
 		<tr>

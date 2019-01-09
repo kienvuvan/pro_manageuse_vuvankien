@@ -550,6 +550,8 @@ public class Common {
 		// Tạo đối tượng TblUser
 		TblUser tblUser = new TblUser();
 		try {
+			// Gán giá trị userId cho đối tượng TblUser
+			tblUser.setUserId(userInfor.getUserId());
 			// Gán giá trị groupId cho đối tượng TblUser
 			tblUser.setGroupId(userInfor.getGroupId());
 			// Gán giá trị loginName cho đối tượng TblUser
