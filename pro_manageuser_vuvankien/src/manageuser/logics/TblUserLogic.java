@@ -6,6 +6,7 @@ package manageuser.logics;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import manageuser.entities.TblUser;
@@ -118,8 +119,9 @@ public interface TblUserLogic {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 * @throws NoSuchAlgorithmException
+	 * @throws ParseException 
 	 */
-	public boolean creatUser(UserInfor userInfor) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException;
+	public boolean creatUser(UserInfor userInfor) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, ParseException;
 
 	/**
 	 * Phương thức thực hiện sửa thông tin người dùng trong CSDL
@@ -127,14 +129,26 @@ public interface TblUserLogic {
 	 * @param userInfor
 	 *            đối tượng UserInfor
 	 * @param existedDetailUserJapan
-	 *            true nếu người dùng có thông tin chi tiết và ngược lại @return
-	 *            true nếu sửa thành công và ngược lại
+	 *            true nếu người dùng có thông tin chi tiết và ngược lại
+	 * @return true nếu sửa thành công và ngược lại
 	 * @throws NoSuchAlgorithmException
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
+	 * @throws ParseException 
 	 */
 	public boolean updateUser(UserInfor userInfor, boolean existedDetailUserJapan)
-			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException;
+			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException, ParseException;
+
+	/**
+	 * Phương thức thực hiện chức năng xóa thông tin người dugnf trong CSDL
+	 * 
+	 * @param userId
+	 *            giá trị id của User cần xóa trong CSDL
+	 * @return true nếu xóa thành công và ngược lại
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
+	 */
+	public boolean deleteUser(int userId) throws ClassNotFoundException, SQLException;
 
 	/**
 	 * Phương thức kiểm tra xem người dùng có tồn tại hay không trong CSDL
@@ -157,5 +171,19 @@ public interface TblUserLogic {
 	 * @throws SQLException
 	 */
 	public UserInfor getUserInforById(int userId) throws ClassNotFoundException, SQLException;
+
+	/**
+	 * Phương thức thực hiện chức năng thay đổi mật khẩu người dùng
+	 * 
+	 * @param userId
+	 *            giá trị id của người dùng
+	 * @param password
+	 *            giá trị mật khẩu muốn đổi
+	 * @return true nếu thay đổi thành công và ngược lại
+	 * @throws ClassNotFoundException
+	 * 			@throws SQLException @throws
+	 */
+	public boolean changePassword(int userId, String password)
+			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException;
 
 }

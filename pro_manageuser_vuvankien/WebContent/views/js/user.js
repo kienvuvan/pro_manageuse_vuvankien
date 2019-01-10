@@ -9,4 +9,4 @@ function showOrHideLevelJapan() {
 	for (var i = 0; i < levelJapan.length; i++) {
 		levelJapan[i].style.display = status;
 	}
-};
+}

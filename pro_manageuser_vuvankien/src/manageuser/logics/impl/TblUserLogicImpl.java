@@ -6,6 +6,7 @@ package manageuser.logics.impl;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import com.mysql.jdbc.Connection;
@@ -36,19 +37,22 @@ public class TblUserLogicImpl implements TblUserLogic {
 	 * java.lang.String)
 	 */
 	@Override
-	public boolean checkExitsAccount(String username, String password)
+	public boolean checkExitsAccount(String userName, String password)
 			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException {
 		try {
+			// Tạo đối tượng TblUserDaoImpl
 			TblUserDao tblUserDao = new TblUserDaoImpl();
-			TblUser tblUserLogin = tblUserDao.getUserByLogIn(username);
+			// Lấy ra đối tượng TblUser từ userName
+			TblUser tblUserLogin = tblUserDao.getUserByLogIn(userName);
 			// Kiểm tra nếu việc mã hóa dữ liệu từ password và salt ra đúng
 			// pass trong CSDL
 			if (Common.encrypt(password, tblUserLogin.getSalt()).equals(tblUserLogin.getPassword())) {
 				// Trả về true (Tài khoản đúng)
 				return true;
 			}
+		// Nếu có lỗi
 		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi 
 			throw e;
 		}
 		return false;
@@ -65,11 +69,13 @@ public class TblUserLogicImpl implements TblUserLogic {
 		try {
 			// replace ký tự willCard
 			fullName = Common.replaceWillCard(fullName);
-			// Gọi đến hàm getTotalUsers của lớp TblUserDaoImpl
+			// Khởi tạo đối tượng TblUserDaoImpl
 			TblUserDao tblUserDaoImp = new TblUserDaoImpl();
+			// Gọi đến hàm getTotalUsers() và trả về kết quả
 			return tblUserDaoImp.getTotalUsers(groupId, fullName);
+		// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 	}
@@ -86,14 +92,16 @@ public class TblUserLogicImpl implements TblUserLogic {
 			String sortByFullName, String sortByCodeLevel, String sortByEndDate)
 			throws ClassNotFoundException, SQLException {
 		try {
+			// Khởi tạo đối tượng TblUserDaoImpl
 			TblUserDao tblUserDaoImp = new TblUserDaoImpl();
 			// replace ký tự willCard
 			fullName = Common.replaceWillCard(fullName);
-			// Gọi đến hàm getListUsers của lớp TblUserDaoImpl
+			// Gọi đến hàm getListUsers() của lớp TblUserDaoImpl và trả về kết quả
 			return tblUserDaoImp.getListUsers(offset, limit, groupId, fullName, sortType, sortByFullName,
 					sortByCodeLevel, sortByEndDate);
+		// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 	}
@@ -106,10 +114,12 @@ public class TblUserLogicImpl implements TblUserLogic {
 	@Override
 	public TblUser getUserByLogIn(String username) throws ClassNotFoundException, SQLException {
 		try {
+			// Khởi tạo đối tượng TblUserDaoImpl
 			TblUserDao tblUserDaoImp = new TblUserDaoImpl();
+			// Gọi đến hàm getUserByLogIn() và trả về kết quả
 			return tblUserDaoImp.getUserByLogIn(username);
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 	}
@@ -121,10 +131,12 @@ public class TblUserLogicImpl implements TblUserLogic {
 	 */
 	public boolean checkExitsUsername(String userName) throws ClassNotFoundException, SQLException {
 		try {
+			// Khởi tạo đối tượng TblUserDaoImpl
 			TblUserDao tblUserDaoImp = new TblUserDaoImpl();
+			// Gọi đến hàm checkExitsUsername() và trả về kết quả
 			return tblUserDaoImp.checkExitsUsername(userName);
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 	}
@@ -137,10 +149,12 @@ public class TblUserLogicImpl implements TblUserLogic {
 	@Override
 	public int checkExitsEmail(String email) throws ClassNotFoundException, SQLException {
 		try {
+			// Khởi tạo đối tượng TblUserDaoImpl
 			TblUserDao tblUserDaoImp = new TblUserDaoImpl();
+			// Gọi đến hàm checkExitsEmail() và trả về kết quả
 			return tblUserDaoImp.checkExitsEmail(email);
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 	}
@@ -153,7 +167,7 @@ public class TblUserLogicImpl implements TblUserLogic {
 	 */
 	@Override
 	public boolean creatUser(UserInfor userInfor)
-			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException {
+			throws ParseException, NoSuchAlgorithmException, ClassNotFoundException, SQLException {
 		// Tạo đối tượng TblUserDaoImpl
 		TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
 		try {
@@ -182,10 +196,10 @@ public class TblUserLogicImpl implements TblUserLogic {
 				return true;
 			}
 			// Nếu có lỗi
-		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
-			System.out.println(e.getMessage());
+		} catch (ParseException | NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
 			// Tiến hành rollback
 			tblUserDaoImpl.rollBack();
+			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
 		} finally {
@@ -202,7 +216,7 @@ public class TblUserLogicImpl implements TblUserLogic {
 	 */
 	@Override
 	public boolean updateUser(UserInfor userInfor, boolean existedDetailUserJapan)
-			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException {
+			throws ParseException, NoSuchAlgorithmException, ClassNotFoundException, SQLException {
 		// Tạo đối tượng TblUserDaoImpl
 		TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
 		try {
@@ -225,18 +239,18 @@ public class TblUserLogicImpl implements TblUserLogic {
 				// Nếu người dùng có thông tin chi tiết trong CSDL
 				if (existedDetailUserJapan) {
 					// Nếu đối tượng UserInfor có thông tin chi tiết
-					if(!Constant.CODE_LEVEL_DEFAULT.equals(codeLevel)){
+					if (!Constant.CODE_LEVEL_DEFAULT.equals(codeLevel)) {
 						// Tiến hành sửa thông tin chi tiết
 						tblDetailUserDaoImpl.editDetailUserJapan(tblDetailUserJapan);
-					// Nếu đối tượng UserInfor không có thông tin chi tiết
-					}else{
+						// Nếu đối tượng UserInfor không có thông tin chi tiết
+					} else {
 						// Tiến hành xóa thông tin chi tiết
-						tblDetailUserDaoImpl.deleteDetailUserJapan(tblDetailUserJapan);
+						tblDetailUserDaoImpl.deleteDetailUserJapan(tblDetailUserJapan.getUserId());
 					}
-				// Nếu người dùng không có thông tin chi tiết trong CSDL
-				}else{
+					// Nếu người dùng không có thông tin chi tiết trong CSDL
+				} else {
 					// Nếu đối tượng UserInfor có thông tin chi tiết
-					if(!Constant.CODE_LEVEL_DEFAULT.equals(codeLevel)){
+					if (!Constant.CODE_LEVEL_DEFAULT.equals(codeLevel)) {
 						// Tiến hành thêm thông tin chi tiết
 						tblDetailUserDaoImpl.insertDetailUserJapan(tblDetailUserJapan);
 					}
@@ -245,10 +259,10 @@ public class TblUserLogicImpl implements TblUserLogic {
 				tblUserDaoImpl.commit();
 				return true;
 			}
-		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
-			System.out.println(e.getMessage());
+		} catch (ParseException | NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
 			// Tiến hành rollback
 			tblUserDaoImpl.rollBack();
+			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
 		} finally {
@@ -260,13 +274,55 @@ public class TblUserLogicImpl implements TblUserLogic {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see manageuser.logics.TblUserLogic#deleteUser(int, boolean)
+	 */
+	@Override
+	public boolean deleteUser(int userId) throws ClassNotFoundException, SQLException {
+		// Tạo đối tượng TblUserDaoImpl
+		TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
+		try {
+			// Khởi tạo connection
+			Connection connection = tblUserDaoImpl.connectDatabase();
+			// Gán thuộc tính AutoCommit bằng false
+			tblUserDaoImpl.setAutoCommit(false);
+			// Tạo đối tượng TblDetailUserDaoImpl
+			TblDetailUserJapanDao tblDetailUserDaoImpl = new TblDetailUserJapanDaoImpl();
+			// Gán giá trị connection để thực hiện truy vấn
+			tblDetailUserDaoImpl.setConnection(connection);
+			// Xóa thông tin chi tiết người dùng trong CSDL
+			tblDetailUserDaoImpl.deleteDetailUserJapan(userId);
+			// Xóa thông tin người dùng trong CSDL
+			tblUserDaoImpl.deleteUser(userId);
+			// Tiến hành commit
+			tblUserDaoImpl.commit();
+			return true;
+		} catch (ClassNotFoundException | SQLException e) {
+			// Tiến hành rollback
+			tblUserDaoImpl.rollBack();
+			// Ném ra 1 lỗi
+			throw e;
+			// Đóng kết nối
+		} finally {
+			tblUserDaoImpl.closeConnection();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see manageuser.logics.TblUserLogic#checkExistedUserInfor(int)
 	 */
 	@Override
 	public boolean checkExistedUser(int userId) throws ClassNotFoundException, SQLException {
-		// Tạo đối tượng TblUserDaoImpl
-		TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
-		return tblUserDaoImpl.checkExistedUser(userId);
+		try {
+			// Tạo đối tượng TblUserDaoImpl
+			TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
+			// Gọi đến hàm checkExistedUser() và trả về kết quả
+			return tblUserDaoImpl.checkExistedUser(userId);
+		} catch (ClassNotFoundException | SQLException e) {
+			// Ném ra 1 lỗi
+			throw e;
+		}
 	}
 
 	/*
@@ -275,9 +331,47 @@ public class TblUserLogicImpl implements TblUserLogic {
 	 * @see manageuser.logics.TblUserLogic#getUserInforById(int)
 	 */
 	public UserInfor getUserInforById(int userId) throws ClassNotFoundException, SQLException {
-		// Tạo đối tượng TblUserDaoImpl
-		TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
-		return tblUserDaoImpl.getUserInforById(userId);
+		try {
+			// Tạo đối tượng TblUserDaoImpl
+			TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
+			// Gọi đến hàm getUserInforById() và trả về kết quả
+			return tblUserDaoImpl.getUserInforById(userId);
+		} catch (ClassNotFoundException | SQLException e) {
+			// Ném ra 1 lỗi
+			throw e;
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see manageuser.logics.TblUserLogic#changePassword(manageuser.entities.
+	 * TblUser)
+	 */
+	@Override
+	public boolean changePassword(int userId, String password)
+			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException {
+		try {
+			// Tạo đối tượng TblUserDaoImpl
+			TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
+			// Tạo đối tượng TblUser
+			TblUser tblUser = new TblUser();
+			// Set thuộc tính userId
+			tblUser.setUserId(userId);
+			// Tạo salt
+			String salt = Common.creatSalt(Constant.SALT_LENGHT);
+			// Set thuộc tính salt
+			tblUser.setSalt(salt);
+			// Mã hóa mật khẩu
+			password = Common.encrypt(password, salt);
+			// Set thuộc tính password
+			tblUser.setPassword(password);
+			// Gọi đến hàm changePassword() và trả về kết quả
+			return tblUserDaoImpl.changePassword(tblUser);
+		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
+			// Ném ra 1 lỗi
+			throw e;
+		}
 	}
 
 }

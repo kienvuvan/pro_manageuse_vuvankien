@@ -7,14 +7,19 @@ package manageuser.logics;
 import java.sql.SQLException;
 
 /**
+ * Interface TblDetailUserJapanLogic
+ * 
  * @author kien vu
  *
  */
 public interface TblDetailUserJapanLogic {
 
 	/**
-	 * Phương thức kiểm tra thông tin chi tiết người dùng có tồn tại trong CSDL hay không?
-	 * @param userId id của người dùng cần kiểm tra
+	 * Phương thức kiểm tra thông tin chi tiết người dùng có tồn tại trong CSDL
+	 * hay không?
+	 * 
+	 * @param userId
+	 *            id của người dùng cần kiểm tra
 	 * @return true nếu thông tin chi tiết người dùng tồn tại và ngược lại
 	 * @throws ClassNotFoundException
 	 * @throws SQLException

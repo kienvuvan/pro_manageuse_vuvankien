@@ -21,8 +21,10 @@ import manageuser.entities.MstJapan;
  */
 public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 
+	// Câu lệnh truy vấn lấy ra tất cả các bản ghi của bảng mst_japn trong CSDL
 	private static final String GET_ALL_MST_JAPAN = "SELECT * FROM mst_japan";
-	private static final String GET_NAME_LEVEL_BY_ID = "SELECT name_level FROM mst_japan WHERE code_level = ?";
+	// Câu lệnh truy vấn lấy ra tên của trình độ tiếng Nhật theo code_level
+	private static final String GET_NAME_LEVEL_BY_CODE_LEVEL = "SELECT name_level FROM mst_japan WHERE code_level = ?";
 	
 	/*
 	 * (non-Javadoc)
@@ -33,8 +35,8 @@ public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 	public ArrayList<MstJapan> getAllMstJapan() throws ClassNotFoundException, SQLException {
 		// Tạo đối tượng ArrayList để lưu trữ
 		ArrayList<MstJapan> listAllMstJapan = new ArrayList<>();
-		// Tạo kết nối với CSDL
 		try {
+			// Tạo kết nối với CSDL
 			connection = connectDatabase();
 			// Nếu kết nối thành công
 			if (connection != null) {
@@ -45,6 +47,7 @@ public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 				// Duyệt kết quả trả về
 				while (resultSet.next()) {
 					int index = 1;
+					// Tạo đối tượng MstJapan
 					MstJapan mstJapan = new MstJapan();
 					// Lấy thông tin từ resultSet và gán vào đối tượng MstGroup
 					mstJapan.setCodeLevel(resultSet.getString(index++));
@@ -55,7 +58,7 @@ public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 			}
 		// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			e.printStackTrace();
 			throw e;
 		// Đóng kết nối
 		} finally {
@@ -73,26 +76,32 @@ public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 	@Override
 	public String getNameLevelById(String codeLevel) throws ClassNotFoundException, SQLException {
 		String result = "";
-		// Tạo kết nối với CSDL
 		try {
+			// Tạo kết nối với CSDL
 			connection = connectDatabase();
 			// Nếu kết nối thành công
 			if (connection != null) {
-				PreparedStatement preparedStatement = connection.prepareStatement(GET_NAME_LEVEL_BY_ID);
+				// Truyền câu lệnh truy vấn vào PreparedStatement
+				PreparedStatement preparedStatement = connection.prepareStatement(GET_NAME_LEVEL_BY_CODE_LEVEL);
+				// Set tham số codeLevel cho câu lệnh truy vấn
 				preparedStatement.setString(1, codeLevel);
+				// Lấy ra kết quả bản ghi được trả về
 				ResultSet resultSet = preparedStatement.executeQuery();
+				// Nếu có bản ghi được trả về
 				if (resultSet.next()) {
+					// Lấy ra tên trình độ tiếng Nhật và gán vào biến result
 					result = resultSet.getString(1);
 				}
 			}
 		// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			e.printStackTrace();
 			throw e;
 		// Đóng kết nối
 		} finally {
 			closeConnection();
 		}
+		// Trả về kết quả
 		return result;
 	}
 

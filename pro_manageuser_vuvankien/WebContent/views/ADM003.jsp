@@ -49,7 +49,8 @@
 							<tr>
 								<td class="lbl_left"><font color="red">*</font> アカウント名:</td>
 								<td align="left"><input class="txBox" type="text"
-									name="loginName" value="${fn:escapeXml(userInfor.loginName)}"
+									name="loginName" value="${fn:escapeXml(userInfor.loginName)}" 
+									<c:if test = "${typeShow == 'edit_user'}">readonly="true"</c:if>
 									size="15" onfocus="this.style.borderColor='#0066ff';"
 									onblur="this.style.borderColor='#aaaaaa';"></td>
 							</tr>
@@ -211,8 +212,16 @@
 				<tr>
 					<th width="200px" align="center">&nbsp;</th>
 					<td><input class="btn" type="submit" value="確認" /></td>
-					<td><a href="listUser.do?typeShow=back"><input class="btn"
-							type="button" value="戻る" /></a></td>
+					<td><a href="
+						<c:choose>
+							<c:when test="${typeShow == 'add_user'}">listUser.do?typeShow=back
+						    </c:when>
+						    <c:otherwise>viewDetailUser.do?userId=${userInfor.userId}
+						    </c:otherwise>
+						</c:choose>">
+						<input class="btn" type="button" value="戻る" />
+						</a>
+					</td>
 				</tr>
 			</table>
 		</div>

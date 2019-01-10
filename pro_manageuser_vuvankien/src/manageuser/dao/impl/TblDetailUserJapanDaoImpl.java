@@ -21,9 +21,13 @@ import manageuser.entities.TblDetailUserJapan;
  */
 public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailUserJapanDao {
 
+	// Câu lệnh truy vấn thêm thông tin chi tiết người dùng vào bảng tbl_detail_user_japan trong CSDL
 	private static final String INSERT_DETAIL_USER = "INSERT INTO tbl_detail_user_japan(user_id,code_level,start_date,end_date,total) VALUES(?,?,?,?,?);";
+	// Câu lệnh truy vấn sửa thông tin chi tiết người dùng của bảng tbl_detail_user_japan trong CSDL
 	private static final String EDIT_DETAIL_USER = "UPDATE tbl_detail_user_japan SET code_level = ?, start_date = ?, end_date = ?, total = ? WHERE user_id = ?";
+	// Câu lệnh truy vấn xóa thông tin chi tiết người dùng của bảng tbl_detail_user_japan trong CSDL
 	private static final String DELETE_DETAIL_USER = "DELETE FROM tbl_detail_user_japan WHERE user_id = ?";
+	// Câu lệnh truy vấn kiểm tra người dùng có thông tin chi tiết không?
 	private static final String CHECK_EXISTED_DETAIL_USER = "SELECT user_id FROM tbl_detail_user_japan WHERE user_id = ?";
 
 	/*
@@ -38,7 +42,7 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 		try {
 			// Nếu kết nối không null
 			if (connection != null) {
-				// Tạo lệnh truy vấn thêm chi tiết User vào trong CSDL
+				// Tạo lệnh truy vấn thêm thông tin chi tiết User vào trong CSDL
 				PreparedStatement preparedStatement = (PreparedStatement) connection
 						.prepareStatement(INSERT_DETAIL_USER);
 				int index = 1;
@@ -55,7 +59,7 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			}
 			// Nếu có lỗi
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			throw e;
 		}
 		return false;
@@ -86,7 +90,7 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			}
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			throw e;
 		// Đóng connection
 		}finally {
@@ -103,9 +107,8 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 		try {
 			// Nếu kết nối không null
 			if (connection != null) {
-				// Tạo lệnh truy vấn thêm chi tiết User vào trong CSDL
-				PreparedStatement preparedStatement = (PreparedStatement) connection
-						.prepareStatement(EDIT_DETAIL_USER);
+				// Tạo lệnh truy vấn sửa thông tin chi tiết User vào trong CSDL
+				PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(EDIT_DETAIL_USER);
 				int index = 1;
 				// Gán các giá trị cho các tham số trong câu lệnh truy vấn
 				preparedStatement.setString(index++, tblDetailUserJapan.getCodeLevel());
@@ -120,7 +123,7 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			}
 			// Nếu có lỗi
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			throw e;
 		}
 		return false;
@@ -130,15 +133,15 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 	 * @see manageuser.dao.TblDetailUserJapanDao#deleteDetailUserJapan(manageuser.entities.TblDetailUserJapan)
 	 */
 	@Override
-	public boolean deleteDetailUserJapan(TblDetailUserJapan tblDetailUserJapan) throws SQLException {
+	public boolean deleteDetailUserJapan(int userId) throws SQLException {
 		try {
 			// Nếu kết nối không null
 			if (connection != null) {
-				// Tạo lệnh truy vấn thêm chi tiết User vào trong CSDL
+				// Tạo lệnh truy vấn xóa thông tin chi tiết User vào trong CSDL
 				PreparedStatement preparedStatement = (PreparedStatement) connection
 						.prepareStatement(DELETE_DETAIL_USER);
 				// Gán các giá trị cho các tham số trong câu lệnh truy vấn
-				preparedStatement.setInt(1, tblDetailUserJapan.getUserId());
+				preparedStatement.setInt(1, userId);
 				// Nếu thêm thành công
 				if (preparedStatement.executeUpdate() > 0) {
 					return true;
@@ -146,7 +149,7 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			}
 			// Nếu có lỗi
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			throw e;
 		}
 		return false;

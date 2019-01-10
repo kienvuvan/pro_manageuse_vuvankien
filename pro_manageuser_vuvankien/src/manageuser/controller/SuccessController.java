@@ -34,12 +34,20 @@ public class SuccessController extends HttpServlet {
 			// Lấy kiểu thông báo
 			String success = request.getParameter("success");
 			// Nếu thông báo là thêm User thành công
-			if (Constant.ADD_USER_SUCCES.equals(success)) {
-				// Gán giá trị lên request
+			if (Constant.ADD_USER_SUCCESS.equals(success)) {
+				// Gán giá trị thông báo lên request
 				request.setAttribute("message", MessageProperties.getData("MSG001"));
 			// Nếu thông báo là sửa thông tin User thành công
-			}else if(Constant.EDIT_USER_SUCCES.equals(success)){
-				// Gán giá trị lên request
+			}else if(Constant.EDIT_USER_SUCCESS.equals(success)){
+				// Gán giá trị thông báo lên request
+				request.setAttribute("message", MessageProperties.getData("MSG002"));
+			// Nếu thông báo là xóa thông tin User thành công
+			}else if(Constant.DELETE_USER_SUCCESS.equals(success)){
+				// Gán giá trị thông báo lên request
+				request.setAttribute("message", MessageProperties.getData("MSG003"));
+			// Nếu thông báo là thay đổi mật khẩu User thành công
+			}else if(Constant.CHANGE_PASSWORD_SUCCESS.equals(success)){
+				// Gán giá trị thông báo lên request
 				request.setAttribute("message", MessageProperties.getData("MSG002"));
 			}
 			// Thực hiện lấy đường dấn đến màn hình hiển thị thông báo ADM006
@@ -47,7 +55,6 @@ public class SuccessController extends HttpServlet {
 			// Chuyển đến trang xử lý lỗi
 			requestDispatcher.forward(request, response);
 		} catch (Exception e) {
-			e.getMessage();
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}

@@ -110,7 +110,7 @@
 						<a href="
 							<c:choose>
 									<c:when test="${typeShow == 'add_user'}">addUserValidate.do?typeShow=back_adm003&session=${keySession}</c:when>
-					    		<c:otherwise>editUserValidate.do?typeShow=back_adm003&session=${keySession}&userId=${userInfor.userId}
+					    		<c:otherwise>editUserValidate.do?typeShow=back_adm003&session=${keySession}
 					    		</c:otherwise>
 							</c:choose>">
 							<input class="btn" type="button" value="戻る" />

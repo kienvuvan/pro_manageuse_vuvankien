@@ -33,11 +33,11 @@ public interface TblDetailUserJapanDao extends BaseDao {
 	
 	/**
 	 * Phương thức xóa thông tin chi tiết người dùng trong CSDL
-	 * @param tblDetailUserJapan đối tượng TblDetailUserJapan
+	 * @param int giá trị id của user cần xóa
 	 * @return true nếu xóa thành công và ngược lại
 	 * @throws SQLException
 	 */
-	public boolean deleteDetailUserJapan(TblDetailUserJapan tblDetailUserJapan) throws SQLException;
+	public boolean deleteDetailUserJapan(int userId) throws SQLException;
 	
 	/**
 	 * Phương thức kiểm tra thông tin chi tiết người dùng có tồn tại trong CSDL hay không?

@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import manageuser.entities.UserInfor;
 import manageuser.logics.TblUserLogic;
@@ -46,6 +47,14 @@ public class ViewDetailUserController extends HttpServlet {
 				UserInfor userInfor = tblUserLogicImpl.getUserInforById(userId);
 				// Set đối tượng UserInfor lên request
 				request.setAttribute("userInfor", userInfor);
+				// Khởi tạo Session
+				HttpSession session = request.getSession();
+				// Khởi tạo keySession
+				String keySession = Common.getKeySession(userId+"");
+				// Set giá trị userId lên session
+				session.setAttribute(keySession, userId);
+				// Truyền keySession lên request
+				request.setAttribute("keySession", keySession);
 				// Thực hiện lấy đường dấn đến màn hình hiển thị thông tin người dùng
 				RequestDispatcher requestDispatcher = this.getServletContext().getRequestDispatcher(Constant.VIEW_ADM005);
 				// Chuyển đến trang xử lý lỗi

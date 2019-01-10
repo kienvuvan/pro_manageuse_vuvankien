@@ -74,7 +74,6 @@ public class EditUserConfirmController extends HttpServlet {
 			// Chuyển đến màn hình ADM004
 			request.getRequestDispatcher(Constant.VIEW_ADM004).forward(request, response);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
@@ -95,25 +94,33 @@ public class EditUserConfirmController extends HttpServlet {
 			TblUserLogic tblUserLogicImpl = new TblUserLogicImpl();
 			// Lấy ra giá trị userId
 			int userId = userInfor.getUserId();
-			//Nếu User tồn tại trong CSDL
-			if(tblUserLogicImpl.checkExistedUser(userId)){
+			// Nếu User tồn tại trong CSDL
+			if (tblUserLogicImpl.checkExistedUser(userId)) {
 				// Tạo đối tượng UserValidate để kiểm tra các trường dữ liệu
 				UserValidate userValidate = new UserValidate();
 				// Nếu userInfor không lỗi thì tiến hành thêm vào CSDL
 				if (userValidate.validateUserInfor(userInfor).isEmpty()) {
 					// Khởi tạo đối tượng TblDetailUserJapanLogicImpl
 					TblDetailUserJapanLogic tblDetailUserJapanLogicImpl = new TblDetailUserJapanLogicImpl();
-					// Kiểm tra thông tin chi tiết của người dùng có tồn tại trong CSDL hay kh
+					// Kiểm tra thông tin chi tiết của người dùng có tồn tại
+					// trong CSDL hay không
 					boolean existedDetailUserJapan = tblDetailUserJapanLogicImpl.checkExistedDetailUserJapan(userId);
-					if(tblUserLogicImpl.updateUser(userInfor, existedDetailUserJapan)){
-						response.sendRedirect(Constant.MESSAGE + "?success=" + Constant.EDIT_USER_SUCCES);
+					// Nếu cập nhật thông tin người dùng thành công
+					if (tblUserLogicImpl.updateUser(userInfor, existedDetailUserJapan)) {
+						// Gọi đến url để chuyển tới màn hình thông báo
+						// ADM006.jsp
+						response.sendRedirect(Constant.MESSAGE + "?success=" + Constant.EDIT_USER_SUCCESS);
 					}
 				}
+				// Nếu người dùng không tồn tại trong CSDL
+			} else {
+				// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ
+				// thống đang lỗi
+				response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
 			}
 			// Xóa thông tin UserInfor trên session
 			session.removeAttribute(keySession);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);

@@ -41,7 +41,7 @@ public class UserValidate {
 	 * @throws SQLException
 	 */
 	public ArrayList<String> validateLogin(String username, String password)
-			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException, Exception {
+			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException {
 		ArrayList<String> message = new ArrayList<>();
 		try {
 			// Nếu tên tài khoản trống
@@ -64,8 +64,8 @@ public class UserValidate {
 					message.add(MessageErrorProperties.getData("ER016"));
 				}
 			}
-		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		return message;
@@ -78,6 +78,8 @@ public class UserValidate {
 	 * @param userInfor
 	 *            đối tượng UserInfor cần kiểm tra
 	 * @return ArrayList<String> danh sách các lỗi
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
 	 */
 	public ArrayList<String> validateUserInfor(UserInfor userInfor) throws ClassNotFoundException, SQLException {
 		// Tạo danh sách chứa các thông báo lỗi
@@ -116,7 +118,7 @@ public class UserValidate {
 			// Lấy ra giá trị của groupId
 			int groupId = userInfor.getGroupId();
 			// Nếu chưa chọn nhóm
-			if (groupId <= 0) {
+			if (groupId <= Constant.GROUP_ID_DEFAULT) {
 				// Thêm thông báo chưa chọn nhóm
 				message.add(MessageErrorProperties.getData("ER002_GROUP_ID"));
 				// Nếu nhóm không tồn tại
@@ -300,10 +302,49 @@ public class UserValidate {
 				}
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
 			throw e;
 		}
 		return message;
 	}
 
+	/**
+	 * Phương thức kiểm tra tính hợp lệ các trường password của đối tượng
+	 * UserInfor
+	 * 
+	 * @param password
+	 *            giá trị trường mật khẩu
+	 * @param passwordAgain
+	 *            giá trị trường mật khẩu nhập lại
+	 * @return ArrayList<String> danh sách các lỗi
+	 */
+	public ArrayList<String> validatePassword(String password, String passwordAgain) {
+		// Tạo danh sách chứa các thông báo lỗi
+		ArrayList<String> message = new ArrayList<>();
+		// Check password
+		// Nếu password trống
+		if (Common.isEmpty(password)) {
+			// Thêm thông báo lỗi password trống
+			message.add(MessageErrorProperties.getData("ER001_PASSWORD"));
+			// Nếu độ dài không nằm trong khoảng từ 8-15
+		} else if (!Common.checkLengthLimit(Constant.MIN_PASSWORD_LENGTH, Constant.MAX_PASSWORD_LENGTH, password)) {
+			// Thêm thông báo lỗi về độ dài
+			message.add(MessageErrorProperties.getData("ER007_PASSWORD"));
+			// Nếu password không đúng định dạng halfSize
+		} else if (!Common.checkHalfSize(password)) {
+			// Thêm thông báo lỗi định dạng
+			message.add(MessageErrorProperties.getData("ER008_PASSWORD"));
+		}
+
+		// Check passwordAgain
+		// Nếu passwordAgain trống
+		if (Common.isEmpty(passwordAgain)) {
+			// Thêm thông báo lỗi passwordAgain trống
+			message.add(MessageErrorProperties.getData("ER001_PASSWORD_AGAIN"));
+			// Nếu passwordAgain không trùng với password
+		} else if (!password.equals(passwordAgain)) {
+			// Thêm thông báo lỗi mật khẩu xác nhận không đúng
+			message.add(MessageErrorProperties.getData("ER017"));
+		}
+		return message;
+	}
 }

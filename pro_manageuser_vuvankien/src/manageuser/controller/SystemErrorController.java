@@ -55,7 +55,6 @@ public class SystemErrorController extends HttpServlet {
 			// Chuyển đến trang xử lý lỗi
 			requestDispatcher.forward(request, response);
 		} catch (Exception e) {
-			e.getMessage();
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}

@@ -28,8 +28,11 @@ public interface MstJapanLogic {
 	public ArrayList<MstJapan> getAllMstJapn() throws ClassNotFoundException, SQLException;
 
 	/**
-	 * Phương thức lấy ra giá trị tên trình độ tiếng Nhật từ giá trị codeLevel trong CSDL
-	 * @param codeLevel giá trị codeLevel của trình độ tiếng Nhật cần lấy tên
+	 * Phương thức lấy ra giá trị tên trình độ tiếng Nhật từ giá trị codeLevel
+	 * trong CSDL
+	 * 
+	 * @param codeLevel
+	 *            giá trị codeLevel của trình độ tiếng Nhật cần lấy tên
 	 * @return String tên trình độ tiếng Nhật
 	 * @throws ClassNotFoundException
 	 * @throws SQLException

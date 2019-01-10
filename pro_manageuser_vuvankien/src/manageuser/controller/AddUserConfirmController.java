@@ -74,7 +74,6 @@ public class AddUserConfirmController extends HttpServlet {
 			request.getRequestDispatcher(Constant.VIEW_ADM004).forward(request, response);
 			// Nếu có lỗi xảy ra chuyển đến trang SysstemError
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
@@ -100,13 +99,12 @@ public class AddUserConfirmController extends HttpServlet {
 				// Nếu thêm thành công thì chuyển đến màn hình ADM006 với kiểu
 				// thông báo là thành công
 				if (tblUserLogicImpl.creatUser(userInfor)) {
-					response.sendRedirect(Constant.MESSAGE + "?success=" + Constant.ADD_USER_SUCCES);
+					response.sendRedirect(Constant.MESSAGE + "?success=" + Constant.ADD_USER_SUCCESS);
 				}
 			}
 			// Xóa thông tin UserInfor trên session
 			session.removeAttribute(keySession);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);

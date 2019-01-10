@@ -57,7 +57,8 @@ public class AddUserInputController extends HttpServlet {
 			// Chuyển đến màn hình ADM003.jsp
 			request.getRequestDispatcher(Constant.VIEW_ADM003).forward(request, response);
 		} catch (Exception e) {
-			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
+			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
@@ -96,8 +97,8 @@ public class AddUserInputController extends HttpServlet {
 				response.sendRedirect(Constant.ADD_USER_CONFIRMS + "?session=" + keySession);
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
+			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
@@ -141,7 +142,7 @@ public class AddUserInputController extends HttpServlet {
 			request.setAttribute("listDay", listDay);
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 	}
@@ -160,7 +161,7 @@ public class AddUserInputController extends HttpServlet {
 		String typeShow = Common.formatString(request.getParameter("typeShow"), Constant.TYPE_ADD_USER);
 		// Nếu kiểu hiển thị từ màn hình ADM002 sang ADM003 hoặc trường hợp
 		// kiểm tra User lỗi quay lại màn hinh ADM003
-		if (Constant.TYPE_ADD_USER.equals(typeShow)|| Constant.TYPE_VALIDATE_USER.equals(typeShow)) {
+		if (Constant.TYPE_ADD_USER.equals(typeShow) || Constant.TYPE_VALIDATE_USER.equals(typeShow)) {
 			// Lấy giá trị trường loginName từ request
 			String loginName = Common.formatString(request.getParameter("loginName"), "");
 			// Lấy giá trị trường groupId từ request
