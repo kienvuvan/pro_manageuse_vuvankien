@@ -11,6 +11,7 @@ package manageuser.entities;
  *
  */
 public class UserInfor {
+	
 	private int userId;
 	private String loginName;
 	private int groupId;
@@ -27,6 +28,7 @@ public class UserInfor {
 	private String startDate;
 	private String endDate;
 	private String totalScore;
+	private int rule;
 
 	/**
 	 * @return the userId
@@ -266,6 +268,20 @@ public class UserInfor {
 	 */
 	public void setTotalScore(String totalScore) {
 		this.totalScore = totalScore;
+	}
+
+	/**
+	 * @return the rule
+	 */
+	public int getRule() {
+		return rule;
+	}
+
+	/**
+	 * @param rule the rule to set
+	 */
+	public void setRule(int rule) {
+		this.rule = rule;
 	}
 
 }

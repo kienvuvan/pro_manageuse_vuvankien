@@ -81,7 +81,8 @@ public class Common {
 			// Tạo đối tượng mã hóa theo chuẩn SHA-1
 			messageDigest = MessageDigest.getInstance("SHA-1");
 		} catch (NoSuchAlgorithmException e) {
-			e.getMessage();
+			e.printStackTrace();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		// Trả về chuỗi sau khi mã hóa
@@ -103,12 +104,14 @@ public class Common {
 			String usernameLogin = (String) session.getAttribute("usernameLogin");
 			// Tạo đối tượng TblUserLogicImpl
 			TblUserLogic tblUserLogic = new TblUserLogicImpl();
-			// Nếu trên session đã tồn tại và tài khoản đó đúng trong CSDL thì trả về true
+			// Nếu trên session đã tồn tại và tài khoản đó đúng trong CSDL thì
+			// trả về true
 			if (usernameLogin != null && tblUserLogic.getUserByLogIn(usernameLogin).getSalt() != null) {
 				return true;
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println(e.getMessage());
+			e.printStackTrace();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		return false;
@@ -150,11 +153,14 @@ public class Common {
 					: currentPage - currentPage % sizePaning + 1;
 			// Tính toán giá trị paging cuối cùng khi hiển thị
 			int numberPaningEnd = numberPaningStart + sizePaning - 1;
+			// Nếu numberPaningEnd khi tính toán ra lớn hơn totalPaning
 			if (numberPaningEnd > totalPaning) {
+				// Gán bằng totalPaning
 				numberPaningEnd = totalPaning;
 			}
 			// Duyệt từ giá trị đầu đến cuối và thêm vào danh sách listPaging
 			for (int i = numberPaningStart; i <= numberPaningEnd; i++) {
+				// Thêm vào danh sách listPaging
 				listPaning.add(i);
 			}
 		}
@@ -170,6 +176,7 @@ public class Common {
 	 * @return String kiểu sắp xếp ngược lại. ASC thành DESC hoặc ngược lại
 	 */
 	public static String changeSort(String typeSort) {
+		// Nếu kiểu hiển tại là ASC thì trả về DESC và ngược lại
 		return Constant.SORTASC.equals(typeSort) ? Constant.SORTDESC : Constant.SORTASC;
 	}
 
@@ -203,7 +210,7 @@ public class Common {
 		// Nếu chuỗi null thì trả về mặc định 0
 		if (input == null) {
 			result = 0;
-		// Nếu chuỗi có định dạng số nguyên thì tiến hành chuyển về dạng số
+			// Nếu chuỗi có định dạng số nguyên thì tiến hành chuyển về dạng số
 		} else if (input.matches("\\d+")) {
 			result = Integer.parseInt(input);
 		}
@@ -224,9 +231,10 @@ public class Common {
 	 * @return true nếu trang cần hiển thị tồn tại và ngược lại
 	 */
 	public static boolean checkNumberPage(int page, int limit, int totalRecord) {
-		// Tính tổng số paging từ tổng số bản ghi và số lượng giới hạn trong 1 paging
+		// Tính tổng số paging từ tổng số bản ghi và số lượng giới hạn trong 1
+		// paging
 		int totalPaning = (totalRecord % limit == 0) ? totalRecord / limit : totalRecord / limit + 1;
-		// Nếu page tồn tại 
+		// Nếu page tồn tại
 		if (page > 0 && page <= totalPaning) {
 			return true;
 		}
@@ -323,7 +331,7 @@ public class Common {
 			calendar.setTime(simpleDateFormat.parse(dateString));
 			// Gán date bằng giá trị chuyển đối được
 			date = new Date(calendar.getTimeInMillis());
-		// Nếu chuyển đổi có lỗi
+			// Nếu chuyển đổi có lỗi
 		} catch (ParseException e) {
 			// Gán date bằng giá trị ngày tháng năm hiện tại
 			date = dateNow;
@@ -333,12 +341,16 @@ public class Common {
 	}
 
 	/**
-	 * Phương thức dùng để chuyển đổi chuỗi về kiểu date với giá trị sau đó 1 năm
-	 * @param endDate chuỗi cần format
-	 * @return trả về chuỗi định dạng kiểu ngày sau khi chuyển đổi với giá trị sau giá trị ban đầu 1 năm
+	 * Phương thức dùng để chuyển đổi chuỗi về kiểu date với giá trị sau đó 1
+	 * năm
+	 * 
+	 * @param endDate
+	 *            chuỗi cần format
+	 * @return trả về chuỗi định dạng kiểu ngày sau khi chuyển đổi với giá trị
+	 *         sau giá trị ban đầu 1 năm
 	 */
 	public static String formatEndDate(String endDate) {
-		// Tạo đối tượng Calendar 
+		// Tạo đối tượng Calendar
 		Calendar calendar = Calendar.getInstance();
 		// Thêm 1 năm
 		calendar.add(Calendar.YEAR, 1);
@@ -376,6 +388,7 @@ public class Common {
 		// Gán giá trị hết hạn trình độ
 		userInfor.setEndDate(formatEndDate(userInfor.getEndDate()));
 		return userInfor;
+
 	}
 
 	/**
@@ -390,7 +403,7 @@ public class Common {
 		if ("".equals(input)) {
 			// Trả về tru
 			return true;
-		// Ngược lại, chuỗi không phải rỗng
+			// Ngược lại, chuỗi không phải rỗng
 		} else {
 			// Trả về false
 			return false;
@@ -417,7 +430,7 @@ public class Common {
 		if (length > maxLength || length < minLength) {
 			// Trả về false
 			return false;
-		// Ngược lại, nếu chuỗi có độ dài phù hợp
+			// Ngược lại, nếu chuỗi có độ dài phù hợp
 		} else {
 			// Trả về true
 			return true;
@@ -439,7 +452,7 @@ public class Common {
 		if (input.length() > maxLength) {
 			// Trả về false
 			return false;
-		// Ngược lại, nếu chuỗi có độ dài thỏa mãn
+			// Ngược lại, nếu chuỗi có độ dài thỏa mãn
 		} else {
 			// Trả về true
 			return true;
@@ -496,7 +509,7 @@ public class Common {
 		if (input.matches("[\u30a0-\u30ff]+")) {
 			// Trả về true
 			return true;
-		// Nếu không phải kí tự kana trả về false
+			// Nếu không phải kí tự kana trả về false
 		} else {
 			return false;
 		}
@@ -546,7 +559,8 @@ public class Common {
 	 *         tượng UserInfor
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static TblUser creatTblUserFromUserInfor(UserInfor userInfor) throws NoSuchAlgorithmException {
+	public static TblUser creatTblUserFromUserInfor(UserInfor userInfor)
+			throws ParseException, NoSuchAlgorithmException {
 		// Tạo đối tượng TblUser
 		TblUser tblUser = new TblUser();
 		try {
@@ -557,7 +571,7 @@ public class Common {
 			// Gán giá trị loginName cho đối tượng TblUser
 			tblUser.setLoginName(userInfor.getLoginName());
 			// Tạo salt
-			String salt = creatSalt(30);
+			String salt = creatSalt(Constant.SALT_LENGHT);
 			// Gán giá trị password
 			tblUser.setPassword(encrypt(userInfor.getPassword(), salt));
 			// Gán giá trị fullName cho đối tượng TblUser
@@ -576,7 +590,7 @@ public class Common {
 			tblUser.setSalt(salt);
 			// Nếu có lỗi tạo salt
 		} catch (NoSuchAlgorithmException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		// Trả về đối tượng TblUser
@@ -590,8 +604,9 @@ public class Common {
 	 *            đối tượng UserInfor
 	 * @return đối tượng TblDetailUserJapan được tạo ra với các thông tin chính
 	 *         từ đối tượng UserInfor
+	 * @throws Exception
 	 */
-	public static TblDetailUserJapan creatTblDetailUserJapanFromUserInfor(UserInfor userInfor) {
+	public static TblDetailUserJapan creatTblDetailUserJapanFromUserInfor(UserInfor userInfor) throws ParseException {
 		// Tạo đối tượng TblDetailUserJapan
 		TblDetailUserJapan tblDetailUserJapan = new TblDetailUserJapan();
 		// Gán giá trị userId cho đối tượng TblDetailUserJapan

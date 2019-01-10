@@ -18,7 +18,7 @@
 	<!-- Begin vung input-->
 	<form action="editUserInput.do" method="get" name="inputform">
 		<input type="hidden" value="edit_user" name="typeShow">
-		<input type="hidden" value="${userInfor.userId}" name="userId">
+		<input type="hidden" value="${userInfor.userId}" name="userId" id="userId">
 		<table class="tbl_input" border="0" width="75%" cellpadding="0"
 			cellspacing="0">
 			<tr>
@@ -91,7 +91,14 @@
 				<tr>
 					<th width="200px" align="center">&nbsp;</th>
 					<td><input class="btn" type="submit" value="編集" /></td>
-					<td><input class="btn" type="button" value="削除" /></td>
+					<c:if test="${userInfor.rule != 0}">
+						<td>
+							<a href="deleteUserConfirm.do?session=${keySession}">
+								<input class="btn" type="button" onclick="return confirm('Bạn có muốn xóa không?')" value="削除" />
+							</a>
+						</td>
+					</c:if>
+					<td><a href="changePass.do?userId=${userInfor.userId}"><input class="btn btn_wider" type="button" value="パスワード変更" /></a></td>
 					<td><a href="listUser.do?typeShow=back"><input class="btn" type="button" value="戻る" /></a></td>
 				</tr>
 			</table>

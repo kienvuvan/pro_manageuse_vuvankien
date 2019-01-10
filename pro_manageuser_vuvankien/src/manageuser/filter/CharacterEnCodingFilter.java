@@ -48,11 +48,13 @@ public class CharacterEnCodingFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
 		try {
 			HttpServletRequest request = (HttpServletRequest) servletRequest;
+			// Set định dạng UTF-8 cho request
 			request.setCharacterEncoding("UTF-8");
+			// Set định dạng UTF-8 cho response
 			response.setCharacterEncoding("UTF-8");
 			filterChain.doFilter(servletRequest, servletResponse);
+		// Nếu có lỗi
 		} catch (Exception e) {
-			e.getMessage();
 			// Chuyển về màn hình lỗi
 			response.sendRedirect(Constant.ERROR_URL);
 		}

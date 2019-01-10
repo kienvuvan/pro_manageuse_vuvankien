@@ -106,12 +106,29 @@ public interface TblUserDao extends BaseDao {
 	public int insertUser(TblUser tblUser) throws SQLException;
 	
 	/**
-	 * Phương thức thực hiện sửa thông tin người dùng
+	 * Phương thức thực hiện sửa thông tin người dùng trong CSDL
 	 * @param tblUser thông tin mới cần được sửa
 	 * @return true nếu sửa thành công và ngược lại
 	 * @throws SQLException 
 	 */
 	public boolean editUser(TblUser tblUser) throws SQLException;
+	
+	/**
+	 * Phương thức thực hiện chức năng xóa người dùng trong CSDL
+	 * @param userId giá trị id của người dùng cần xóa
+	 * @return true nếu xóa thành công và ngược lại
+	 * @throws SQLException 
+	 */
+	public boolean deleteUser(int userId) throws SQLException;
+	
+	/**
+	 * Phương thức thực hiện chức năng thay đổi mật khẩu người dùng
+	 * @param tblUser đối tượng TblUser
+	 * @return true nếu thay đổi thành công và ngược lại
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	public boolean changePassword(TblUser tblUser) throws ClassNotFoundException, SQLException;
 	
 	/**
 	 * Phương thức kiểm tra xem người dùng có tồn tại hay không trong CSDL

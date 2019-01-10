@@ -28,10 +28,12 @@ public class MstGroupLogicImpl implements MstGroupLogic {
 	@Override
 	public ArrayList<MstGroup> getAllGroups() throws ClassNotFoundException, SQLException {
 		try {
+			// Tạo đối tượng MstGroupDaoImpl
 			MstGroupDao mstGroupDaoImpl = new MstGroupDaoImpl();
+			// Trả về ArrayList<MstGroup>
 			return mstGroupDaoImpl.getAllGroups();
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 	}
@@ -44,10 +46,12 @@ public class MstGroupLogicImpl implements MstGroupLogic {
 	@Override
 	public String getGroupNameById(int groupId) throws ClassNotFoundException, SQLException {
 		try {
+			// Tạo đối tượng MstGroupDaoImpl
 			MstGroupDao mstGroupDaoImpl = new MstGroupDaoImpl();
+			// Trả về tên group
 			return mstGroupDaoImpl.getGroupNameById(groupId);
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 	}

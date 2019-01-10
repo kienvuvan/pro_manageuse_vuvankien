@@ -42,6 +42,8 @@ public class Constant {
 	public static final String VIEW_ADM005 = "/views/ADM005.jsp";
 	// Đường dẫn tương đối đến màn hình ADM006.jsp
 	public static final String VIEW_ADM006 = "/views/ADM006.jsp";
+	// Đường dẫn tương đối đến màn hình ChangePass.jsp
+	public static final String CHANGE_PASS = "/views/ChangePass.jsp";
 	// Đường dẫn tương đối đến màn hình System_Error.jsp
 	public static final String VIEW_SYSTEM_ERROR = "/views/System_Error.jsp";
 
@@ -74,14 +76,16 @@ public class Constant {
 	public static final String TYPE_SORT_CODE_LEVEL = "code_level";
 	public static final String TYPE_SORT_END_DATE = "end_date";
 
+	// Giá trị 0
+	public static final int NUMBER_ZERO = 0;
 	// Chuỗi để sinh random chuỗi
 	public static final String STRING_RANDOM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-	// Giá trị all tiếng nhật
-	public static final String ALL = "全て";
-
 	// Thời gian timeout
 	public static final int TIME_OUT = 5 * 60;
+
+	// Giá trị độ dài chuỗi salt khi tạo
+	public static final int SALT_LENGHT = 30;
 
 	// Năm bắt đầu
 	public static final int FROM_YEAR = 1980;
@@ -116,9 +120,13 @@ public class Constant {
 	public static final int RULE_USER = 1;
 
 	// Thông báo thêm User thành công
-	public static final String ADD_USER_SUCCES = "success";
+	public static final String ADD_USER_SUCCESS = "add_success";
 	// Thông báo sửa thông tin User thành công
-	public static final String EDIT_USER_SUCCES = "success";
+	public static final String EDIT_USER_SUCCESS = "edit_success";
+	// Thông báo xóa thông tin User thành công
+	public static final String DELETE_USER_SUCCESS = "delete_success";
+	// Thông báo thay đổi mật khẩu User thành công
+	public static final String CHANGE_PASSWORD_SUCCESS = "change_password_success";
 
 	// Lỗi hệ thống
 	public static final String SYSTEM_ERROR = "system_error";
@@ -129,4 +137,6 @@ public class Constant {
 	public static final int ID_ADD_USER = 0;
 	// Giá trị codeLevel khi người dùng không có trình độ
 	public static final String CODE_LEVEL_DEFAULT = "0";
+	// Giá trị groupId nếu người dùng không chọn nhóm
+	public static final int GROUP_ID_DEFAULT = 0;
 }

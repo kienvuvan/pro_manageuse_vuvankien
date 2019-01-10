@@ -6,6 +6,7 @@ package manageuser.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -46,7 +47,25 @@ public class EditUserInputController extends HttpServlet {
 			throws IOException, ServletException {
 		try {
 			// Lấy ra giá trị userId từ form của màn hình ADM005.jsp
-			int userId = Common.convertNumberInteger(request.getParameter("userId"));
+			String userIdRequest = request.getParameter("userId");
+			int userId;
+			// Nếu giá trị lấy được từ request không null
+			if (userIdRequest != null) {
+				// Chuyển giá trị nhận được về dạng số
+				userId = Common.convertNumberInteger(userIdRequest);
+				// Ngược lại, nếu không tồn tại tham số userId trên url
+				// (Trường hợp back từ ADM004.jsp)
+				// Lấy giá trị từ đối tượng UserInfor lưu trên session
+			} else {
+				// Khởi tạo đối tượng session
+				HttpSession session = request.getSession();
+				// Khởi tạo, gán giá trị cho sessionKey lấy giá trị từ request
+				String sessionKey = request.getParameter("session");
+				// Gán giá trị cho đối tượng userInfo
+				UserInfor userInfor = (UserInfor) session.getAttribute(sessionKey);
+				// Lấy ra giá trị userId
+				userId = userInfor.getUserId();
+			}
 			// Tạo đối tượng TblUserLogicImpl
 			TblUserLogic tblUserLogicImpl = new TblUserLogicImpl();
 			// Kiểm tra nếu User tồn tại
@@ -68,7 +87,6 @@ public class EditUserInputController extends HttpServlet {
 				response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
@@ -112,7 +130,8 @@ public class EditUserInputController extends HttpServlet {
 					HttpSession session = request.getSession();
 					// Set giá trị UserInfor lên session
 					session.setAttribute(keySession, userInfor);
-					// Chuyển cho controller EditUserConfirmController xử lý tiếp
+					// Chuyển cho controller EditUserConfirmController xử lý
+					// tiếp
 					response.sendRedirect(Constant.EDIT_USER_CONFIRMS + "?session=" + keySession);
 				}
 			} else {
@@ -121,7 +140,6 @@ public class EditUserInputController extends HttpServlet {
 				response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
@@ -167,7 +185,7 @@ public class EditUserInputController extends HttpServlet {
 			request.setAttribute("listDay", listDay);
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 	}
@@ -178,7 +196,9 @@ public class EditUserInputController extends HttpServlet {
 	 * @param request
 	 * @param response
 	 * @return UserInfor đối tượng chứa các thông tin lấy từ request
+	 * @throws ParseException
 	 * @throws ClassNotFoundException
+	 * @throws SQLException
 	 */
 	private UserInfor getDefaultValue(HttpServletRequest request, HttpServletResponse response)
 			throws ClassNotFoundException, SQLException {
@@ -187,82 +207,85 @@ public class EditUserInputController extends HttpServlet {
 		try {
 			// Lấy giá trị kiểu hiển thị màn hình ADM003
 			String typeShow = Common.formatString(request.getParameter("typeShow"), Constant.TYPE_EDIT_USER);
-			// Lấy giá trị userId
-			int userId = Common.convertNumberInteger(request.getParameter("userId"));
-			// Nếu kiểu hiển thị từ màn hình ADM002 sang ADM003 hoặc trường hợp
-			// kiểm tra User lỗi quay lại màn hinh ADM003
-			if (Constant.TYPE_EDIT_USER.equals(typeShow)) {
-				// Tạo đối tượng TblUserLogicImpl
-				TblUserLogic tblUserLogicImpl = new TblUserLogicImpl();
-				// Lấy ra thông tin UserInfor
-				userInfor = tblUserLogicImpl.getUserInforById(userId);
-				// Format định dạng các thuộc tính ngày của UserInfor
-				userInfor = Common.formatDateUserInfor(userInfor);
-			} else if (Constant.TYPE_VALIDATE_USER.equals(typeShow)) {
-				// Lấy giá trị trường loginName từ request
-				String loginName = Common.formatString(request.getParameter("loginName"), "");
-				// Lấy giá trị trường groupId từ request
-				int groupId = Common.convertNumberInteger(request.getParameter("groupId"));
-				// Lấy giá trị trường fullName từ request
-				String fullName = Common.formatString(request.getParameter("fullName"), "");
-				// Lấy giá trị trường fullNameKana từ request
-				String fullNameKana = Common.formatString(request.getParameter("fullNameKana"), "");
-
-				// Lấy giá trị ngày tháng năm sinh từ request
-				String yearBirth = Common.formatString(request.getParameter("yearBirth"), "");
-				String monthBirth = Common.formatString(request.getParameter("monthBirth"), "");
-				String dayBirth = Common.formatString(request.getParameter("dayBirth"), "");
-				String dateBirth = yearBirth + "-" + monthBirth + "-" + dayBirth;
-
-				// Lấy giá trị email từ request
-				String email = Common.formatString(request.getParameter("email"), "");
-				// Lấy giá trị tel từ request
-				String tel = Common.formatString(request.getParameter("tel"), "");
-
-				// Lấy giá trị codeLevel từ request
-				String codeLevel = Common.formatString(request.getParameter("codeLevel"),
-						Constant.CODE_LEVEL_DEFAULT_VALUE);
-
-				// Lấy giá trị ngày tháng năm bắt đầu trình độ tiếng nhật từ
-				// request
-				String yearStart = Common.formatString(request.getParameter("yearStart"), "");
-				String monthStart = Common.formatString(request.getParameter("monthStart"), "");
-				String dayStart = Common.formatString(request.getParameter("dayStart"), "");
-				String dateStart = yearStart + "-" + monthStart + "-" + dayStart;
-
-				// Lấy giá trị ngày tháng năm trình độ tiếng nhật hết hạn từ
-				// request
-				String yearEnd = Common.formatString(request.getParameter("yearEnd"), "");
-				String monthEnd = Common.formatString(request.getParameter("monthEnd"), "");
-				String dayEnd = Common.formatString(request.getParameter("dayEnd"), "");
-				String dateEnd = yearEnd + "-" + monthEnd + "-" + dayEnd;
-
-				// Lấy giá trị tổng điểm từ request
-				String totalScore = Common.formatString(request.getParameter("totalScore"), "");
-
-				// Set các thuộc tính cho đối tượng UserInfor
-				userInfor.setUserId(userId);
-				userInfor.setLoginName(loginName);
-				userInfor.setGroupId(groupId);
-				userInfor.setFullName(fullName);
-				userInfor.setFullNameKana(fullNameKana);
-				userInfor.setBirthday(dateBirth);
-				userInfor.setEmail(email);
-				userInfor.setTel(tel);
-				userInfor.setCodeLevel(codeLevel);
-				userInfor.setStartDate(dateStart);
-				userInfor.setEndDate(dateEnd);
-				userInfor.setTotalScore(totalScore);
-			} else if (Constant.TYPE_BACK_ADM003.equals(typeShow)) {
+			// Nếu là trường quay lại từ màn hình ADM004.jsp
+			if (Constant.TYPE_BACK_ADM003.equals(typeShow)) {
 				// Khởi tạo đối tượng session
 				HttpSession session = request.getSession();
 				// Khởi tạo, gán giá trị cho sessionKey lấy giá trị từ request
 				String sessionKey = request.getParameter("session");
 				// Gán giá trị cho đối tượng userInfo
 				userInfor = (UserInfor) session.getAttribute(sessionKey);
+			} else {
+				// Lấy giá trị userId
+				int userId = Common.convertNumberInteger(request.getParameter("userId"));
+				// Nếu kiểu hiển thị từ màn hình ADM002 sang ADM003
+				if (Constant.TYPE_EDIT_USER.equals(typeShow)) {
+					// Tạo đối tượng TblUserLogicImpl
+					TblUserLogic tblUserLogicImpl = new TblUserLogicImpl();
+					// Lấy ra thông tin UserInfor
+					userInfor = tblUserLogicImpl.getUserInforById(userId);
+					// Format định dạng các thuộc tính ngày của UserInfor
+					userInfor = Common.formatDateUserInfor(userInfor);
+					// Trường hợp kiểm tra User lỗi quay lại màn hinh ADM003
+				} else if (Constant.TYPE_VALIDATE_USER.equals(typeShow)) {
+					// Lấy giá trị trường loginName từ request
+					String loginName = Common.formatString(request.getParameter("loginName"), "");
+					// Lấy giá trị trường groupId từ request
+					int groupId = Common.convertNumberInteger(request.getParameter("groupId"));
+					// Lấy giá trị trường fullName từ request
+					String fullName = Common.formatString(request.getParameter("fullName"), "");
+					// Lấy giá trị trường fullNameKana từ request
+					String fullNameKana = Common.formatString(request.getParameter("fullNameKana"), "");
+
+					// Lấy giá trị ngày tháng năm sinh từ request
+					String yearBirth = Common.formatString(request.getParameter("yearBirth"), "");
+					String monthBirth = Common.formatString(request.getParameter("monthBirth"), "");
+					String dayBirth = Common.formatString(request.getParameter("dayBirth"), "");
+					String dateBirth = yearBirth + "-" + monthBirth + "-" + dayBirth;
+
+					// Lấy giá trị email từ request
+					String email = Common.formatString(request.getParameter("email"), "");
+					// Lấy giá trị tel từ request
+					String tel = Common.formatString(request.getParameter("tel"), "");
+
+					// Lấy giá trị codeLevel từ request
+					String codeLevel = Common.formatString(request.getParameter("codeLevel"),
+							Constant.CODE_LEVEL_DEFAULT_VALUE);
+
+					// Lấy giá trị ngày tháng năm bắt đầu trình độ tiếng nhật từ
+					// request
+					String yearStart = Common.formatString(request.getParameter("yearStart"), "");
+					String monthStart = Common.formatString(request.getParameter("monthStart"), "");
+					String dayStart = Common.formatString(request.getParameter("dayStart"), "");
+					String dateStart = yearStart + "-" + monthStart + "-" + dayStart;
+
+					// Lấy giá trị ngày tháng năm trình độ tiếng nhật hết hạn từ
+					// request
+					String yearEnd = Common.formatString(request.getParameter("yearEnd"), "");
+					String monthEnd = Common.formatString(request.getParameter("monthEnd"), "");
+					String dayEnd = Common.formatString(request.getParameter("dayEnd"), "");
+					String dateEnd = yearEnd + "-" + monthEnd + "-" + dayEnd;
+
+					// Lấy giá trị tổng điểm từ request
+					String totalScore = Common.formatString(request.getParameter("totalScore"), "");
+
+					// Set các thuộc tính cho đối tượng UserInfor
+					userInfor.setUserId(userId);
+					userInfor.setLoginName(loginName);
+					userInfor.setGroupId(groupId);
+					userInfor.setFullName(fullName);
+					userInfor.setFullNameKana(fullNameKana);
+					userInfor.setBirthday(dateBirth);
+					userInfor.setEmail(email);
+					userInfor.setTel(tel);
+					userInfor.setCodeLevel(codeLevel);
+					userInfor.setStartDate(dateStart);
+					userInfor.setEndDate(dateEnd);
+					userInfor.setTotalScore(totalScore);
+				}
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			System.out.println(e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		// Trả về đối tượng UserInfor

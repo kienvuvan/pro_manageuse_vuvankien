@@ -62,7 +62,6 @@ public class LoginFilter implements Filter {
 				response.sendRedirect(Constant.LOGIN_URL1);
 			}
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
 			// Chuyển về màn hình lỗi
 			response.sendRedirect(Constant.ERROR_URL);
 		}

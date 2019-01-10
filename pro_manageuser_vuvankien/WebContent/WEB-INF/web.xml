@@ -78,7 +78,7 @@
 		<url-pattern>/editUserValidate.do</url-pattern>
 	</servlet-mapping>
 	
-	
+	<!-- Url xử lý chức năng sửa thông tin User -->
 	<servlet>
 		<servlet-name>editUserConfirm</servlet-name>
 		<servlet-class>manageuser.controller.EditUserConfirmController</servlet-class>
@@ -96,6 +96,26 @@
 	<servlet-mapping>
 		<servlet-name>addUserConfirm</servlet-name>
 		<url-pattern>/addUserConfirm.do</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Url xử lý chức năng xóa User trong CSDL -->
+	<servlet>
+		<servlet-name>deleteUserConfirm</servlet-name>
+		<servlet-class>manageuser.controller.DeleteUserConfirmController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>deleteUserConfirm</servlet-name>
+		<url-pattern>/deleteUserConfirm.do</url-pattern>
+	</servlet-mapping>
+	
+	<!-- Url xử lý chức năng thay đổi mật khẩu User trong CSDL -->
+	<servlet>
+		<servlet-name>changePass</servlet-name>
+		<servlet-class>manageuser.controller.ChangePassController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>changePass</servlet-name>
+		<url-pattern>/changePass.do</url-pattern>
 	</servlet-mapping>
 	
 	<!-- Url xử lý chức năng hiển thị chi tiết User -->

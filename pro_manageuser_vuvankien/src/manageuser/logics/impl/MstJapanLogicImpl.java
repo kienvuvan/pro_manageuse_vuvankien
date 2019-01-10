@@ -28,10 +28,12 @@ public class MstJapanLogicImpl implements MstJapanLogic {
 	@Override
 	public ArrayList<MstJapan> getAllMstJapn() throws ClassNotFoundException, SQLException {
 		try {
+			// Tạo đối tượng MstJapanDaoImpl
 			MstJapanDao mstJapanDaoImpl = new MstJapanDaoImpl();
+			// Trả về ArrayList<MstJapan>
 			return mstJapanDaoImpl.getAllMstJapan();
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 	}
@@ -44,10 +46,12 @@ public class MstJapanLogicImpl implements MstJapanLogic {
 	@Override
 	public String getNameLevelById(String codeLevel) throws ClassNotFoundException, SQLException {
 		try {
+			// Tạo đối tượng MstJapanDaoImpl
 			MstJapanDao mstJapanDaoImpl = new MstJapanDaoImpl();
+			// Trả về tên của trình độ tiếng Nhật
 			return mstJapanDaoImpl.getNameLevelById(codeLevel);
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// Ném ra 1 lỗi
 			throw e;
 		}
 	}
