@@ -25,7 +25,7 @@ public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 	private static final String GET_ALL_MST_JAPAN = "SELECT * FROM mst_japan";
 	// Câu lệnh truy vấn lấy ra tên của trình độ tiếng Nhật theo code_level
 	private static final String GET_NAME_LEVEL_BY_CODE_LEVEL = "SELECT name_level FROM mst_japan WHERE code_level = ?";
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -37,7 +37,7 @@ public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 		ArrayList<MstJapan> listAllMstJapan = new ArrayList<>();
 		try {
 			// Tạo kết nối với CSDL
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu kết nối thành công
 			if (connection != null) {
 				// Tạo câu lệnh truy vấn
@@ -56,11 +56,13 @@ public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 					listAllMstJapan.add(mstJapan);
 				}
 			}
-		// Nếu có lỗi
+			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("MstJapanDaoImpl : getAllMstJapan - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
-		// Đóng kết nối
+			// Đóng kết nối
 		} finally {
 			closeConnection();
 		}
@@ -78,7 +80,7 @@ public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 		String result = "";
 		try {
 			// Tạo kết nối với CSDL
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu kết nối thành công
 			if (connection != null) {
 				// Truyền câu lệnh truy vấn vào PreparedStatement
@@ -93,11 +95,13 @@ public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 					result = resultSet.getString(1);
 				}
 			}
-		// Nếu có lỗi
+			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("MstJapanDaoImpl : getNameLevelById - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
-		// Đóng kết nối
+			// Đóng kết nối
 		} finally {
 			closeConnection();
 		}

@@ -27,14 +27,20 @@ import manageuser.utils.Constant;
  *
  */
 public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
-	private static final String GET_USER_ADMIN_BY_ID = "SELECT pass, salt FROM tbl_user WHERE rule = 0 AND login_name = ?";
-	private static final String CHECK_EXITS_USERNAME = "SELECT COUNT(*) FROM tbl_user WHERE login_name = ?";
+	// Câu lệnh truy vấn lấy ra thông tin mật khẩu, salt của tài khoản admin với
+	// tên đăng nhập
+	private static final String GET_USER_ADMIN_BY_LOGIN_NAME = "SELECT pass, salt FROM tbl_user WHERE rule = ? AND BINARY login_name = ?";
+	// Câu lệnh kiểm tra tài khoản tồn tại
+	private static final String CHECK_EXITS_USERNAME = "SELECT user_id FROM tbl_user WHERE login_name = ?";
+	// Câu lệnh kiểm tra email tồn tại
 	private static final String CHECK_EXITS_EMAIL = "SELECT user_id FROM tbl_user WHERE email = ?";
+	// Câu lệnh lấy ra tổng số User
 	private static final String GET_TOTAL_USERS = "SELECT COUNT(*) as number " + "FROM tbl_user "
 			+ "INNER JOIN mst_group " + "ON mst_group.group_id = tbl_user.group_id "
 			+ "LEFT JOIN (tbl_detail_user_japan " + "INNER JOIN mst_japan "
 			+ "ON mst_japan.code_level = tbl_detail_user_japan.code_level ) "
 			+ "ON tbl_user.user_id = tbl_detail_user_japan.user_id WHERE 1=1 ";
+	// Câu lệnh lấy ra thông tin User
 	private static final String GET_LIST_USER = "SELECT tbl_user.user_id,tbl_user.full_name,tbl_user.birthday,"
 			+ "mst_group.group_name, tbl_user.email,tbl_user.tel, mst_japan.name_level, "
 			+ "tbl_detail_user_japan.end_date, tbl_detail_user_japan.total " + "FROM tbl_user "
@@ -42,11 +48,19 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			+ "LEFT JOIN (tbl_detail_user_japan "
 			+ "INNER JOIN mst_japan  ON mst_japan.code_level = tbl_detail_user_japan.code_level )"
 			+ " ON tbl_user.user_id = tbl_detail_user_japan.user_id WHERE 1=1 ";
+	// Câu lệnh truy vấn chèn thêm 1 đối tượng User vào trong bảng tbl_user
 	private static final String INSERT_USER = "INSERT INTO tbl_user(group_id, login_name,pass, full_name, full_name_kana, tel, email, birthday, rule,salt) VALUES(?,?,?,?,?,?,?,?,?,?);";
+	// Câu lệnh truy vấn sửa 1 đối tượng User vào trong bảng tbl_user với
+	// user_id truyền vào
 	private static final String EDIT_USER = "UPDATE tbl_user SET group_id = ?, full_name = ?, full_name_kana = ?, tel = ?, email = ?, birthday = ? WHERE user_id = ?";
+	// Câu lệnh truy vấn xóa đối tượng User trong bảng tbl_user
 	private static final String DELETE_USER = "DELETE FROM tbl_user WHERE user_id = ? AND rule != 0";
+	// Câu lệnh truy vấn thay đổi mật khẩu đối tượng User (cả admin) trong bảng
+	// tbl_user
 	private static final String CHANGE_PASSWORD = "UPDATE tbl_user SET pass = ?, salt = ? WHERE user_id = ?";
+	// Câu lệnh truy vấn kiểm tra tồn tại đối tượng User trong bảng tbl_user
 	private static final String CHECK_EXISTED_USER = "SELECT COUNT(*) FROM tbl_user WHERE user_id = ?";
+	// Câu lệnh truy vấn lấy thông tin UserInfor trong bảng tbl_user
 	private static final String GET_USERINFOR_BY_ID = "SELECT tbl_user.login_name,mst_group.group_id,mst_group.group_name,tbl_user.full_name,tbl_user.full_name_kana,"
 			+ "tbl_user.birthday,tbl_user.email,tbl_user.tel,mst_japan.code_level, mst_japan.name_level, "
 			+ "tbl_detail_user_japan.start_date,tbl_detail_user_japan.end_date, tbl_detail_user_japan.total, tbl_user.rule "
@@ -54,9 +68,11 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			+ "LEFT JOIN (tbl_detail_user_japan "
 			+ "INNER JOIN mst_japan  ON mst_japan.code_level = tbl_detail_user_japan.code_level )"
 			+ " ON tbl_user.user_id = tbl_detail_user_japan.user_id WHERE tbl_user.user_id = ?";
-
+	// Định dạng ngày tháng năm theo kiểu yyyy/MM/dd
 	private static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd");
+	// Định dạng ngày tháng năm theo kiểu yyyy-MM-dd
 	private static SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+	// Map chưa tên các cột của các bảng trong CSDL
 	private static HashMap<Integer, String> hashMapColumnSort = new HashMap<>();
 
 	/*
@@ -69,19 +85,23 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		TblUser tblUser = new TblUser();
 		try {
 			// Tạo kết nối với database
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu thành công
 			if (connection != null) {
 				// Tạo lệnh truy vấn lấy ra tài khoản có tên tài khoản tồn tại
 				// trong CSDL và có quyền admin
 				PreparedStatement preparedStatement = (PreparedStatement) connection
-						.prepareStatement(GET_USER_ADMIN_BY_ID);
-				preparedStatement.setString(1, username);
+						.prepareStatement(GET_USER_ADMIN_BY_LOGIN_NAME);
+				int index = 1;
+				// Set tham số rule cho câu lệnh truy vấn
+				preparedStatement.setInt(index++, Constant.RULE_ADMIN);
+				// Set tham số login_name cho câu lệnh truy vấn
+				preparedStatement.setString(index++, username);
 				// Trả về bản truy vấn
 				ResultSet resultSet = preparedStatement.executeQuery();
 				// Nếu tài khoản tồn tại
 				if (resultSet.next()) {
-					int index = 1;
+					index = 1;
 					// Lấy thông tin pass
 					tblUser.setPassword(resultSet.getString(index++));
 					// Lấy thông tin phần salt để tạo ra pass
@@ -90,7 +110,9 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			}
 			// Lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : getUserByLogIn - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
 		} finally {
@@ -109,7 +131,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	public int getTotalUsers(int groupId, String fullName) throws ClassNotFoundException, SQLException {
 		try {
 			// Tạo kết nối với CSDL
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu tạo kết nối thành công
 			if (connection != null) {
 				// Câu lệnh truy vấn tổng bản ghi
@@ -149,7 +171,9 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			}
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : getTotalUsers - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
 		} finally {
@@ -173,7 +197,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		ArrayList<UserInfor> listUserInfor = new ArrayList<>();
 		try {
 			// Tạo kết nối CSDL
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu kết nối thành công
 			if (connection != null) {
 				// Câu lệnh truy vấn lấy thông tin người dùng
@@ -256,7 +280,9 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			}
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : getListUsers - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
 		} finally {
@@ -314,9 +340,11 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 						+ getData(Constant.FULL_NAME_COLUMN) + " " + sortByFullName;
 				break;
 			}
-		// Nếu có lỗi
+			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : getOrderBy - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		// Trả về chuỗi sắp xếp
@@ -329,10 +357,10 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	 * @see manageuser.dao.TblUserDao#checkExitsUsername(java.lang.String)
 	 */
 	@Override
-	public boolean checkExitsUsername(String userName) throws ClassNotFoundException, SQLException {
+	public int checkExitsUsername(String userName) throws ClassNotFoundException, SQLException {
 		try {
 			// Tạo kết nối với database
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu thành công
 			if (connection != null) {
 				// Tạo lệnh truy vấn lấy ra tài khoản có tên tài khoản tồn tại
@@ -345,20 +373,21 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 				// Nếu tài khoản tồn tại
 				if (resultSet.next()) {
 					// Nếu tồn tại
-					if (resultSet.getInt(1) > 0) {
-						return true;
-					}
+					return resultSet.getInt(1);
 				}
 			}
-			// Lỗi
+			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : checkExitsUsername - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
 		} finally {
 			closeConnection();
 		}
-		return false;
+		// Trả về giá trị mặc định nếu loginName đó chưa có trong CSDL
+		return Constant.ID_NOT_EXISTED_LOGIN_NAME;
 	}
 
 	/*
@@ -370,7 +399,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	public int checkExitsEmail(String email) throws ClassNotFoundException, SQLException {
 		try {
 			// Tạo kết nối với database
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu thành công
 			if (connection != null) {
 				// Tạo lệnh truy vấn lấy ra tài khoản có tên tài khoản tồn tại
@@ -388,7 +417,9 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			}
 			// Lỗi
 		} catch (SQLException | ClassNotFoundException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : checkExitsEmail - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
 		} finally {
@@ -428,9 +459,11 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 					return (int) preparedStatement.getLastInsertID();
 				}
 			}
-			// Lỗi
+			// Nếu có lỗi
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : insertUser - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		return Constant.ERROR_EXCUTE_DATABASE;
@@ -445,7 +478,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	 */
 	public static String getData(String value) {
 		String result = "";
-		// Nếu value tồn tại trong HashMap 
+		// Nếu value tồn tại trong HashMap
 		if (hashMapColumnSort.containsValue(value)) {
 			result = value;
 		}
@@ -462,7 +495,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	public boolean checkExistedUser(int userId) throws ClassNotFoundException, SQLException {
 		try {
 			// Tạo kết nối với database
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu thành công
 			if (connection != null) {
 				// Tạo lệnh truy vấn kiểm tra người dùng có userId có tồn trong
@@ -484,11 +517,12 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			}
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : checkExistedUser - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
-		// Đóng connection
-		}finally {
+			// Đóng connection
+		} finally {
 			closeConnection();
 		}
 		return false;
@@ -505,7 +539,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 		UserInfor userInfor = new UserInfor();
 		try {
 			// Tạo kết nối với database
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu thành công
 			if (connection != null) {
 				// Tạo lệnh truy vấn lấy ra thông tin người dùng có userId
@@ -530,7 +564,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 					String nameLevel = resultSet.getString(index++);
 					Date startDate = resultSet.getDate(index++);
 					Date endDate = resultSet.getDate(index++);
-					int total = resultSet.getInt(index++);
+					String total = resultSet.getString(index++);
 					int rule = resultSet.getInt(index++);
 					// Set đối tượng UserInfor với các thông số lấy được
 					// Set thuộc tính userId
@@ -578,18 +612,19 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 						userInfor.setEndDate("");
 					}
 					// Set thuộc tính total
-					userInfor.setTotalScore(total + "");
+					userInfor.setTotalScore(Common.formatString(total, ""));
 					// Set thuộc tính rule
 					userInfor.setRule(rule);
 				}
 			}
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : getUserInforById - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
-		// Đóng connection
-		}finally {
+			// Đóng connection
+		} finally {
 			closeConnection();
 		}
 		// Trả về đối tượng UserInfor
@@ -625,7 +660,9 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			}
 			// Lỗi
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : editUser - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		return false;
@@ -652,9 +689,12 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			}
 			// Lỗi
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : deleteUser - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 		}
+		// Nếu là xóa admin thì trả về false
 		return false;
 	}
 
@@ -667,7 +707,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	public boolean changePassword(TblUser tblUser) throws ClassNotFoundException, SQLException {
 		try {
 			// Tạo kết nối CSDL
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu connection khác null
 			if (connection != null) {
 				// Tạo lệnh truy vấn xóa thông tin User trong trong CSDL
@@ -686,7 +726,9 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			}
 			// Lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblUserDaoImpl : changePassword - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		return false;

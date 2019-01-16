@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import manageuser.logics.TblUserLogic;
 import manageuser.logics.impl.TblUserLogicImpl;
@@ -32,6 +33,12 @@ public class ChangePassController extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -54,13 +61,22 @@ public class ChangePassController extends HttpServlet {
 				// thống đang lỗi
 				response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
 			}
+			// Nếu có lỗi
 		} catch (Exception e) {
+			// In ra lỗi
+			System.out.println("ChangePassController : doGet - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -81,29 +97,38 @@ public class ChangePassController extends HttpServlet {
 				ArrayList<String> messages = userValidate.validatePassword(password, passwordAgain);
 				// Nếu có lỗi
 				if (!messages.isEmpty()) {
-					// Set giá trị UserInfor lên request
-					request.setAttribute("password", password);
-					// Set thông báo lỗi lên request
-					request.setAttribute("passwordAgain", passwordAgain);
+					// Set lỗi lên request
+					request.setAttribute("messages", messages);
+					// Set userId lên request
+					request.setAttribute("userId", userId);
 					// Quay về màn hình ADM003
 					request.getRequestDispatcher(Constant.CHANGE_PASS).forward(request, response);
 					// Nếu không có lỗi
 				} else {
 					// Nếu thay đổi mật khẩu thành công
 					if (tblUserLogicImpl.changePassword(userId, password)) {
+						// Khởi tạo session
+						HttpSession session = request.getSession();
+						// Set giá trị trạng thái chuyển sang màn hình ADM006 là
+						// OK
+						session.setAttribute("from", Constant.ACCEPT);
+						// Thêm kiểu thực hiện thành công lên session
+						session.setAttribute("success", Constant.SUCCESS);
 						// Gọi đến url để chuyển tới màn hình thông báo
 						// ADM006.jsp
-						response.sendRedirect(Constant.MESSAGE + "?success=" + Constant.CHANGE_PASSWORD_SUCCESS);
+						response.sendRedirect(Constant.SUCCESS_URL + "?type=" + Constant.CHANGE_PASSWORD_SUCCESS);
 					}
 				}
 				// Nếu người dùng không tồn tại
 			} else {
-				// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ
-				// thống đang lỗi
+				// Chuyển đến màn hình lỗi System_Error.jsp với thông báo người
+				// dùng không tồn tại
 				response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
 			}
 			// Nếu có lỗi
 		} catch (Exception e) {
+			// In ra lỗi
+			System.out.println("ChangePassController : doPost - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);

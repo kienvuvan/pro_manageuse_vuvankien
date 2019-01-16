@@ -42,30 +42,19 @@ public class EditUserInputController extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		try {
-			// Lấy ra giá trị userId từ form của màn hình ADM005.jsp
-			String userIdRequest = request.getParameter("userId");
-			int userId;
-			// Nếu giá trị lấy được từ request không null
-			if (userIdRequest != null) {
-				// Chuyển giá trị nhận được về dạng số
-				userId = Common.convertNumberInteger(userIdRequest);
-				// Ngược lại, nếu không tồn tại tham số userId trên url
-				// (Trường hợp back từ ADM004.jsp)
-				// Lấy giá trị từ đối tượng UserInfor lưu trên session
-			} else {
-				// Khởi tạo đối tượng session
-				HttpSession session = request.getSession();
-				// Khởi tạo, gán giá trị cho sessionKey lấy giá trị từ request
-				String sessionKey = request.getParameter("session");
-				// Gán giá trị cho đối tượng userInfo
-				UserInfor userInfor = (UserInfor) session.getAttribute(sessionKey);
-				// Lấy ra giá trị userId
-				userId = userInfor.getUserId();
-			}
+			// Lấy ra giá trị userId từ request và chuyển giá trị nhận được về
+			// dạng số
+			int userId = Common.convertNumberInteger(request.getParameter("userId"));
 			// Tạo đối tượng TblUserLogicImpl
 			TblUserLogic tblUserLogicImpl = new TblUserLogicImpl();
 			// Kiểm tra nếu User tồn tại
@@ -87,12 +76,20 @@ public class EditUserInputController extends HttpServlet {
 				response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
 			}
 		} catch (Exception e) {
+			// In ra lỗi
+			System.out.println("EditUserInputController : doGet - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -128,6 +125,8 @@ public class EditUserInputController extends HttpServlet {
 					String keySession = Common.getKeySession(userInfor.getLoginName());
 					// Get đối tượng Session
 					HttpSession session = request.getSession();
+					// Set giá trị màn hình chuyển sang là từ ADM003
+					session.setAttribute("from", Constant.ADM003);
 					// Set giá trị UserInfor lên session
 					session.setAttribute(keySession, userInfor);
 					// Chuyển cho controller EditUserConfirmController xử lý
@@ -139,7 +138,10 @@ public class EditUserInputController extends HttpServlet {
 				// thống đang lỗi
 				response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
 			}
+			// Nếu có lỗi
 		} catch (Exception e) {
+			// In ra lỗi
+			System.out.println("EditUserInputController : doPost - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
@@ -185,6 +187,8 @@ public class EditUserInputController extends HttpServlet {
 			request.setAttribute("listDay", listDay);
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println("EditUserInputController : setDataLogicADM003 - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -215,6 +219,8 @@ public class EditUserInputController extends HttpServlet {
 				String sessionKey = request.getParameter("session");
 				// Gán giá trị cho đối tượng userInfo
 				userInfor = (UserInfor) session.getAttribute(sessionKey);
+				// Xóa đối tượng UserInfor trên session
+				session.removeAttribute(sessionKey);
 			} else {
 				// Lấy giá trị userId
 				int userId = Common.convertNumberInteger(request.getParameter("userId"));
@@ -241,7 +247,7 @@ public class EditUserInputController extends HttpServlet {
 					String yearBirth = Common.formatString(request.getParameter("yearBirth"), "");
 					String monthBirth = Common.formatString(request.getParameter("monthBirth"), "");
 					String dayBirth = Common.formatString(request.getParameter("dayBirth"), "");
-					String dateBirth = yearBirth + "-" + monthBirth + "-" + dayBirth;
+					String birthDay = yearBirth + "-" + monthBirth + "-" + dayBirth;
 
 					// Lấy giá trị email từ request
 					String email = Common.formatString(request.getParameter("email"), "");
@@ -275,7 +281,7 @@ public class EditUserInputController extends HttpServlet {
 					userInfor.setGroupId(groupId);
 					userInfor.setFullName(fullName);
 					userInfor.setFullNameKana(fullNameKana);
-					userInfor.setBirthday(dateBirth);
+					userInfor.setBirthday(birthDay);
 					userInfor.setEmail(email);
 					userInfor.setTel(tel);
 					userInfor.setCodeLevel(codeLevel);
@@ -285,6 +291,8 @@ public class EditUserInputController extends HttpServlet {
 				}
 			}
 		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println("EditUserInputController : getDefaultValue - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}

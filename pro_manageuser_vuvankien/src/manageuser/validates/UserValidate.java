@@ -45,12 +45,12 @@ public class UserValidate {
 		ArrayList<String> message = new ArrayList<>();
 		try {
 			// Nếu tên tài khoản trống
-			if ("".equals(username)) {
+			if (Common.isEmpty(username)) {
 				// Thêm thông báo lỗi tài khoản trống
 				message.add(MessageErrorProperties.getData("ER001_USERNAME"));
 			}
 			// Nếu mật khẩu trống
-			if ("".equals(password)) {
+			if (Common.isEmpty(password)) {
 				// Thêm thông báo lỗi mật khẩu trống
 				message.add(MessageErrorProperties.getData("ER001_PASSWORD"));
 			}
@@ -65,6 +65,8 @@ public class UserValidate {
 				}
 			}
 		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println("UserValidate : validateLogin - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -89,27 +91,46 @@ public class UserValidate {
 			TblUserLogic tblUserLogicImpl = new TblUserLogicImpl();
 			// Lấy giá trị userId
 			int userId = userInfor.getUserId();
-			// Nếu là trường hợp addUser thì mới check trường loginName
-			if (userId == Constant.ID_ADD_USER) {
-				// Check loginName
-				// Lấy giá trị loginName
-				String loginName = userInfor.getLoginName();
-				// Nếu loginName rỗng
-				if (Common.isEmpty(loginName)) {
-					// Thêm thông báo lỗi tài khoản trống
-					message.add(MessageErrorProperties.getData("ER001_USERNAME"));
-					// Nếu độ dài không nằm trong khoảng từ 6-15 ký tự
-				} else if (!Common.checkLengthLimit(Constant.MIN_LOGIN_NAME_LENGTH, Constant.MAX_LOGIN_NAME_LENGTH,
-						loginName)) {
-					// Thêm thông báo lỗi về độ dài
-					message.add(MessageErrorProperties.getData("ER007_USERNAME"));
-				} else if (!Common.checkFormatLoginName(loginName)) {
-					// Thêm thông báo lỗi tài khoản sai định dạng
-					message.add(MessageErrorProperties.getData("ER019_USERNAME"));
-					// Nếu tài khoản đã tồn tại
-				} else if (tblUserLogicImpl.checkExitsUsername(loginName)) {
-					// Thêm thông báo lỗi tài khoản đã tồn tại
-					message.add(MessageErrorProperties.getData("ER003_USERNAME"));
+			// Check loginName
+			// Lấy giá trị loginName
+			String loginName = userInfor.getLoginName();
+			// Nếu loginName rỗng
+			if (Common.isEmpty(loginName)) {
+				// Thêm thông báo lỗi tài khoản trống
+				message.add(MessageErrorProperties.getData("ER001_USERNAME"));
+				// Nếu độ dài không nằm trong khoảng từ 6-15 ký tự
+			} else if (!Common.checkLengthLimit(Constant.MIN_LOGIN_NAME_LENGTH, Constant.MAX_LOGIN_NAME_LENGTH,
+					loginName)) {
+				// Thêm thông báo lỗi về độ dài
+				message.add(MessageErrorProperties.getData("ER007_USERNAME"));
+			} else if (!Common.checkFormatLoginName(loginName)) {
+				// Thêm thông báo lỗi tài khoản sai định dạng
+				message.add(MessageErrorProperties.getData("ER019_USERNAME"));
+				// Nếu tài khoản đã tồn tại
+			} else {
+				// Lấy ra giá trị userId của loginName đó
+				int userIdOfLoginName = tblUserLogicImpl.checkExitsUsername(loginName);
+				// Nếu là trường hợp addUser
+				if (userId == Constant.ID_ADD_USER) {
+					// Nếu loginName đó tồn tại
+					if (userIdOfLoginName != Constant.ID_NOT_EXISTED_LOGIN_NAME) {
+						// Thêm thông báo lỗi tài khoản đã tồn tại
+						message.add(MessageErrorProperties.getData("ER003_USERNAME"));
+					}
+					// Ngược lại thì kiểm tra nếu loginName đó khác so với
+					// loginName cũ
+					// thì kiểm tra tồn tại, nếu không thay đổi thì không kiểm
+					// tra
+					// tồn tại
+				} else {
+					// Nếu loginName đó tồn tại và userId của loginName trong
+					// CSDL không
+					// phải của người đó
+					if (userIdOfLoginName != userInfor.getUserId()
+							&& userIdOfLoginName != Constant.ID_NOT_EXISTED_LOGIN_NAME) {
+						// Thêm thông báo lỗi loginName đã tồn tại
+						message.add(MessageErrorProperties.getData("ER003_USERNAME"));
+					}
 				}
 			}
 
@@ -181,13 +202,14 @@ public class UserValidate {
 				int userIdOfEmail = tblUserLogicImpl.checkExitsEmail(email);
 				// Nếu là trường hợp addUser thì kiểm tra email tồn tại
 				if (userId == Constant.ID_ADD_USER) {
-					// Nếu email tồn tạ
+					// Nếu email tồn tại
 					if (userIdOfEmail != Constant.ID_NOT_EXISTED_EMAIL) {
 						// Thêm thông báo lỗi email đã tồn tại
 						message.add(MessageErrorProperties.getData("ER003_EMAIL"));
 					}
 					// Ngược lại thì kiểm tra nếu email đó khác so với email cũ
-					// thì kiểm tra tồn tại nếu không khác thì không kiểm tra
+					// thì kiểm tra tồn tại, nếu không thay đổi thì không kiểm
+					// tra
 					// tồn tại
 				} else {
 					// Nếu email đó tồn tại và userId của email trong CSDL không
@@ -216,7 +238,8 @@ public class UserValidate {
 				message.add(MessageErrorProperties.getData("ER005_TEL"));
 			}
 
-			// Nếu là trường hợp addUser thì mới check trường loginName
+			// Nếu là trường hợp addUser thì mới check trường password và
+			// passwordAgain
 			if (userId == Constant.ID_ADD_USER) {
 				// Check password
 				// Lấy giá trị password
@@ -239,12 +262,8 @@ public class UserValidate {
 				// Check passwordAgain
 				// Lấy giá trị passwordAgain
 				String passwordAgain = userInfor.getPasswordAgain();
-				// Nếu passwordAgain trống
-				if (Common.isEmpty(passwordAgain)) {
-					// Thêm thông báo lỗi passwordAgain trống
-					message.add(MessageErrorProperties.getData("ER001_PASSWORD_AGAIN"));
-					// Nếu passwordAgain không trùng với password
-				} else if (!password.equals(passwordAgain)) {
+				// Nếu passwordAgain không trùng với password
+				if (!password.equals(passwordAgain)) {
 					// Thêm thông báo lỗi mật khẩu xác nhận không đúng
 					message.add(MessageErrorProperties.getData("ER017"));
 				}
@@ -295,13 +314,21 @@ public class UserValidate {
 				if (Common.isEmpty(totalScore)) {
 					// Thêm thông báo lỗi không nhập điểm tiếng Nhật
 					message.add(MessageErrorProperties.getData("ER001_TOTAL_SCORE"));
+					// Nếu độ dài không nằm trong khoảng từ 1-3
+				} else if (!Common.checkLengthLimit(Constant.MIN_TOTAL_SCORE, Constant.MAX_TOTAL_SCORE, totalScore)) {
+					// Thêm thông báo lỗi về độ dài
+					message.add(MessageErrorProperties.getData("ER007_SCORE"));
 					// Nếu điểm không phải là số HalfSize
 				} else if (!Common.checkNumberHalfSize(totalScore)) {
 					// Thêm lỗi không phải số HalfSize
 					message.add(MessageErrorProperties.getData("ER018_TOTAL_SCORE"));
 				}
 			}
+		// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println("UserValidate : validateUserInfor - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		return message;
@@ -336,12 +363,8 @@ public class UserValidate {
 		}
 
 		// Check passwordAgain
-		// Nếu passwordAgain trống
-		if (Common.isEmpty(passwordAgain)) {
-			// Thêm thông báo lỗi passwordAgain trống
-			message.add(MessageErrorProperties.getData("ER001_PASSWORD_AGAIN"));
-			// Nếu passwordAgain không trùng với password
-		} else if (!password.equals(passwordAgain)) {
+		// Nếu passwordAgain không trùng với password
+		if (!password.equals(passwordAgain)) {
 			// Thêm thông báo lỗi mật khẩu xác nhận không đúng
 			message.add(MessageErrorProperties.getData("ER017"));
 		}

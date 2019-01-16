@@ -11,41 +11,40 @@ package manageuser.utils;
  *
  */
 public class Constant {
-	// Đường dẫn URL root
-	public static final String ROOT_URL = "http://localhost:9090/pro_manageuser_vuvankien";
 	// Đường dẫn vào màn hình Login
-	public static final String LOGIN_URL = ROOT_URL + "/login.do";
-	// Đường dẫn link chạy file index.jsp
-	public static final String LOGIN_URL1 = ROOT_URL + "/index.jsp";
+	public static final String LOGIN_URL = "login.do";
 	// Đường dẫn chạy đến link hiển thị màn hình ADM002
-	public static final String LIST_USER_URL = ROOT_URL + "/listUser.do";
+	public static final String LIST_USER_URL = "listUser.do";
 	// Đường dẫn hiển thị màn hình ADM003
-	public static final String ADD_USER_INPUT = ROOT_URL + "/addUserInput.do";
+	public static final String ADD_USER_INPUT = "addUserInput.do";
 	// Đường dẫn hiển thị màn hình ADM004 với chức năng thêm User
-	public static final String ADD_USER_CONFIRMS = ROOT_URL + "/addUserConfirm.do";
+	public static final String ADD_USER_CONFIRMS = "addUserConfirm.do";
 	// Đường dẫn hiển thị màn hình ADM004 với chức năng cập nhật User
-	public static final String EDIT_USER_CONFIRMS = ROOT_URL + "/editUserConfirm.do";
+	public static final String EDIT_USER_CONFIRMS = "editUserConfirm.do";
 	// Đường dẫn hiển thị màn hình thông báo ADM006
-	public static final String MESSAGE = ROOT_URL + "/message.do";
+	public static final String SUCCESS_URL = "success.do";
 	// Đường dẫn hiển thị màn hình System_Error
-	public static final String ERROR_URL = ROOT_URL + "/error";
+	public static final String ERROR_URL = "error.do";
 
 	// Đường dẫn tương đối đến màn hình ADM001.jsp
-	public static final String VIEW_ADM001 = "/views/ADM001.jsp";
+	public static final String VIEW_ADM001 = "/views/jsp/ADM001.jsp";
 	// Đường dẫn tương đối đến màn hình ADM002.jsp
-	public static final String VIEW_ADM002 = "/views/ADM002.jsp";
+	public static final String VIEW_ADM002 = "/views/jsp/ADM002.jsp";
 	// Đường dẫn tương đối đến màn hình ADM003.jsp
-	public static final String VIEW_ADM003 = "/views/ADM003.jsp";
+	public static final String VIEW_ADM003 = "/views/jsp/ADM003.jsp";
 	// Đường dẫn tương đối đến màn hình ADM004.jsp
-	public static final String VIEW_ADM004 = "/views/ADM004.jsp";
+	public static final String VIEW_ADM004 = "/views/jsp/ADM004.jsp";
 	// Đường dẫn tương đối đến màn hình ADM005.jsp
-	public static final String VIEW_ADM005 = "/views/ADM005.jsp";
+	public static final String VIEW_ADM005 = "/views/jsp/ADM005.jsp";
 	// Đường dẫn tương đối đến màn hình ADM006.jsp
-	public static final String VIEW_ADM006 = "/views/ADM006.jsp";
+	public static final String VIEW_ADM006 = "/views/jsp/ADM006.jsp";
 	// Đường dẫn tương đối đến màn hình ChangePass.jsp
-	public static final String CHANGE_PASS = "/views/ChangePass.jsp";
+	public static final String CHANGE_PASS = "/views/jsp/ChangePass.jsp";
 	// Đường dẫn tương đối đến màn hình System_Error.jsp
-	public static final String VIEW_SYSTEM_ERROR = "/views/System_Error.jsp";
+	public static final String VIEW_SYSTEM_ERROR = "/views/jsp/System_Error.jsp";
+
+	// Tên màn hình ADM003
+	public static final String ADM003 = "ADM003";
 
 	// Tên các cột sort
 	public static final String FULL_NAME_COLUMN = "tbl_user.full_name";
@@ -78,6 +77,10 @@ public class Constant {
 
 	// Giá trị 0
 	public static final int NUMBER_ZERO = 0;
+	// Giá trị chuỗi rỗng
+	public static final String STRING_EMPTY = "";
+	// Giá trị trang hiện tại mặc định
+	public static final int PAGE_CURRENT_DEFAULT = 1;
 	// Chuỗi để sinh random chuỗi
 	public static final String STRING_RANDOM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
@@ -105,6 +108,10 @@ public class Constant {
 	public static final int MIN_PASSWORD_LENGTH = 8;
 	// Độ dài lớn nhất của password
 	public static final int MAX_PASSWORD_LENGTH = 15;
+	// Độ dài nhỏ nhất của totalScore
+	public static final int MIN_TOTAL_SCORE = 1;
+	// Độ dài lớn nhất của totalScore
+	public static final int MAX_TOTAL_SCORE = 3;
 	// Độ dài lớn nhất của chuỗi
 	public static final int MAX_LENGTH = 255;
 	// Giá trị không chọn codeLevel
@@ -116,8 +123,14 @@ public class Constant {
 	public static final int ERROR_EXCUTE_DATABASE = -1;
 	// Giá trị userId trả về khi email không tồn tại
 	public static final int ID_NOT_EXISTED_EMAIL = -1;
+	// Giá trị userId trả về khi loginName không tồn tại
+	public static final int ID_NOT_EXISTED_LOGIN_NAME = -1;
+	// Giá trị rule của admin
+	public static final int RULE_ADMIN = 0;
 	// Giá trị rule của user
 	public static final int RULE_USER = 1;
+	// Giá trị khi đường dẫn không tồn tại
+	public static final int NOT_FOUND_URL = 404;
 
 	// Thông báo thêm User thành công
 	public static final String ADD_USER_SUCCESS = "add_success";
@@ -128,10 +141,14 @@ public class Constant {
 	// Thông báo thay đổi mật khẩu User thành công
 	public static final String CHANGE_PASSWORD_SUCCESS = "change_password_success";
 
+	// Thực hiện thành công
+	public static final String SUCCESS = "success";
 	// Lỗi hệ thống
 	public static final String SYSTEM_ERROR = "system_error";
 	// Lỗi user không tồn tại
 	public static final String NOT_EXISTED_USER = "not_existed_user";
+	// Giá trị trạng thái chuyển sang màn hình khác là OK
+	public static final String ACCEPT = "ACCEPT";
 
 	// Giá trị userId trong trường hợp thêm người dùng
 	public static final int ID_ADD_USER = 0;

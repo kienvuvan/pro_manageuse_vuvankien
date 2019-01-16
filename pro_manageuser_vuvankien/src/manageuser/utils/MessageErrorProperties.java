@@ -30,7 +30,8 @@ public class MessageErrorProperties {
 					Thread.currentThread().getContextClassLoader().getResourceAsStream("messageerror.properties"),
 					"UTF-8"));
 		} catch (IOException e) {
-			e.getMessage();
+			// In ra lỗi
+			System.out.println("MessageErrorProperties : static - " + e.getMessage());
 		}
 		Enumeration<String> enumeration = (Enumeration<String>) properties.propertyNames();
 		while (enumeration.hasMoreElements()) {

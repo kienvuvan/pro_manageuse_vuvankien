@@ -28,8 +28,11 @@ public class SystemErrorController extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Phương thức thực hiện chuyển đến trang System_Error.jsp
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -40,12 +43,14 @@ public class SystemErrorController extends HttpServlet {
 			// Biến kiểu lỗi
 			String errorMessage = "";
 			// Nếu lỗi là user không tồn tại
-			if(Constant.NOT_EXISTED_USER.equals(typeError)){
-				// Lấy giá trị câu thông báo lỗi user không tồn tại trong file messageerror.properties
+			if (Constant.NOT_EXISTED_USER.equals(typeError)) {
+				// Lấy giá trị câu thông báo lỗi user không tồn tại trong file
+				// messageerror.properties
 				errorMessage = MessageErrorProperties.getData("ER013");
-			// Ngược lại nếu lỗi là lỗi hệ thống
-			}else{
-				// Lấy giá trị câu thông báo lỗi hệ thống đang lỗi trong file messageerror.properties
+				// Ngược lại nếu lỗi là lỗi hệ thống
+			} else {
+				// Lấy giá trị câu thông báo lỗi hệ thống đang lỗi trong file
+				// messageerror.properties
 				errorMessage = MessageErrorProperties.getData("ER015");
 			}
 			request.setAttribute("errorMessage", errorMessage);
@@ -54,8 +59,12 @@ public class SystemErrorController extends HttpServlet {
 					.getRequestDispatcher(Constant.VIEW_SYSTEM_ERROR);
 			// Chuyển đến trang xử lý lỗi
 			requestDispatcher.forward(request, response);
+			// Nếu có lỗi
 		} catch (Exception e) {
-			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			// In ra lỗi
+			System.out.println("SystemErrorController : doGet - " + e.getMessage());
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
+			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}

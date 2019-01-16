@@ -36,50 +36,82 @@ public class EditUserConfirmController extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		try {
 			// Khởi tạo session
 			HttpSession session = request.getSession();
+			// Lấy giá trị màn hình đi tới ADM004
+			String from = (String) session.getAttribute("from");
+			// Xóa session chứa giá trị màn hình đi tới ADM004
+			session.removeAttribute("from");
 			// Lấy ra giá trị keySession
 			String keySession = Common.formatString(request.getParameter("session"), "");
-			UserInfor userInfor;
-			// Lấy ra đối tượng UserInfor trên session
-			userInfor = (UserInfor) session.getAttribute(keySession);
-			// Nếu đối tượng không có trên session
-			if (userInfor == null) {
-				// Khởi tạo đối tượng
-				userInfor = new UserInfor();
+			// Nếu màn hình đi tới là màn hình ADM003
+			if (Constant.ADM003.equals(from)) {
+				// Lấy ra đối tượng UserInfor trên session
+				UserInfor userInfor = (UserInfor) session.getAttribute(keySession);
+				// Nếu đối tượng UserInfor tồn tại trên session
+				if (userInfor != null) {
+					// Khởi tạo đối tượng MstGroupLogicImpl
+					MstGroupLogic mstGroupLogicImpl = new MstGroupLogicImpl();
+					// Lấy ra giá trị tên nhóm từ giá trị groupId
+					String groupName = mstGroupLogicImpl.getGroupNameById(userInfor.getGroupId());
+					// Khởi tạo đối tượng MstJapanLogicImpl
+					MstJapanLogic mstJapanLogicImpl = new MstJapanLogicImpl();
+					// Lấy ra giá trị tên trình độ tiếng Nhật từ codLevel
+					String nameLevel = mstJapanLogicImpl.getNameLevelById(userInfor.getCodeLevel());
+					// Set giá trị groupName cho userInfor
+					userInfor.setNameLevel(nameLevel);
+					// Set giá trị nameLevel cho userInfor
+					userInfor.setGroupName(groupName);
+					// Set kiểu hiển thị màn hình ADM004.jsp lên request
+					request.setAttribute("typeShow", Constant.TYPE_EDIT_USER);
+					// Set keySession lên request
+					request.setAttribute("keySession", keySession);
+					// Set userInfor lên request
+					request.setAttribute("userInfor", userInfor);
+					// Chuyển đến màn hình ADM004
+					request.getRequestDispatcher(Constant.VIEW_ADM004).forward(request, response);
+					// Nếu không được chuyển từ màn hình ADM003.jsp sang thì
+					// chuyển
+					// đến trang SysstemError với lỗi người dùng không tồn tại
+				} else {
+					// Chuyển đến màn hình lỗi System_Error.jsp với thông báo
+					// người
+					// dùng không tồn tại
+					response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
+				}
+				// Ngược lại, nếu không đi từ ADM003
 			} else {
-				// Khởi tạo đối tượng MstGroupLogicImpl
-				MstGroupLogic mstGroupLogicImpl = new MstGroupLogicImpl();
-				// Lấy ra giá trị tên nhóm từ giá trị groupId
-				String groupName = mstGroupLogicImpl.getGroupNameById(userInfor.getGroupId());
-				// Khởi tạo đối tượng MstJapanLogicImpl
-				MstJapanLogic mstJapanLogicImpl = new MstJapanLogicImpl();
-				// Lấy ra giá trị tên trình độ tiếng Nhật từ codLevel
-				String nameLevel = mstJapanLogicImpl.getNameLevelById(userInfor.getCodeLevel());
-				// Set giá trị groupName cho userInfor
-				userInfor.setNameLevel(nameLevel);
-				// Set giá trị nameLevel cho userInfor
-				userInfor.setGroupName(groupName);
+				// Xóa đối tượng UserInfor trên session
+				session.removeAttribute(keySession);
+				// Chuyển đến màn hình ADM002
+				response.sendRedirect(Constant.LIST_USER_URL);
 			}
-			// Set kiểu hiển thị màn hình ADM004.jsp lên request
-			request.setAttribute("typeShow", Constant.TYPE_EDIT_USER);
-			// Set keySession lên request
-			request.setAttribute("keySession", keySession);
-			// Set userInfor lên request
-			request.setAttribute("userInfor", userInfor);
-			// Chuyển đến màn hình ADM004
-			request.getRequestDispatcher(Constant.VIEW_ADM004).forward(request, response);
+			// Nếu có lỗi
 		} catch (Exception e) {
+			// In ra lỗi
+			System.out.println("EditUserConfirmController : doGet - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -90,6 +122,8 @@ public class EditUserConfirmController extends HttpServlet {
 			String keySession = request.getParameter("session");
 			// Lấy giá trị userInfor từ session
 			UserInfor userInfor = (UserInfor) session.getAttribute(keySession);
+			// Xóa thông tin UserInfor trên session
+			session.removeAttribute(keySession);
 			// Khởi tạo đối tượng TblUserLogicImpl
 			TblUserLogic tblUserLogicImpl = new TblUserLogicImpl();
 			// Lấy ra giá trị userId
@@ -107,9 +141,14 @@ public class EditUserConfirmController extends HttpServlet {
 					boolean existedDetailUserJapan = tblDetailUserJapanLogicImpl.checkExistedDetailUserJapan(userId);
 					// Nếu cập nhật thông tin người dùng thành công
 					if (tblUserLogicImpl.updateUser(userInfor, existedDetailUserJapan)) {
+						// Set giá trị trạng thái chuyển sang màn hình ADM006 là
+						// OK
+						session.setAttribute("from", Constant.ACCEPT);
+						// Thêm kiểu thực hiện thành công lên session
+						session.setAttribute("success", Constant.SUCCESS);
 						// Gọi đến url để chuyển tới màn hình thông báo
 						// ADM006.jsp
-						response.sendRedirect(Constant.MESSAGE + "?success=" + Constant.EDIT_USER_SUCCESS);
+						response.sendRedirect(Constant.SUCCESS_URL + "?type=" + Constant.EDIT_USER_SUCCESS);
 					}
 				}
 				// Nếu người dùng không tồn tại trong CSDL
@@ -118,9 +157,10 @@ public class EditUserConfirmController extends HttpServlet {
 				// thống đang lỗi
 				response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
 			}
-			// Xóa thông tin UserInfor trên session
-			session.removeAttribute(keySession);
+			// Nếu có lỗi
 		} catch (Exception e) {
+			// In ra lỗi
+			System.out.println("EditUserConfirmController : doPost - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
