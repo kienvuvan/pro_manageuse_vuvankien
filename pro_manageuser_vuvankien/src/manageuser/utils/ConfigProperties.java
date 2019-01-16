@@ -29,7 +29,8 @@ public class ConfigProperties {
 			properties.load(new InputStreamReader(
 					Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties"), "UTF-8"));
 		} catch (IOException e) {
-			e.getMessage();
+			// In ra lỗi
+			System.out.println("ConfigProperties : static - " + e.getMessage());
 		}
 		Enumeration<String> enumeration = (Enumeration<String>) properties.propertyNames();
 		while (enumeration.hasMoreElements()) {

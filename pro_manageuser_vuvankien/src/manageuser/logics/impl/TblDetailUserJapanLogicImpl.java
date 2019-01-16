@@ -12,6 +12,7 @@ import manageuser.logics.TblDetailUserJapanLogic;
 
 /**
  * thực hiện các chức năng logic với đối tượng TblDetailUserJapan
+ * 
  * @author kien vu
  *
  */
@@ -28,9 +29,12 @@ public class TblDetailUserJapanLogicImpl implements TblDetailUserJapanLogic {
 		try {
 			// Tạo đối tượng TblDetailUserJapanDaoImpl
 			TblDetailUserJapanDao tblDetailUserJapanDaoImpl = new TblDetailUserJapanDaoImpl();
-			// Trả về giá trị khi kiểm tra người dùng có thông tin chi tiết hay không?
+			// Trả về giá trị khi kiểm tra người dùng có thông tin chi tiết hay
+			// không?
 			return tblDetailUserJapanDaoImpl.checkExistedDetailUser(userId);
 		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println("MstJapanLogicImpl : checkExistedDetailUserJapan - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}

@@ -40,6 +40,12 @@ public class AddUserInputController extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -56,13 +62,22 @@ public class AddUserInputController extends HttpServlet {
 			request.setAttribute("typeShow", Constant.TYPE_ADD_USER);
 			// Chuyển đến màn hình ADM003.jsp
 			request.getRequestDispatcher(Constant.VIEW_ADM003).forward(request, response);
+			// Nếu có lỗi
 		} catch (Exception e) {
+			// In ra lỗi
+			System.out.println("AddUserInputController : doGet - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -91,12 +106,17 @@ public class AddUserInputController extends HttpServlet {
 				String keySession = Common.getKeySession(userInfor.getLoginName());
 				// Get đối tượng Session
 				HttpSession session = request.getSession();
+				// Set giá trị màn hình chuyển sang là từ ADM003
+				session.setAttribute("from", Constant.ADM003);
 				// Set giá trị UserInfor lên session
 				session.setAttribute(keySession, userInfor);
 				// Chuyển cho controller AddUserConfirmController xử lý tiếp
 				response.sendRedirect(Constant.ADD_USER_CONFIRMS + "?session=" + keySession);
 			}
+			// Nếu có lỗi
 		} catch (Exception e) {
+			// In ra lỗi
+			System.out.println("AddUserInputController : doPost - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
@@ -142,6 +162,8 @@ public class AddUserInputController extends HttpServlet {
 			request.setAttribute("listDay", listDay);
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println("AddUserInputController : setDataLogicADM003 - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -175,7 +197,7 @@ public class AddUserInputController extends HttpServlet {
 			String yearBirth = Common.formatString(request.getParameter("yearBirth"), "");
 			String monthBirth = Common.formatString(request.getParameter("monthBirth"), "");
 			String dayBirth = Common.formatString(request.getParameter("dayBirth"), "");
-			String dateBirth = yearBirth + "-" + monthBirth + "-" + dayBirth;
+			String birthday = yearBirth + "-" + monthBirth + "-" + dayBirth;
 
 			// Lấy giá trị email từ request
 			String email = Common.formatString(request.getParameter("email"), "");
@@ -208,18 +230,31 @@ public class AddUserInputController extends HttpServlet {
 			String totalScore = Common.formatString(request.getParameter("totalScore"), "");
 
 			// Set các thuộc tính cho đối tượng UserInfor
+			// Set giá trị loginName cho đối tượng UserInfor
 			userInfor.setLoginName(loginName);
+			// Set giá trị groupId cho đối tượng UserInfor
 			userInfor.setGroupId(groupId);
+			// Set giá trị fullName cho đối tượng UserInfor
 			userInfor.setFullName(fullName);
+			// Set giá trị fullNameKana cho đối tượng UserInfor
 			userInfor.setFullNameKana(fullNameKana);
-			userInfor.setBirthday(dateBirth);
+			// Set giá trị birthday cho đối tượng UserInfor
+			userInfor.setBirthday(birthday);
+			// Set giá trị email cho đối tượng UserInfor
 			userInfor.setEmail(email);
+			// Set giá trị tel cho đối tượng UserInfor
 			userInfor.setTel(tel);
+			// Set giá trị password cho đối tượng UserInfor
 			userInfor.setPassword(password);
+			// Set giá trị passwordAgain cho đối tượng UserInfor
 			userInfor.setPasswordAgain(passwordAgain);
+			// Set giá trị codeLevel cho đối tượng UserInfor
 			userInfor.setCodeLevel(codeLevel);
+			// Set giá trị startDate cho đối tượng UserInfor
 			userInfor.setStartDate(dateStart);
+			// Set giá trị endDate cho đối tượng UserInfor
 			userInfor.setEndDate(dateEnd);
+			// Set giá trị totalScore cho đối tượng UserInfor
 			userInfor.setTotalScore(totalScore);
 		} else if (Constant.TYPE_BACK_ADM003.equals(typeShow)) {
 			// Khởi tạo đối tượng session
@@ -228,6 +263,8 @@ public class AddUserInputController extends HttpServlet {
 			String sessionKey = request.getParameter("session");
 			// Gán giá trị cho đối tượng userInfo
 			userInfor = (UserInfor) session.getAttribute(sessionKey);
+			// Xóa đối tượng UserInfor trên session
+			session.removeAttribute(sessionKey);
 		}
 		// Trả về đối tượng UserInfor
 		return userInfor;

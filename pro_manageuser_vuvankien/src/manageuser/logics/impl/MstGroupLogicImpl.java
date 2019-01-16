@@ -33,6 +33,8 @@ public class MstGroupLogicImpl implements MstGroupLogic {
 			// Trả về ArrayList<MstGroup>
 			return mstGroupDaoImpl.getAllGroups();
 		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println("MstGroupLogicImpl : getAllGroups - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -51,6 +53,8 @@ public class MstGroupLogicImpl implements MstGroupLogic {
 			// Trả về tên group
 			return mstGroupDaoImpl.getGroupNameById(groupId);
 		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println("MstGroupLogicImpl : getGroupNameById - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}

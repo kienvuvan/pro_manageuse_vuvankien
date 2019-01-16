@@ -53,8 +53,10 @@ public class CharacterEnCodingFilter implements Filter {
 			// Set định dạng UTF-8 cho response
 			response.setCharacterEncoding("UTF-8");
 			filterChain.doFilter(servletRequest, servletResponse);
-		// Nếu có lỗi
+			// Nếu có lỗi
 		} catch (Exception e) {
+			// In ra lỗi
+			System.out.println("CharacterEnCodingFilter : doFilter - " + e.getMessage());
 			// Chuyển về màn hình lỗi
 			response.sendRedirect(Constant.ERROR_URL);
 		}

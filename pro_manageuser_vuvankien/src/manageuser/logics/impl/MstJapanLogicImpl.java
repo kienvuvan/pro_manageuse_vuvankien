@@ -33,6 +33,8 @@ public class MstJapanLogicImpl implements MstJapanLogic {
 			// Trả về ArrayList<MstJapan>
 			return mstJapanDaoImpl.getAllMstJapan();
 		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println("MstJapanLogicImpl : getAllMstJapn - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -51,6 +53,8 @@ public class MstJapanLogicImpl implements MstJapanLogic {
 			// Trả về tên của trình độ tiếng Nhật
 			return mstJapanDaoImpl.getNameLevelById(codeLevel);
 		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println("MstJapanLogicImpl : getNameLevelById - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}

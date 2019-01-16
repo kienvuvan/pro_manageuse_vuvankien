@@ -27,11 +27,11 @@ public class LogoutController extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Phương thức thực hiện xóa session và chuyển về trang đăng nhập hệ thống
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param request
-	 * @param response
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -42,8 +42,12 @@ public class LogoutController extends HttpServlet {
 			session.invalidate();
 			// Chuyển về màn hình login
 			response.sendRedirect(Constant.LOGIN_URL);
+			// Nếu có lỗi
 		} catch (Exception e) {
-			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			// In ra lỗi
+			System.out.println("LogoutController : doGet - " + e.getMessage());
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
+			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}

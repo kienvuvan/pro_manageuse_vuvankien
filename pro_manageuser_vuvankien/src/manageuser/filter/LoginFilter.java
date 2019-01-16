@@ -47,21 +47,31 @@ public class LoginFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
 			throws IOException, ServletException {
+		// Lấy ra đối tượng HttpServletResponse
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
 		try {
+			// Lấy ra đối tượng HttpServletRequest
 			HttpServletRequest request = (HttpServletRequest) servletRequest;
+			// Lấy ra đối tượng Session
 			HttpSession session = request.getSession(true);
-			String loginRequest = request.getRequestURL().toString();
-			// Nếu đường dẫn đến file index.jsp hoặc đường dẫn đến trang đăng
-			// nhập hoặc người dùng đã đăng nhập thì cho qua
-			if (loginRequest.equals(Constant.LOGIN_URL) || loginRequest.equals(Constant.LOGIN_URL1)
-					|| Common.checkLogin(session)) {
+			// Lấy ra đường dẫn login
+			String loginRequest = request.getRequestURI().toString();
+			// Lấy ra đường dẫn thư mục gốc
+			String contextPath = request.getContextPath() + "/";
+			// Nếu đường dẫn đến trang đăng nhập hoặc người dùng đã đăng nhập
+			// hoặc nếu đường dẫn không tồn tại thì cho qua
+			if (loginRequest.equals(contextPath + Constant.LOGIN_URL) || Common.checkLogin(session)
+					|| response.getStatus() == Constant.NOT_FOUND_URL) {
 				filterChain.doFilter(servletRequest, servletResponse);
-				// Ngược lại chuyển về màn hình đăng nhập
+				// Ngược lại nếu là đường dẫn tồn tại nhưng admin chưa đăng nhập
 			} else {
-				response.sendRedirect(Constant.LOGIN_URL1);
+				// Chuyển về màn hình đăng nhập
+				response.sendRedirect(Constant.LOGIN_URL);
 			}
+			// Nếu có lỗi xảy ra
 		} catch (Exception e) {
+			// In ra lỗi
+			System.out.println("CharacterEnCodingFilter : doFilter - " + e.getMessage());
 			// Chuyển về màn hình lỗi
 			response.sendRedirect(Constant.ERROR_URL);
 		}
@@ -75,7 +85,6 @@ public class LoginFilter implements Filter {
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 		// TODO Auto-generated method stub
-
 	}
 
 }

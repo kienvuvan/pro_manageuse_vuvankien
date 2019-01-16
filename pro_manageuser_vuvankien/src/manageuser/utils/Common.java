@@ -108,13 +108,15 @@ public class Common {
 			// trả về true
 			if (usernameLogin != null && tblUserLogic.getUserByLogIn(usernameLogin).getSalt() != null) {
 				return true;
+			} else {
+				return false;
 			}
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("Common : checkLogin - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
-		return false;
 	}
 
 	/**
@@ -199,11 +201,12 @@ public class Common {
 	}
 
 	/**
-	 * Phương thức kiểm tra định dạng trang có phải là số 0
+	 * Phương thức chuyển định dạng 1 chuỗi về 1 số nguyên
 	 * 
 	 * @param page
 	 *            Chuỗi định dạng cần kiểm tra
-	 * @return giá trị int của số trang. Nếu page không phải số thì trả về 0
+	 * @return giá trị int của số chuỗi. Nếu chuỗi không phải số thì trả về -1,
+	 *         nếu chuỗi null thì trả về 0
 	 */
 	public static int convertNumberInteger(String input) {
 		int result = -1;
@@ -401,7 +404,7 @@ public class Common {
 	public static boolean isEmpty(String input) {
 		// Nếu chuỗi rỗng
 		if ("".equals(input)) {
-			// Trả về tru
+			// Trả về true
 			return true;
 			// Ngược lại, chuỗi không phải rỗng
 		} else {
@@ -590,6 +593,8 @@ public class Common {
 			tblUser.setSalt(salt);
 			// Nếu có lỗi tạo salt
 		} catch (NoSuchAlgorithmException e) {
+			// In ra lỗi
+			System.out.println("Common : creatTblUserFromUserInfor - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}

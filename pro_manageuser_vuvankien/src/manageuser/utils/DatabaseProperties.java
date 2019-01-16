@@ -30,7 +30,8 @@ public class DatabaseProperties {
 					Thread.currentThread().getContextClassLoader().getResourceAsStream("database.properties"),
 					"UTF-8"));
 		} catch (IOException e) {
-			e.getMessage();
+			// In ra lỗi
+			System.out.println("DatabaseProperties : static - " + e.getMessage());
 		}
 		Enumeration<String> enumeration = (Enumeration<String>) properties.propertyNames();
 		while (enumeration.hasMoreElements()) {

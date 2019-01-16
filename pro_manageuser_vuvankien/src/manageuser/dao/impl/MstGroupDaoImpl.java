@@ -37,7 +37,7 @@ public class MstGroupDaoImpl extends BaseDaoImpl implements MstGroupDao {
 		ArrayList<MstGroup> listAllMstGroup = new ArrayList<>();
 		try {
 			// Tạo kết nối với CSDL
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu kết nối thành công
 			if (connection != null) {
 				// Truyền câu lệnh truy vấn vào trong PreparedStatement
@@ -59,10 +59,11 @@ public class MstGroupDaoImpl extends BaseDaoImpl implements MstGroupDao {
 			}
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("MstGroupDaoImpl : getAllGroups - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
-		// Đóng kết nối
+			// Đóng kết nối
 		} finally {
 			closeConnection();
 		}
@@ -78,9 +79,9 @@ public class MstGroupDaoImpl extends BaseDaoImpl implements MstGroupDao {
 	@Override
 	public String getGroupNameById(int groupId) throws ClassNotFoundException, SQLException {
 		String result = "";
-		// Tạo kết nối với CSDL
 		try {
-			connection = connectDatabase();
+			// Tạo kết nối với CSDL
+			connectDatabase();
 			// Nếu kết nối thành công
 			if (connection != null) {
 				// Truyền câu lệnh truy vấn vào trong PreparedStatement
@@ -97,7 +98,9 @@ public class MstGroupDaoImpl extends BaseDaoImpl implements MstGroupDao {
 			}
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("MstGroupDaoImpl : getGroupNameById - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
 		} finally {

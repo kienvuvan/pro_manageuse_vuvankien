@@ -21,11 +21,14 @@ import manageuser.entities.TblDetailUserJapan;
  */
 public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailUserJapanDao {
 
-	// Câu lệnh truy vấn thêm thông tin chi tiết người dùng vào bảng tbl_detail_user_japan trong CSDL
+	// Câu lệnh truy vấn thêm thông tin chi tiết người dùng vào bảng
+	// tbl_detail_user_japan trong CSDL
 	private static final String INSERT_DETAIL_USER = "INSERT INTO tbl_detail_user_japan(user_id,code_level,start_date,end_date,total) VALUES(?,?,?,?,?);";
-	// Câu lệnh truy vấn sửa thông tin chi tiết người dùng của bảng tbl_detail_user_japan trong CSDL
+	// Câu lệnh truy vấn sửa thông tin chi tiết người dùng của bảng
+	// tbl_detail_user_japan trong CSDL
 	private static final String EDIT_DETAIL_USER = "UPDATE tbl_detail_user_japan SET code_level = ?, start_date = ?, end_date = ?, total = ? WHERE user_id = ?";
-	// Câu lệnh truy vấn xóa thông tin chi tiết người dùng của bảng tbl_detail_user_japan trong CSDL
+	// Câu lệnh truy vấn xóa thông tin chi tiết người dùng của bảng
+	// tbl_detail_user_japan trong CSDL
 	private static final String DELETE_DETAIL_USER = "DELETE FROM tbl_detail_user_japan WHERE user_id = ?";
 	// Câu lệnh truy vấn kiểm tra người dùng có thông tin chi tiết không?
 	private static final String CHECK_EXISTED_DETAIL_USER = "SELECT user_id FROM tbl_detail_user_japan WHERE user_id = ?";
@@ -59,7 +62,9 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			}
 			// Nếu có lỗi
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblDetailUserJapanDaoImpl : insertDetailUserJapan - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		return false;
@@ -74,33 +79,39 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 	public boolean checkExistedDetailUser(int userId) throws ClassNotFoundException, SQLException {
 		try {
 			// Tạo kết nối với CSDL
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu kết nối không null
 			if (connection != null) {
 				// Tạo lệnh truy vấn thêm chi tiết User vào trong CSDL
-				PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(CHECK_EXISTED_DETAIL_USER);
+				PreparedStatement preparedStatement = (PreparedStatement) connection
+						.prepareStatement(CHECK_EXISTED_DETAIL_USER);
 				// Gán các giá trị cho các tham số trong câu lệnh truy vấn
 				preparedStatement.setInt(1, userId);
 				// Trả về danh sách các bản ghi khi thực hiện truy vấn
 				ResultSet resultSet = preparedStatement.executeQuery();
 				// Nếu tồn tại bản ghi
-				if(resultSet.next()){
+				if (resultSet.next()) {
 					return true;
 				}
 			}
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblDetailUserJapanDaoImpl : checkExistedDetailUser - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
-		// Đóng connection
-		}finally {
+			// Đóng connection
+		} finally {
 			closeConnection();
 		}
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see manageuser.dao.TblDetailUserJapanDao#editDetailUserJapan(manageuser.entities.TblDetailUserJapan)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see manageuser.dao.TblDetailUserJapanDao#editDetailUserJapan(manageuser.
+	 * entities.TblDetailUserJapan)
 	 */
 	@Override
 	public boolean editDetailUserJapan(TblDetailUserJapan tblDetailUserJapan) throws SQLException {
@@ -123,14 +134,20 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			}
 			// Nếu có lỗi
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblDetailUserJapanDaoImpl : editDetailUserJapan - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see manageuser.dao.TblDetailUserJapanDao#deleteDetailUserJapan(manageuser.entities.TblDetailUserJapan)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * manageuser.dao.TblDetailUserJapanDao#deleteDetailUserJapan(manageuser.
+	 * entities.TblDetailUserJapan)
 	 */
 	@Override
 	public boolean deleteDetailUserJapan(int userId) throws SQLException {
@@ -149,7 +166,9 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			}
 			// Nếu có lỗi
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("TblDetailUserJapanDaoImpl : deleteDetailUserJapan - " + e.getMessage());
+			// Ném ra 1 lỗi
 			throw e;
 		}
 		return false;

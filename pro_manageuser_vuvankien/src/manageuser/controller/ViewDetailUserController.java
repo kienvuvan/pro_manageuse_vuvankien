@@ -11,13 +11,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import manageuser.entities.UserInfor;
 import manageuser.logics.TblUserLogic;
 import manageuser.logics.impl.TblUserLogicImpl;
 import manageuser.utils.Common;
 import manageuser.utils.Constant;
+import manageuser.utils.MessageProperties;
 
 /**
  * Class dùng để lấy thông tin chi tiết người dùng và chuyển cho màn hình
@@ -33,6 +33,12 @@ public class ViewDetailUserController extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -47,25 +53,26 @@ public class ViewDetailUserController extends HttpServlet {
 				UserInfor userInfor = tblUserLogicImpl.getUserInforById(userId);
 				// Set đối tượng UserInfor lên request
 				request.setAttribute("userInfor", userInfor);
-				// Khởi tạo Session
-				HttpSession session = request.getSession();
-				// Khởi tạo keySession
-				String keySession = Common.getKeySession(userId+"");
-				// Set giá trị userId lên session
-				session.setAttribute(keySession, userId);
-				// Truyền keySession lên request
-				request.setAttribute("keySession", keySession);
-				// Thực hiện lấy đường dấn đến màn hình hiển thị thông tin người dùng
-				RequestDispatcher requestDispatcher = this.getServletContext().getRequestDispatcher(Constant.VIEW_ADM005);
+				// Truyền câu thông báo xóa người dùng
+				request.setAttribute("messageDelete", MessageProperties.getData("MSG004"));
+				// Thực hiện lấy đường dấn đến màn hình hiển thị thông tin người
+				// dùng
+				RequestDispatcher requestDispatcher = this.getServletContext()
+						.getRequestDispatcher(Constant.VIEW_ADM005);
 				// Chuyển đến trang xử lý lỗi
 				requestDispatcher.forward(request, response);
-			// Nếu user đó không tồn tại hoặc là admin
-			}else{
-				// Chuyển đến màn hình lỗi System_Error.jsp với thông báo user không tồn tại
+				// Nếu user đó không tồn tại hoặc là admin
+			} else {
+				// Chuyển đến màn hình lỗi System_Error.jsp với thông báo user
+				// không tồn tại
 				response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
 			}
+			// Nếu có lỗi
 		} catch (Exception e) {
-			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			// In ra lỗi
+			System.out.println("ViewDetailUserController : doGet - " + e.getMessage());
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
+			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}

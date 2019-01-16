@@ -37,6 +37,12 @@ public class ListUserController extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -58,15 +64,15 @@ public class ListUserController extends HttpServlet {
 			// Danh sách User
 			ArrayList<UserInfor> listUserInfor = new ArrayList<>();
 			// Biến tổng số User
-			int totalUser = 0;
+			int totalUser = Constant.NUMBER_ZERO;
 			// Giá trị groupId mặc định
-			int groupId = 0;
+			int groupId = Constant.NUMBER_ZERO;
 			// Giá trị tên tìm kiếm mặc định
-			String fullname = "";
+			String fullname = Constant.STRING_EMPTY;
 			// Giá trị trang mặc định = 1
-			int pagingCurrent = 1;
+			int pagingCurrent = Constant.PAGE_CURRENT_DEFAULT;
 			// Vị trị lấy bản ghi mặc định = 0
-			int offset = 0;
+			int offset = Constant.NUMBER_ZERO;
 			// Giá trị cột sắp xếp ưu tiên mặc định là cột fullname
 			String columnSort = Constant.FULL_NAME_COLUMN;
 			// Giá trị sắp xếp theo tên mặc định là tăng
@@ -75,8 +81,8 @@ public class ListUserController extends HttpServlet {
 			String sortByCodeLevel = Constant.SORTASC;
 			// Giá trị sắp xếp theo ngày hết hạn mặc định là giảm
 			String sortByEndDate = Constant.SORTDESC;
+			// Khởi tạo đối tượng TblUserLogicImpl
 			TblUserLogic tblUserLogic = new TblUserLogicImpl();
-
 			// Giá trị kiểu hiển thị màn hình ADM002
 			String typeShow = Common.formatString((String) request.getParameter("typeShow"),
 					Constant.TYPE_LOGIN_OR_TOP);
@@ -163,7 +169,7 @@ public class ListUserController extends HttpServlet {
 						// Set giá trị trang hiện tại lên session
 						session.setAttribute("pagingCurrent", pagingCurrent);
 						break;
-					// Trường hợp back
+					// Trường hợp back từ ADM003 hoặc ADM005
 					case Constant.TYPE_BACK:
 						// Lấy giá trị trang hiện tại từ session
 						if (session.getAttribute("pagingCurrent") != null) {
@@ -171,18 +177,18 @@ public class ListUserController extends HttpServlet {
 						}
 						break;
 					}
-					if (pagingCurrent > 0) {
+					if (pagingCurrent > Constant.NUMBER_ZERO) {
 						// Tính toán vị trí đầu tiên lấy bản ghi
 						offset = (pagingCurrent - 1) * limit;
 					}
 				}
 			}
-			if (groupId >= 0) {
+			if (groupId >= Constant.GROUP_ID_DEFAULT) {
 				// Lấy giá trị tổng bản ghi tìm kiếm được
 				totalUser = tblUserLogic.getTotalUsers(groupId, fullname);
 			}
-			// Nếu số lượng > 0
-			if (totalUser > 0 && Common.checkNumberPage(pagingCurrent, limit, totalUser)) {
+			// Nếu số lượng bản ghi > 0
+			if (totalUser > Constant.NUMBER_ZERO && Common.checkNumberPage(pagingCurrent, limit, totalUser)) {
 				// Lấy danh sách phân trang
 				listPaging = Common.getListPaging(totalUser, limit, pagingCurrent);
 				// Lấy danh sách thông tin user
@@ -205,8 +211,12 @@ public class ListUserController extends HttpServlet {
 				request.setAttribute("listEmpty", MessageProperties.getData("LIST_EMPTY"));
 			}
 			request.getRequestDispatcher(Constant.VIEW_ADM002).forward(request, response);
+			// Nếu có lỗi
 		} catch (Exception e) {
-			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			// In ra lỗi
+			System.out.println("ListUserController : doGet - " + e.getMessage());
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
+			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}

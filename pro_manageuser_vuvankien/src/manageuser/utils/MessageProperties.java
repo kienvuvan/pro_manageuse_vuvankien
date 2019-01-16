@@ -29,7 +29,8 @@ public class MessageProperties {
 			properties.load(new InputStreamReader(
 					Thread.currentThread().getContextClassLoader().getResourceAsStream("message.properties"), "UTF-8"));
 		} catch (IOException e) {
-			e.getMessage();
+			// In ra lỗi
+			System.out.println("MessageProperties : static - " + e.getMessage());
 		}
 		Enumeration<String> enumeration = (Enumeration<String>) properties.propertyNames();
 		while (enumeration.hasMoreElements()) {

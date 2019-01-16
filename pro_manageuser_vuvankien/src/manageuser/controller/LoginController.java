@@ -29,6 +29,12 @@ public class LoginController extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -43,24 +49,37 @@ public class LoginController extends HttpServlet {
 			ArrayList<String> message = userValidate.validateLogin(username, password);
 			// Nếu không có lỗi
 			if (message.isEmpty()) {
+				// Khởi tạo session
 				HttpSession session = request.getSession(true);
+				// Set giá trị tài khoản đã đăng nhập lên session
 				session.setAttribute("usernameLogin", username);
 				// Chuyển đến trang ADM002.jsp
 				response.sendRedirect(Constant.LIST_USER_URL);
 				// Nếu có lỗi
 			} else {
-				// Quay về trang login và giữ nguyên giá trị trường username
+				// Set giá trị trường loginName lên request
 				request.setAttribute("username", username);
+				// Set thông báo lỗi lên request
 				request.setAttribute("message", message);
+				// Quay về trang login
 				request.getRequestDispatcher(Constant.VIEW_ADM001).forward(request, response);
 			}
 			// Nếu có lỗi
 		} catch (Exception e) {
-			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			// In ra lỗi
+			System.out.println("LoginController : doPost - " + e.getMessage());
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
+			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -68,7 +87,10 @@ public class LoginController extends HttpServlet {
 			// Chuyển về màn hình đăng nhập ADM001
 			request.getRequestDispatcher(Constant.VIEW_ADM001).forward(request, response);
 		} catch (Exception e) {
-			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
+			// In ra lỗi
+			System.out.println("LoginController : doGet - " + e.getMessage());
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
+			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}

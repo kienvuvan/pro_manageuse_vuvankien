@@ -57,10 +57,11 @@ public class BaseDaoImpl implements BaseDao {
 			Class.forName(driver);
 			// Kết nối database
 			connection = (Connection) DriverManager.getConnection(url + database, username, password);
-		// Nếu lỗi
-		} catch (ClassNotFoundException | SQLException ex) {
-			ex.getMessage();
-			throw ex;
+			// Nếu lỗi
+		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println("BaseDaoImpl : connectDatabase - " + e.getMessage());
+			throw e;
 		}
 		// Trả về connection vừa kết nối
 		return connection;
@@ -85,7 +86,7 @@ public class BaseDaoImpl implements BaseDao {
 	public void setConnection(Connection connection) {
 		this.connection = connection;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -101,7 +102,8 @@ public class BaseDaoImpl implements BaseDao {
 			}
 			// Nếu có lỗi trong quá trình đóng kết nối
 		} catch (SQLException e) {
-			e.getMessage();
+			// In ra lỗi
+			System.out.println("BaseDaoImpl : closeConnection - " + e.getMessage());
 			throw e;
 		}
 
@@ -115,13 +117,15 @@ public class BaseDaoImpl implements BaseDao {
 	@Override
 	public void setAutoCommit(boolean status) throws SQLException {
 		try {
-			// Nếu connection không null thì setAutoCommit bằng tham số status truyền vào
+			// Nếu connection không null thì setAutoCommit bằng tham số status
+			// truyền vào
 			if (connection != null) {
 				connection.setAutoCommit(status);
 			}
 			// Nếu lỗi
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("BaseDaoImpl : setAutoCommit - " + e.getMessage());
 			throw e;
 		}
 	}
@@ -140,7 +144,8 @@ public class BaseDaoImpl implements BaseDao {
 			}
 			// Nếu lỗi
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("BaseDaoImpl : setAutoCommit - " + e.getMessage());
 			throw e;
 		}
 	}
@@ -159,7 +164,8 @@ public class BaseDaoImpl implements BaseDao {
 			}
 			// Nếu lỗi
 		} catch (SQLException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println("BaseDaoImpl : rollBack - " + e.getMessage());
 			throw e;
 		}
 	}
@@ -175,11 +181,12 @@ public class BaseDaoImpl implements BaseDao {
 		HashMap<Integer, String> hashMapColumnSort = new HashMap<>();
 		try {
 			// Tạo kết nối với CSDL
-			connection = connectDatabase();
+			connectDatabase();
 			// Nếu kết nối thành công
 			if (connection != null) {
 				int index = 1;
-				// Truyền câu lệnh truy vấn lấy ra danh sách tất cả các bảng trong CSDL
+				// Truyền câu lệnh truy vấn lấy ra danh sách tất cả các bảng
+				// trong CSDL
 				preparedStatement = (PreparedStatement) connection.prepareStatement(SELECT_ALL_TABLE);
 				// Lấy tất cả các bảng trong CSDL
 				ResultSet resultSetTables = preparedStatement.executeQuery();
@@ -187,7 +194,8 @@ public class BaseDaoImpl implements BaseDao {
 				while (resultSetTables.next()) {
 					// Lấy tên bảng
 					String table_Name = resultSetTables.getString(1);
-					// Truyền câu lệnh truy vấn lấy ra danh sách tất cả các cột của 1 bảng trong CSDL
+					// Truyền câu lệnh truy vấn lấy ra danh sách tất cả các cột
+					// của 1 bảng trong CSDL
 					preparedStatement = (PreparedStatement) connection.prepareStatement(SELECT_ALL_COLUMN_IN_TABLE);
 					// Set tham số tên bảng vào trong câu lệnh truy vấn
 					preparedStatement.setString(1, table_Name);
@@ -202,9 +210,10 @@ public class BaseDaoImpl implements BaseDao {
 					}
 				}
 			}
-		// Nếu có lỗi
+			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
-			e.getMessage();
+			// In ra lỗi
+			System.out.println("BaseDaoImpl : getColumnSort - " + e.getMessage());
 			throw e;
 		}
 		// Trả về HashMap chứa tên cột

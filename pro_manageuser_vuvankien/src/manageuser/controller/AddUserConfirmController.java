@@ -35,51 +35,82 @@ public class AddUserConfirmController extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		try {
 			// Khởi tạo session
 			HttpSession session = request.getSession();
+			// Lấy giá trị màn hình đi tới ADM004
+			String from = (String) session.getAttribute("from");
+			// Xóa session chứa giá trị màn hình đi tới ADM004
+			session.removeAttribute("from");
 			// Lấy ra giá trị keySession
 			String keySession = Common.formatString(request.getParameter("session"), "");
-			UserInfor userInfor;
-			// Lấy ra đối tượng UserInfor trên session
-			userInfor = (UserInfor) session.getAttribute(keySession);
-			// Nếu đối tượng không có trên session
-			if (userInfor == null) {
-				// Khởi tạo đối tượng
-				userInfor = new UserInfor();
-			}
-			// Khởi tạo đối tượng MstGroupLogicImpl
-			MstGroupLogic mstGroupLogicImpl = new MstGroupLogicImpl();
-			// Lấy ra giá trị tên nhóm từ giá trị groupId
-			String groupName = mstGroupLogicImpl.getGroupNameById(userInfor.getGroupId());
-			// Khởi tạo đối tượng MstJapanLogicImpl
-			MstJapanLogic mstJapanLogicImpl = new MstJapanLogicImpl();
-			// Lấy ra giá trị tên trình độ tiếng Nhật từ codLevel
-			String nameLevel = mstJapanLogicImpl.getNameLevelById(userInfor.getCodeLevel());
-			// Set giá trị groupName cho userInfor
-			userInfor.setNameLevel(nameLevel);
-			// Set giá trị nameLevel cho userInfor
-			userInfor.setGroupName(groupName);
+			// Nếu màn hình đi tới là màn hình ADM003
+			if (Constant.ADM003.equals(from)) {
+				UserInfor userInfor;
+				// Lấy ra đối tượng UserInfor trên session
+				userInfor = (UserInfor) session.getAttribute(keySession);
+				// Nếu đối tượng tồn tại trên session
+				if (userInfor != null) {
+					// Khởi tạo đối tượng MstGroupLogicImpl
+					MstGroupLogic mstGroupLogicImpl = new MstGroupLogicImpl();
+					// Lấy ra giá trị tên nhóm từ giá trị groupId
+					String groupName = mstGroupLogicImpl.getGroupNameById(userInfor.getGroupId());
+					// Khởi tạo đối tượng MstJapanLogicImpl
+					MstJapanLogic mstJapanLogicImpl = new MstJapanLogicImpl();
+					// Lấy ra giá trị tên trình độ tiếng Nhật từ codLevel
+					String nameLevel = mstJapanLogicImpl.getNameLevelById(userInfor.getCodeLevel());
+					// Set giá trị groupName cho userInfor
+					userInfor.setNameLevel(nameLevel);
+					// Set giá trị nameLevel cho userInfor
+					userInfor.setGroupName(groupName);
 
-			// Set kiểu hiển thị màn hình ADM004.jsp lên request
-			request.setAttribute("typeShow", Constant.TYPE_ADD_USER);
-			// Set keySession lên request
-			request.setAttribute("keySession", keySession);
-			// Set userInfor lên request
-			request.setAttribute("userInfor", userInfor);
-			// Chuyển đến màn hình ADM004
-			request.getRequestDispatcher(Constant.VIEW_ADM004).forward(request, response);
-			// Nếu có lỗi xảy ra chuyển đến trang SysstemError
+					// Set kiểu hiển thị màn hình ADM004.jsp lên request
+					request.setAttribute("typeShow", Constant.TYPE_ADD_USER);
+					// Set keySession lên request
+					request.setAttribute("keySession", keySession);
+					// Set userInfor lên request
+					request.setAttribute("userInfor", userInfor);
+					// Chuyển đến màn hình ADM004
+					request.getRequestDispatcher(Constant.VIEW_ADM004).forward(request, response);
+					// Nếu không được chuyển từ màn hình ADM003.jsp sang thì
+					// chuyển
+					// đến trang SysstemError với lỗi người dùng không tồn tại
+				} else {
+					// Chuyển đến màn hình lỗi System_Error.jsp với thông báo
+					// người dùng không tồn tại
+					response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
+				}
+				// Ngược lại, nếu không đi từ ADM003
+			} else {
+				// Xóa đối tượng UserInfor trên session
+				session.removeAttribute(keySession);
+				// Chuyển đến màn hình ADM002
+				response.sendRedirect(Constant.LIST_USER_URL);
+			}
 		} catch (Exception e) {
+			// In ra lỗi
+			System.out.println("AddUserConfirmController : doGet - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.
+	 * HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
@@ -90,23 +121,30 @@ public class AddUserConfirmController extends HttpServlet {
 			String keySession = request.getParameter("session");
 			// Lấy giá trị userInfor từ session
 			UserInfor userInfor = (UserInfor) session.getAttribute(keySession);
+			// Xóa thông tin UserInfor trên session
+			session.removeAttribute(keySession);
 			// Khởi tạo đối tượng TblUserLogicImpl
 			TblUserLogic tblUserLogicImpl = new TblUserLogicImpl();
 			// Tạo đối tượng UserValidate để kiểm tra các trường dữ liệu
 			UserValidate userValidate = new UserValidate();
 			// Nếu userInfor không lỗi thì tiến hành thêm vào CSDL
 			if (userValidate.validateUserInfor(userInfor).isEmpty()) {
-				// Nếu thêm thành công thì chuyển đến màn hình ADM006 với kiểu
-				// thông báo là thành công
+				// Nếu thêm người dùng thành công
 				if (tblUserLogicImpl.creatUser(userInfor)) {
-					response.sendRedirect(Constant.MESSAGE + "?success=" + Constant.ADD_USER_SUCCESS);
+					// Set giá trị trạng thái chuyển sang màn hình ADM006 là OK
+					session.setAttribute("from", Constant.ACCEPT);
+					// Thêm kiểu thực hiện thành công lên session
+					session.setAttribute("success", Constant.SUCCESS);
+					// Chuyển đến màn hình ADM006 với kiểu thông báo là thành
+					// công
+					response.sendRedirect("success.do" + "?type=" + Constant.ADD_USER_SUCCESS);
 				}
 			}
-			// Xóa thông tin UserInfor trên session
-			session.removeAttribute(keySession);
+			// Nếu có lỗi
 		} catch (Exception e) {
-			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
-			// đang lỗi
+			// In ra lỗi
+			System.out.println("AddUserConfirmController : doGet - " + e.getMessage());
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 		}
 	}

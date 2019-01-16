@@ -79,18 +79,18 @@ public interface TblUserDao extends BaseDao {
 	 * 
 	 * @param userName
 	 *            chuỗi tài khoản cần kiểm tra
-	 * @return true nếu đã tồn tại và ngược lại
+	 * @return int trả về giá trị userId của email đó nếu tồn tại và ngược lại trả về -1
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public boolean checkExitsUsername(String userName) throws ClassNotFoundException, SQLException;
+	public int checkExitsUsername(String userName) throws ClassNotFoundException, SQLException;
 
 	/**
 	 * Phương thức kiểm tra email đã tồn tại trong CSDL hay chưa?
 	 * 
 	 * @param email
 	 *            chuỗi email cần kiểm tra
-	 * @return true nếu tồn tại và ngược lại
+	 * @return trả về giá trị userId của email đó và ngược lại trả về -1 nếu không tồn tại
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
