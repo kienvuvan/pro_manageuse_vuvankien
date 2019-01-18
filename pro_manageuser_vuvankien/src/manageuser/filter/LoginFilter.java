@@ -58,15 +58,28 @@ public class LoginFilter implements Filter {
 			String loginRequest = request.getRequestURI().toString();
 			// Lấy ra đường dẫn thư mục gốc
 			String contextPath = request.getContextPath() + "/";
-			// Nếu đường dẫn đến trang đăng nhập hoặc người dùng đã đăng nhập
-			// hoặc nếu đường dẫn không tồn tại thì cho qua
-			if (loginRequest.equals(contextPath + Constant.LOGIN_URL) || Common.checkLogin(session)
-					|| response.getStatus() == Constant.NOT_FOUND_URL) {
-				filterChain.doFilter(servletRequest, servletResponse);
-				// Ngược lại nếu là đường dẫn tồn tại nhưng admin chưa đăng nhập
+			// Nếu đường dẫn là url vào màn hình đăng nhập
+			if (loginRequest.equals(contextPath + Constant.LOGIN_URL)) {
+				// Nếu người dùng chưa đăng nhập
+				if (!Common.checkLogin(session)) {
+					// Filter sẽ cho qua để chuyển đến màn hình ADM001
+					filterChain.doFilter(servletRequest, servletResponse);
+					// Nếu người dùng đãđăng nhập
+				} else {
+					// Chuyển về màn hình ADM002
+					response.sendRedirect(Constant.LIST_USER_URL);
+				}
+				// Ngược lại, không phải url vào màn hình đăng nhập
 			} else {
-				// Chuyển về màn hình đăng nhập
-				response.sendRedirect(Constant.LOGIN_URL);
+				// Nếu người dùng chưa đăng nhập
+				if (!Common.checkLogin(session)) {
+					// Chuyển về màn hình đăng nhập
+					response.sendRedirect(Constant.LOGIN_URL);
+					// Nếu người dùng đã đăng nhập
+				} else {
+					// Filter sẽ cho qua
+					filterChain.doFilter(servletRequest, servletResponse);
+				}
 			}
 			// Nếu có lỗi xảy ra
 		} catch (Exception e) {
@@ -83,8 +96,8 @@ public class LoginFilter implements Filter {
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
 	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
+	public void init(FilterConfig filterConfig) throws ServletException {
+		
 	}
 
 }

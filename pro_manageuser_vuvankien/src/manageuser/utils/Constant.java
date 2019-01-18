@@ -24,7 +24,7 @@ public class Constant {
 	// Đường dẫn hiển thị màn hình thông báo ADM006
 	public static final String SUCCESS_URL = "success.do";
 	// Đường dẫn hiển thị màn hình System_Error
-	public static final String ERROR_URL = "error.do";
+	public static final String ERROR_URL = "error";
 
 	// Đường dẫn tương đối đến màn hình ADM001.jsp
 	public static final String VIEW_ADM001 = "/views/jsp/ADM001.jsp";
@@ -129,8 +129,6 @@ public class Constant {
 	public static final int RULE_ADMIN = 0;
 	// Giá trị rule của user
 	public static final int RULE_USER = 1;
-	// Giá trị khi đường dẫn không tồn tại
-	public static final int NOT_FOUND_URL = 404;
 
 	// Thông báo thêm User thành công
 	public static final String ADD_USER_SUCCESS = "add_success";

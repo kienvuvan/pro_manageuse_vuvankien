@@ -17,8 +17,8 @@
 		<servlet-name>login</servlet-name>
 		<url-pattern>/login.do</url-pattern>
 	</servlet-mapping>
-	
-	<!-- Url xử lí đăng xuất  -->
+
+	<!-- Url xử lí đăng xuất -->
 	<servlet>
 		<servlet-name>logout</servlet-name>
 		<servlet-class>manageuser.controller.LogoutController</servlet-class>
@@ -37,7 +37,7 @@
 		<servlet-name>listUser</servlet-name>
 		<url-pattern>/listUser.do</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Url xử lý chức năng thêm User ở màn hình ADM003.jsp -->
 	<servlet>
 		<servlet-name>addUserInput</servlet-name>
@@ -47,7 +47,7 @@
 		<servlet-name>addUserInput</servlet-name>
 		<url-pattern>/addUserInput.do</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Url xử lý chức năng kiểm tra dữ liệu User thêm mới ở màn hình ADM003.jsp -->
 	<servlet>
 		<servlet-name>addUserValidate</servlet-name>
@@ -57,7 +57,7 @@
 		<servlet-name>addUserValidate</servlet-name>
 		<url-pattern>/addUserValidate.do</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Url xử lý chức năng sửa thông tin người dùng ở màn hình ADM003.jsp -->
 	<servlet>
 		<servlet-name>editUserInput</servlet-name>
@@ -67,7 +67,7 @@
 		<servlet-name>editUserInput</servlet-name>
 		<url-pattern>/editUserInput.do</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Url xử lý chức năng kiểm tra dữ liệu User khi sửa ở màn hình ADM003.jsp -->
 	<servlet>
 		<servlet-name>editUserValidate</servlet-name>
@@ -77,7 +77,7 @@
 		<servlet-name>editUserValidate</servlet-name>
 		<url-pattern>/editUserValidate.do</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Url xử lý chức năng sửa thông tin User -->
 	<servlet>
 		<servlet-name>editUserConfirm</servlet-name>
@@ -87,7 +87,7 @@
 		<servlet-name>editUserConfirm</servlet-name>
 		<url-pattern>/editUserConfirm.do</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Url xử lý chức năng thêm User vào CSDL -->
 	<servlet>
 		<servlet-name>addUserConfirm</servlet-name>
@@ -97,7 +97,7 @@
 		<servlet-name>addUserConfirm</servlet-name>
 		<url-pattern>/addUserConfirm.do</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Url xử lý chức năng xóa User trong CSDL -->
 	<servlet>
 		<servlet-name>deleteUserConfirm</servlet-name>
@@ -107,7 +107,7 @@
 		<servlet-name>deleteUserConfirm</servlet-name>
 		<url-pattern>/deleteUserConfirm.do</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Url xử lý chức năng thay đổi mật khẩu User trong CSDL -->
 	<servlet>
 		<servlet-name>changePass</servlet-name>
@@ -117,7 +117,7 @@
 		<servlet-name>changePass</servlet-name>
 		<url-pattern>/changePass.do</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Url xử lý chức năng hiển thị chi tiết User -->
 	<servlet>
 		<servlet-name>viewDetailUser</servlet-name>
@@ -127,7 +127,7 @@
 		<servlet-name>viewDetailUser</servlet-name>
 		<url-pattern>/viewDetailUser.do</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Url xử lý chức năng hiển thị thông báo ra màn hình ADM006.jsp -->
 	<servlet>
 		<servlet-name>success</servlet-name>
@@ -138,21 +138,21 @@
 		<url-pattern>/success.do</url-pattern>
 	</servlet-mapping>
 
-	<!-- Url xử lý chức năng hiển thị màn hình lỗi System_Error.jsp  -->
+	<!-- Url xử lý chức năng hiển thị màn hình lỗi System_Error.jsp -->
 	<servlet>
 		<servlet-name>error</servlet-name>
 		<servlet-class>manageuser.controller.SystemErrorController</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>error</servlet-name>
-		<url-pattern>/error.do</url-pattern>
+		<url-pattern>/error</url-pattern>
 	</servlet-mapping>
-	
+
 	<!-- Set timeout cho hệ thống là 5 phút -->
 	<session-config>
 		<session-timeout>5</session-timeout>
 	</session-config>
-	
+
 	<!-- Tạo filter về characterEnCoding UTF-8 cho hệ thống -->
 	<filter>
 		<filter-name>characterEnCoding</filter-name>
@@ -163,7 +163,7 @@
 		<filter-name>characterEnCoding</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<!-- Tạo filter đăng nhập cho hệ thống -->
 	<filter>
 		<filter-name>logFilter</filter-name>
@@ -174,13 +174,13 @@
 		<filter-name>logFilter</filter-name>
 		<url-pattern>*.do</url-pattern>
 	</filter-mapping>
-
+	
 	<!-- Url dẫn đến trang xử lý lỗi IOException -->
 	<error-page>
 		<exception-type>java.io.IOException</exception-type>
 		<location>/views/jsp/System_Error.jsp</location>
 	</error-page>
-	
+
 	<!-- Url dẫn đến trang xử lý lỗi ServletException -->
 	<error-page>
 		<exception-type>javax.servlet.ServletException</exception-type>
