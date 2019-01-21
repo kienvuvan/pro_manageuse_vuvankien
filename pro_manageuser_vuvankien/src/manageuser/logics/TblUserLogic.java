@@ -6,7 +6,6 @@ package manageuser.logics;
 
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 
 import manageuser.entities.TblUser;
@@ -93,7 +92,7 @@ public interface TblUserLogic {
 	 * 
 	 * @param userName
 	 *            chuỗi tài khoản cần kiểm tra
-	 * @return int trả về giá trị userId của email đó nếu tồn tại và ngược lại trả về -1
+	 * @return int userId của người dùng có email đó và ngược lại là -1
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
@@ -104,11 +103,15 @@ public interface TblUserLogic {
 	 * 
 	 * @param email
 	 *            chuỗi email cần kiểm tra
-	 * @return trả về giá trị userId của email đó và ngược lại trả về -1 nếu không tồn tại
+	 * @param userId
+	 *            giá trị userId của người dùng
+	 * @return true nếu email tồn tại trong CSDL (nếu là trường hợp thêm thì
+	 *         email trùng với email của đối tượng khác userId truyền vào) và
+	 *         ngược lại
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public int checkExitsEmail(String email) throws ClassNotFoundException, SQLException;
+	public boolean checkExitsEmail(String email, int userId) throws ClassNotFoundException, SQLException;
 
 	/**
 	 * Phương thức thêm thông tin người dùng mới vào trong CSDL
@@ -119,9 +122,8 @@ public interface TblUserLogic {
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 * @throws NoSuchAlgorithmException
-	 * @throws ParseException 
 	 */
-	public boolean creatUser(UserInfor userInfor) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException, ParseException;
+	public boolean creatUser(UserInfor userInfor) throws ClassNotFoundException, SQLException, NoSuchAlgorithmException;
 
 	/**
 	 * Phương thức thực hiện sửa thông tin người dùng trong CSDL
@@ -134,10 +136,9 @@ public interface TblUserLogic {
 	 * @throws NoSuchAlgorithmException
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
-	 * @throws ParseException 
 	 */
 	public boolean updateUser(UserInfor userInfor, boolean existedDetailUserJapan)
-			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException, ParseException;
+			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException;
 
 	/**
 	 * Phương thức thực hiện chức năng xóa thông tin người dugnf trong CSDL
@@ -181,7 +182,8 @@ public interface TblUserLogic {
 	 *            giá trị mật khẩu muốn đổi
 	 * @return true nếu thay đổi thành công và ngược lại
 	 * @throws ClassNotFoundException
-	 * 			@throws SQLException @throws
+	 * @throws SQLException
+	 * 			@throws
 	 */
 	public boolean changePassword(int userId, String password)
 			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException;

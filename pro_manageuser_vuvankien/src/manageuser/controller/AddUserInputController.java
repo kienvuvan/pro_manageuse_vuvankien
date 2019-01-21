@@ -53,19 +53,29 @@ public class AddUserInputController extends HttpServlet {
 			// Set giá trị các trường selectBox
 			setDataLogicADM003(request, response);
 			// Lấy ra đối tượng UserInfor
-			UserInfor userInfor = getDefaultValue(request, response);
-			// Format định dạng các thuộc tính ngày của UserInfor
-			userInfor = Common.formatDateUserInfor(userInfor);
-			// Set đối tượng UserInfor lên request
-			request.setAttribute("userInfor", userInfor);
-			// Set kiểu hiển thị màn hình ADM003.jsp là add_user
-			request.setAttribute("typeShow", Constant.TYPE_ADD_USER);
-			// Chuyển đến màn hình ADM003.jsp
-			request.getRequestDispatcher(Constant.VIEW_ADM003).forward(request, response);
+			UserInfor userInfor = getDefaultValue(request);
+			// Nếu đối tượng UserInfor tồn tại
+			if (userInfor != null) {
+				// Format định dạng các thuộc tính ngày của UserInfor
+				userInfor = Common.formatDateUserInfor(userInfor);
+				// Set đối tượng UserInfor lên request
+				request.setAttribute("userInfor", userInfor);
+				// Set kiểu hiển thị màn hình ADM003.jsp là add_user
+				request.setAttribute("typeShow", Constant.TYPE_ADD_USER);
+				// Chuyển đến màn hình ADM003.jsp
+				request.getRequestDispatcher(Constant.VIEW_ADM003).forward(request, response);
+				// Ngược lại nếu không tồn tại (khi timeout session)
+			} else {
+				// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ
+				// thống
+				// đang lỗi
+				response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			}
 			// Nếu có lỗi
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("AddUserInputController : doGet - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
@@ -83,7 +93,7 @@ public class AddUserInputController extends HttpServlet {
 			throws IOException, ServletException {
 		try {
 			// Lấy ra đối tượng UserInfor
-			UserInfor userInfor = getDefaultValue(request, response);
+			UserInfor userInfor = getDefaultValue(request);
 			// Tạo đối tượng UserValidate để kiểm tra các trường dữ liệu
 			UserValidate userValidate = new UserValidate();
 			// Kiểm tra để xem trả về danh sách lỗi
@@ -92,6 +102,10 @@ public class AddUserInputController extends HttpServlet {
 			if (!messages.isEmpty()) {
 				// Set giá trị các trường selectBox
 				setDataLogicADM003(request, response);
+				// Set giá trị password về chuỗi rỗng
+				userInfor.setPassword("");
+				// Set giá trị passwordAgain về chuỗi rỗng
+				userInfor.setPasswordAgain("");
 				// Set giá trị UserInfor lên request
 				request.setAttribute("userInfor", userInfor);
 				// Set kiểu hiển thị màn hình ADM003.jsp là add_user
@@ -116,7 +130,8 @@ public class AddUserInputController extends HttpServlet {
 			// Nếu có lỗi
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("AddUserInputController : doPost - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + 
+			new Object() {}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
 			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
@@ -163,7 +178,8 @@ public class AddUserInputController extends HttpServlet {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("AddUserInputController : setDataLogicADM003 - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -173,10 +189,9 @@ public class AddUserInputController extends HttpServlet {
 	 * Phương thức set các giá trị của đối tượng UserInfor lấy từ request
 	 * 
 	 * @param request
-	 * @param response
 	 * @return UserInfor đối tượng chứa các thông tin lấy từ request
 	 */
-	private UserInfor getDefaultValue(HttpServletRequest request, HttpServletResponse response) {
+	private UserInfor getDefaultValue(HttpServletRequest request) {
 		// Khởi tạo đối tượng UserInfor
 		UserInfor userInfor = new UserInfor();
 		// Lấy giá trị kiểu hiển thị màn hình ADM003
@@ -263,6 +278,10 @@ public class AddUserInputController extends HttpServlet {
 			String sessionKey = request.getParameter("session");
 			// Gán giá trị cho đối tượng userInfo
 			userInfor = (UserInfor) session.getAttribute(sessionKey);
+			// Set giá trị password về chuỗi rỗng
+			userInfor.setPassword("");
+			// Set giá trị passwordAgain về chuỗi rỗng
+			userInfor.setPasswordAgain("");
 			// Xóa đối tượng UserInfor trên session
 			session.removeAttribute(sessionKey);
 		}

@@ -34,7 +34,8 @@ public class TblDetailUserJapanLogicImpl implements TblDetailUserJapanLogic {
 			return tblDetailUserJapanDaoImpl.checkExistedDetailUser(userId);
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("MstJapanLogicImpl : checkExistedDetailUserJapan - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}

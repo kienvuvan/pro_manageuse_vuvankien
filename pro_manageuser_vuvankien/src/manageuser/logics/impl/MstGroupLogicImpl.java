@@ -34,7 +34,8 @@ public class MstGroupLogicImpl implements MstGroupLogic {
 			return mstGroupDaoImpl.getAllGroups();
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("MstGroupLogicImpl : getAllGroups - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -54,7 +55,8 @@ public class MstGroupLogicImpl implements MstGroupLogic {
 			return mstGroupDaoImpl.getGroupNameById(groupId);
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("MstGroupLogicImpl : getGroupNameById - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}

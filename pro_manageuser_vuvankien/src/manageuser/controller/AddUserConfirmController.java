@@ -81,9 +81,7 @@ public class AddUserConfirmController extends HttpServlet {
 					request.setAttribute("userInfor", userInfor);
 					// Chuyển đến màn hình ADM004
 					request.getRequestDispatcher(Constant.VIEW_ADM004).forward(request, response);
-					// Nếu không được chuyển từ màn hình ADM003.jsp sang thì
-					// chuyển
-					// đến trang SysstemError với lỗi người dùng không tồn tại
+					// Nếu người dùng không tồn tại trên session (trường hợp nếu session time out)
 				} else {
 					// Chuyển đến màn hình lỗi System_Error.jsp với thông báo
 					// người dùng không tồn tại
@@ -91,17 +89,20 @@ public class AddUserConfirmController extends HttpServlet {
 				}
 				// Ngược lại, nếu không đi từ ADM003
 			} else {
-				// Xóa đối tượng UserInfor trên session
+				// Xóa đối tượng UserInfor trên session tránh trường hợp người
+				// dùng chưa xác nhận thêm mà xóa tab (làm nhiều lần khiến trên
+				// session chưa nhiều dữ liệu)
 				session.removeAttribute(keySession);
 				// Chuyển đến màn hình ADM002
 				response.sendRedirect(Constant.LIST_USER_URL);
 			}
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("AddUserConfirmController : doGet - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
-			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			response.sendRedirect(Constant.ERROR_URL);
 		}
 	}
 
@@ -128,7 +129,7 @@ public class AddUserConfirmController extends HttpServlet {
 			// Tạo đối tượng UserValidate để kiểm tra các trường dữ liệu
 			UserValidate userValidate = new UserValidate();
 			// Nếu userInfor không lỗi thì tiến hành thêm vào CSDL
-			if (userValidate.validateUserInfor(userInfor).isEmpty()) {
+			if (userValidate.validateConfirmUserInfor(userInfor)) {
 				// Nếu thêm người dùng thành công
 				if (tblUserLogicImpl.creatUser(userInfor)) {
 					// Set giá trị trạng thái chuyển sang màn hình ADM006 là OK
@@ -143,9 +144,11 @@ public class AddUserConfirmController extends HttpServlet {
 			// Nếu có lỗi
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("AddUserConfirmController : doGet - " + e.getMessage());
-			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống đang lỗi
-			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
+			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
+			// đang lỗi
+			response.sendRedirect(Constant.ERROR_URL);
 		}
 	}
 

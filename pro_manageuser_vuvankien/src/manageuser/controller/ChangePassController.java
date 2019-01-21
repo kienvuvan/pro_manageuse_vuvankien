@@ -64,10 +64,11 @@ public class ChangePassController extends HttpServlet {
 			// Nếu có lỗi
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("ChangePassController : doGet - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
-			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			response.sendRedirect(Constant.ERROR_URL);
 		}
 	}
 
@@ -109,8 +110,7 @@ public class ChangePassController extends HttpServlet {
 					if (tblUserLogicImpl.changePassword(userId, password)) {
 						// Khởi tạo session
 						HttpSession session = request.getSession();
-						// Set giá trị trạng thái chuyển sang màn hình ADM006 là
-						// OK
+						// Set giá trị trạng thái chuyển màn hình ADM006 là OK
 						session.setAttribute("from", Constant.ACCEPT);
 						// Thêm kiểu thực hiện thành công lên session
 						session.setAttribute("success", Constant.SUCCESS);
@@ -128,10 +128,11 @@ public class ChangePassController extends HttpServlet {
 			// Nếu có lỗi
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("ChangePassController : doPost - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
-			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			response.sendRedirect(Constant.ERROR_URL);
 		}
 	}
 

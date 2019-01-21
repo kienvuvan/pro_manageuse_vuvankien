@@ -84,7 +84,8 @@ public class LoginFilter implements Filter {
 			// Nếu có lỗi xảy ra
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("CharacterEnCodingFilter : doFilter - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển về màn hình lỗi
 			response.sendRedirect(Constant.ERROR_URL);
 		}
@@ -97,7 +98,7 @@ public class LoginFilter implements Filter {
 	 */
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		
+
 	}
 
 }

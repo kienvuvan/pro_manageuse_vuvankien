@@ -59,7 +59,8 @@ public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("MstJapanDaoImpl : getAllMstJapan - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
@@ -98,7 +99,8 @@ public class MstJapanDaoImpl extends BaseDaoImpl implements MstJapanDao {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("MstJapanDaoImpl : getNameLevelById - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối

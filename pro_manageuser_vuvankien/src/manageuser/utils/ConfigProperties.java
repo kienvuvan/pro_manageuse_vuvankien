@@ -30,7 +30,8 @@ public class ConfigProperties {
 					Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties"), "UTF-8"));
 		} catch (IOException e) {
 			// In ra lỗi
-			System.out.println("ConfigProperties : static - " + e.getMessage());
+			System.out.println(new Object(){}.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 		}
 		Enumeration<String> enumeration = (Enumeration<String>) properties.propertyNames();
 		while (enumeration.hasMoreElements()) {

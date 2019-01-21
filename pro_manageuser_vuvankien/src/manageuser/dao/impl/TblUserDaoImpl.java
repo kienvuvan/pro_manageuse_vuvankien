@@ -5,13 +5,12 @@
 package manageuser.dao.impl;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import com.mysql.jdbc.PreparedStatement;
 
 import manageuser.dao.TblUserDao;
 import manageuser.entities.TblUser;
@@ -33,7 +32,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	// Câu lệnh kiểm tra tài khoản tồn tại
 	private static final String CHECK_EXITS_USERNAME = "SELECT user_id FROM tbl_user WHERE login_name = ?";
 	// Câu lệnh kiểm tra email tồn tại
-	private static final String CHECK_EXITS_EMAIL = "SELECT user_id FROM tbl_user WHERE email = ?";
+	private static final String CHECK_EXITS_EMAIL = "SELECT user_id FROM tbl_user WHERE email = ? ";
 	// Câu lệnh lấy ra tổng số User
 	private static final String GET_TOTAL_USERS = "SELECT COUNT(*) as number " + "FROM tbl_user "
 			+ "INNER JOIN mst_group " + "ON mst_group.group_id = tbl_user.group_id "
@@ -54,7 +53,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	// user_id truyền vào
 	private static final String EDIT_USER = "UPDATE tbl_user SET group_id = ?, full_name = ?, full_name_kana = ?, tel = ?, email = ?, birthday = ? WHERE user_id = ?";
 	// Câu lệnh truy vấn xóa đối tượng User trong bảng tbl_user
-	private static final String DELETE_USER = "DELETE FROM tbl_user WHERE user_id = ? AND rule != 0";
+	private static final String DELETE_USER = "DELETE FROM tbl_user WHERE user_id = ? AND rule != ?";
 	// Câu lệnh truy vấn thay đổi mật khẩu đối tượng User (cả admin) trong bảng
 	// tbl_user
 	private static final String CHANGE_PASSWORD = "UPDATE tbl_user SET pass = ?, salt = ? WHERE user_id = ?";
@@ -90,8 +89,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			if (connection != null) {
 				// Tạo lệnh truy vấn lấy ra tài khoản có tên tài khoản tồn tại
 				// trong CSDL và có quyền admin
-				PreparedStatement preparedStatement = (PreparedStatement) connection
-						.prepareStatement(GET_USER_ADMIN_BY_LOGIN_NAME);
+				PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_ADMIN_BY_LOGIN_NAME);
 				int index = 1;
 				// Set tham số rule cho câu lệnh truy vấn
 				preparedStatement.setInt(index++, Constant.RULE_ADMIN);
@@ -111,7 +109,8 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : getUserByLogIn - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
@@ -147,8 +146,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 					stringBuilderQueryUser.append(" AND tbl_user.full_name LIKE ?");
 				}
 				// Truyền câu lệnh truy vấn vào PreparedStatement
-				PreparedStatement preparedStatement = (PreparedStatement) connection
-						.prepareStatement(stringBuilderQueryUser.toString());
+				PreparedStatement preparedStatement = connection.prepareStatement(stringBuilderQueryUser.toString());
 				int index = 1;
 				// Set các tham số truyền vào câu lệnh truy vấn
 				// Nếu có phần tìm kiếm theo group
@@ -172,7 +170,8 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : getTotalUsers - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
@@ -217,8 +216,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 				// Thêm phần vị trị và giới hạn bản ghi lấy ra
 				stringBuilderQueryUser.append(" LIMIT " + offset + " , " + limit);
 				// Truyền câu lệnh truy vấn vào PreparedStatement
-				PreparedStatement preparedStatement = (PreparedStatement) connection
-						.prepareStatement(stringBuilderQueryUser.toString());
+				PreparedStatement preparedStatement = connection.prepareStatement(stringBuilderQueryUser.toString());
 				int index = 1;
 				// Set các tham số truyền vào câu lệnh truy vấn
 				// Nếu có tìm kiếm theo groupId
@@ -281,7 +279,8 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : getListUsers - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
@@ -343,7 +342,8 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : getOrderBy - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -364,29 +364,30 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Nếu thành công
 			if (connection != null) {
 				// Tạo lệnh truy vấn lấy ra tài khoản có tên tài khoản tồn tại
-				// trong CSDL và có quyền admin
-				PreparedStatement preparedStatement = (PreparedStatement) connection
-						.prepareStatement(CHECK_EXITS_USERNAME);
-				preparedStatement.setString(1, userName);
+				// trong CSDL không?
+				PreparedStatement preparedStatement = connection.prepareStatement(CHECK_EXITS_USERNAME);
+				int index = 1;
+				preparedStatement.setString(index++, userName);
 				// Trả về bản truy vấn
 				ResultSet resultSet = preparedStatement.executeQuery();
 				// Nếu tài khoản tồn tại
 				if (resultSet.next()) {
-					// Nếu tồn tại
+					// Nếu tồn tại trong CSDL thì trả về giá trị id
 					return resultSet.getInt(1);
 				}
 			}
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : checkExitsUsername - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
 		} finally {
 			closeConnection();
 		}
-		// Trả về giá trị mặc định nếu loginName đó chưa có trong CSDL
+		// Trả về -1 nếu không tồn tại trong CSDL
 		return Constant.ID_NOT_EXISTED_LOGIN_NAME;
 	}
 
@@ -396,37 +397,54 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 	 * @see manageuser.dao.TblUserDao#checkExitsEmail(java.lang.String)
 	 */
 	@Override
-	public int checkExitsEmail(String email) throws ClassNotFoundException, SQLException {
+	public boolean checkExitsEmail(String email, int userId) throws ClassNotFoundException, SQLException {
 		try {
 			// Tạo kết nối với database
 			connectDatabase();
 			// Nếu thành công
 			if (connection != null) {
-				// Tạo lệnh truy vấn lấy ra tài khoản có tên tài khoản tồn tại
-				// trong CSDL và có quyền admin
-				PreparedStatement preparedStatement = (PreparedStatement) connection
-						.prepareStatement(CHECK_EXITS_EMAIL);
-				preparedStatement.setString(1, email);
+				// Tạo đối tượng StringBuilder chứa câu lệnh truy vấn kiểm tra
+				// email tồn tại
+				StringBuilder queryCheckExitsEmail = new StringBuilder(CHECK_EXITS_EMAIL);
+				// Nếu là trường hợp sửa thông tin
+				if (userId > Constant.ID_ADD_USER) {
+					// Thêm điều kiện kiểm tra user_id khác giá trị userId
+					// truyền vào
+					queryCheckExitsEmail.append(" AND user_id != ?");
+				}
+				// Tạo lệnh truy vấn kiểm tra email có tồn tại trong CSDL không
+				int index = 1;
+				// Truyền câu lệnh truy vấn vào trong PreparedStatement
+				PreparedStatement preparedStatement = connection.prepareStatement(queryCheckExitsEmail.toString());
+				// Truyền giá trị email vào tham số đầu trong câu lệnh truy vấn
+				preparedStatement.setString(index++, email);
+				// Nếu là trường hợp sửa thông tin
+				if (userId > Constant.ID_ADD_USER) {
+					// Truyền giá trị userId vào tham số tiếp theo trong câu
+					// lệnh truy vấn
+					preparedStatement.setInt(index++, userId);
+				}
 				// Trả về bản truy vấn
 				ResultSet resultSet = preparedStatement.executeQuery();
-				// Nếu tài khoản tồn tại
+				// Nếu email tồn tại
 				if (resultSet.next()) {
-					// Trả về giá trị userId của người dùng đó
-					return resultSet.getInt(1);
+					// Trả về true nếu email đó tồn tại trong CSDL
+					return true;
 				}
 			}
 			// Lỗi
 		} catch (SQLException | ClassNotFoundException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : checkExitsEmail - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
 		} finally {
 			closeConnection();
 		}
-		// Trả về giá trị mặc định nếu email đó không tồn tại
-		return Constant.ID_NOT_EXISTED_EMAIL;
+		// Trả về false nếu không tồn tại
+		return false;
 	}
 
 	/*
@@ -440,7 +458,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Nếu connection khác null
 			if (connection != null) {
 				// Tạo lệnh truy vấn thêm User vào trong CSDL
-				PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(INSERT_USER);
+				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER);
 				int index = 1;
 				// Gán các giá trị cho các tham số của câu lệnh truy vấn
 				preparedStatement.setInt(index++, tblUser.getGroupId());
@@ -455,14 +473,18 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 				preparedStatement.setString(index++, tblUser.getSalt());
 				// Nếu truy vấn thêm thành công
 				if (preparedStatement.executeUpdate() > 0) {
-					// Trả về giá trị id cuối cùng vừa thêm vào
-					return (int) preparedStatement.getLastInsertID();
+					ResultSet resultSet = preparedStatement.getGeneratedKeys();
+					if (resultSet.next()) {
+						// Trả về giá trị id cuối cùng vừa thêm vào
+						return resultSet.getInt(1);
+					}
 				}
 			}
 			// Nếu có lỗi
 		} catch (SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : insertUser - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -500,8 +522,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			if (connection != null) {
 				// Tạo lệnh truy vấn kiểm tra người dùng có userId có tồn trong
 				// CSDL hay không
-				PreparedStatement preparedStatement = (PreparedStatement) connection
-						.prepareStatement(CHECK_EXISTED_USER);
+				PreparedStatement preparedStatement = connection.prepareStatement(CHECK_EXISTED_USER);
 				// Truyền tham số userId cho câu lệnh truy vấn
 				preparedStatement.setInt(1, userId);
 				// Trả về bản truy vấn
@@ -518,7 +539,8 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : checkExistedUser - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng connection
@@ -543,8 +565,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Nếu thành công
 			if (connection != null) {
 				// Tạo lệnh truy vấn lấy ra thông tin người dùng có userId
-				PreparedStatement preparedStatement = (PreparedStatement) connection
-						.prepareStatement(GET_USERINFOR_BY_ID);
+				PreparedStatement preparedStatement = connection.prepareStatement(GET_USERINFOR_BY_ID);
 				preparedStatement.setInt(1, userId);
 				// Trả về bản truy vấn
 				ResultSet resultSet = preparedStatement.executeQuery();
@@ -620,7 +641,8 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : getUserInforById - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng connection
@@ -642,7 +664,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Nếu connection khác null
 			if (connection != null) {
 				// Tạo lệnh truy vấn sửa thông tin User vào trong CSDL
-				PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(EDIT_USER);
+				PreparedStatement preparedStatement = connection.prepareStatement(EDIT_USER);
 				int index = 1;
 				// Gán các giá trị cho các tham số của câu lệnh truy vấn
 				preparedStatement.setInt(index++, tblUser.getGroupId());
@@ -661,7 +683,8 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Lỗi
 		} catch (SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : editUser - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -678,9 +701,11 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Nếu connection khác null
 			if (connection != null) {
 				// Tạo lệnh truy vấn xóa thông tin User trong trong CSDL
-				PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(DELETE_USER);
+				PreparedStatement preparedStatement = connection.prepareStatement(DELETE_USER);
 				// Gán giá trị userId cho các tham số của câu lệnh truy vấn
-				preparedStatement.setInt(1, userId);
+				int index = 1;
+				preparedStatement.setInt(index++, userId);
+				preparedStatement.setInt(index++, Constant.RULE_ADMIN);
 				// Nếu truy vấn thêm thành công
 				if (preparedStatement.executeUpdate() > 0) {
 					// Trả về true
@@ -690,7 +715,8 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Lỗi
 		} catch (SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : deleteUser - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -711,7 +737,7 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Nếu connection khác null
 			if (connection != null) {
 				// Tạo lệnh truy vấn xóa thông tin User trong trong CSDL
-				PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(CHANGE_PASSWORD);
+				PreparedStatement preparedStatement = connection.prepareStatement(CHANGE_PASSWORD);
 				int index = 1;
 				// Gán giá trị userId cho các tham số của câu lệnh truy vấn
 				preparedStatement.setString(index++, tblUser.getPassword());
@@ -727,7 +753,8 @@ public class TblUserDaoImpl extends BaseDaoImpl implements TblUserDao {
 			// Lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserDaoImpl : changePassword - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}

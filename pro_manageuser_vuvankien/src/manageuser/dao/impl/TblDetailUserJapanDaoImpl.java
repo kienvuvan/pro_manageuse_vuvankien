@@ -4,10 +4,9 @@
  */
 package manageuser.dao.impl;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import com.mysql.jdbc.PreparedStatement;
 
 import manageuser.dao.TblDetailUserJapanDao;
 import manageuser.entities.TblDetailUserJapan;
@@ -46,8 +45,7 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			// Nếu kết nối không null
 			if (connection != null) {
 				// Tạo lệnh truy vấn thêm thông tin chi tiết User vào trong CSDL
-				PreparedStatement preparedStatement = (PreparedStatement) connection
-						.prepareStatement(INSERT_DETAIL_USER);
+				PreparedStatement preparedStatement = connection.prepareStatement(INSERT_DETAIL_USER);
 				int index = 1;
 				// Gán các giá trị cho các tham số trong câu lệnh truy vấn
 				preparedStatement.setInt(index++, tblDetailUserJapan.getUserId());
@@ -63,7 +61,8 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			// Nếu có lỗi
 		} catch (SQLException e) {
 			// In ra lỗi
-			System.out.println("TblDetailUserJapanDaoImpl : insertDetailUserJapan - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -83,8 +82,7 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			// Nếu kết nối không null
 			if (connection != null) {
 				// Tạo lệnh truy vấn thêm chi tiết User vào trong CSDL
-				PreparedStatement preparedStatement = (PreparedStatement) connection
-						.prepareStatement(CHECK_EXISTED_DETAIL_USER);
+				PreparedStatement preparedStatement = connection.prepareStatement(CHECK_EXISTED_DETAIL_USER);
 				// Gán các giá trị cho các tham số trong câu lệnh truy vấn
 				preparedStatement.setInt(1, userId);
 				// Trả về danh sách các bản ghi khi thực hiện truy vấn
@@ -97,7 +95,8 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblDetailUserJapanDaoImpl : checkExistedDetailUser - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng connection
@@ -119,7 +118,7 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			// Nếu kết nối không null
 			if (connection != null) {
 				// Tạo lệnh truy vấn sửa thông tin chi tiết User vào trong CSDL
-				PreparedStatement preparedStatement = (PreparedStatement) connection.prepareStatement(EDIT_DETAIL_USER);
+				PreparedStatement preparedStatement = connection.prepareStatement(EDIT_DETAIL_USER);
 				int index = 1;
 				// Gán các giá trị cho các tham số trong câu lệnh truy vấn
 				preparedStatement.setString(index++, tblDetailUserJapan.getCodeLevel());
@@ -135,7 +134,8 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			// Nếu có lỗi
 		} catch (SQLException e) {
 			// In ra lỗi
-			System.out.println("TblDetailUserJapanDaoImpl : editDetailUserJapan - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -155,7 +155,7 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			// Nếu kết nối không null
 			if (connection != null) {
 				// Tạo lệnh truy vấn xóa thông tin chi tiết User vào trong CSDL
-				PreparedStatement preparedStatement = (PreparedStatement) connection
+				PreparedStatement preparedStatement = connection
 						.prepareStatement(DELETE_DETAIL_USER);
 				// Gán các giá trị cho các tham số trong câu lệnh truy vấn
 				preparedStatement.setInt(1, userId);
@@ -167,7 +167,8 @@ public class TblDetailUserJapanDaoImpl extends BaseDaoImpl implements TblDetailU
 			// Nếu có lỗi
 		} catch (SQLException e) {
 			// In ra lỗi
-			System.out.println("TblDetailUserJapanDaoImpl : deleteDetailUserJapan - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}

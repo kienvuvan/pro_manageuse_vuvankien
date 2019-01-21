@@ -5,11 +5,9 @@
 package manageuser.logics.impl;
 
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
-
-import com.mysql.jdbc.Connection;
 
 import manageuser.dao.TblDetailUserJapanDao;
 import manageuser.dao.TblUserDao;
@@ -53,7 +51,8 @@ public class TblUserLogicImpl implements TblUserLogic {
 			// Nếu có lỗi
 		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : checkExitsAccount - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -78,7 +77,8 @@ public class TblUserLogicImpl implements TblUserLogic {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : getTotalUsers - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -107,7 +107,8 @@ public class TblUserLogicImpl implements TblUserLogic {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : getListUsers - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -128,7 +129,8 @@ public class TblUserLogicImpl implements TblUserLogic {
 			tblUser = tblUserDaoImp.getUserByLogIn(username);
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : getUserByLogIn - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -148,7 +150,8 @@ public class TblUserLogicImpl implements TblUserLogic {
 			return tblUserDaoImp.checkExitsUsername(userName);
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : checkExitsUsername - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -160,15 +163,16 @@ public class TblUserLogicImpl implements TblUserLogic {
 	 * @see manageuser.logics.TblUserLogic#checkExitsEmail(java.lang.String)
 	 */
 	@Override
-	public int checkExitsEmail(String email) throws ClassNotFoundException, SQLException {
+	public boolean checkExitsEmail(String email, int userId) throws ClassNotFoundException, SQLException {
 		try {
 			// Khởi tạo đối tượng TblUserDaoImpl
 			TblUserDao tblUserDaoImp = new TblUserDaoImpl();
 			// Gọi đến hàm checkExitsEmail() và trả về kết quả
-			return tblUserDaoImp.checkExitsEmail(email);
+			return tblUserDaoImp.checkExitsEmail(email, userId);
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : checkExitsEmail - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -182,7 +186,7 @@ public class TblUserLogicImpl implements TblUserLogic {
 	 */
 	@Override
 	public boolean creatUser(UserInfor userInfor)
-			throws ParseException, NoSuchAlgorithmException, ClassNotFoundException, SQLException {
+			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException {
 		// Tạo đối tượng TblUserDaoImpl
 		TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
 		try {
@@ -211,9 +215,10 @@ public class TblUserLogicImpl implements TblUserLogic {
 				return true;
 			}
 			// Nếu có lỗi
-		} catch (ParseException | NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
+		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : creatUser - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Tiến hành rollback
 			tblUserDaoImpl.rollBack();
 			// Ném ra 1 lỗi
@@ -233,7 +238,7 @@ public class TblUserLogicImpl implements TblUserLogic {
 	 */
 	@Override
 	public boolean updateUser(UserInfor userInfor, boolean existedDetailUserJapan)
-			throws ParseException, NoSuchAlgorithmException, ClassNotFoundException, SQLException {
+			throws NoSuchAlgorithmException, ClassNotFoundException, SQLException {
 		// Tạo đối tượng TblUserDaoImpl
 		TblUserDao tblUserDaoImpl = new TblUserDaoImpl();
 		try {
@@ -276,9 +281,10 @@ public class TblUserLogicImpl implements TblUserLogic {
 				tblUserDaoImpl.commit();
 				return true;
 			}
-		} catch (ParseException | NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
+		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : updateUser - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " 
+					+ new Object() {}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Tiến hành rollback
 			tblUserDaoImpl.rollBack();
 			// Ném ra 1 lỗi
@@ -323,7 +329,8 @@ public class TblUserLogicImpl implements TblUserLogic {
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : deleteUser - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Tiến hành rollback
 			tblUserDaoImpl.rollBack();
 			// Ném ra 1 lỗi
@@ -349,7 +356,8 @@ public class TblUserLogicImpl implements TblUserLogic {
 			return tblUserDaoImpl.checkExistedUser(userId);
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : checkExistedUser - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -368,7 +376,8 @@ public class TblUserLogicImpl implements TblUserLogic {
 			return tblUserDaoImpl.getUserInforById(userId);
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : getUserInforById - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -402,7 +411,8 @@ public class TblUserLogicImpl implements TblUserLogic {
 			return tblUserDaoImpl.changePassword(tblUser);
 		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("TblUserLogicImpl : changePassword - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}

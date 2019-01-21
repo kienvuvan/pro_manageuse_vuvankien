@@ -81,7 +81,10 @@ public class Common {
 			// Tạo đối tượng mã hóa theo chuẩn SHA-1
 			messageDigest = MessageDigest.getInstance("SHA-1");
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			// In ra lỗi
+			System.out.println(new Object() {
+			}.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -113,7 +116,9 @@ public class Common {
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("Common : checkLogin - " + e.getMessage());
+			System.out.println(new Object() {
+			}.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -562,8 +567,7 @@ public class Common {
 	 *         tượng UserInfor
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static TblUser creatTblUserFromUserInfor(UserInfor userInfor)
-			throws ParseException, NoSuchAlgorithmException {
+	public static TblUser creatTblUserFromUserInfor(UserInfor userInfor) throws NoSuchAlgorithmException {
 		// Tạo đối tượng TblUser
 		TblUser tblUser = new TblUser();
 		try {
@@ -594,7 +598,9 @@ public class Common {
 			// Nếu có lỗi tạo salt
 		} catch (NoSuchAlgorithmException e) {
 			// In ra lỗi
-			System.out.println("Common : creatTblUserFromUserInfor - " + e.getMessage());
+			System.out.println(new Object() {
+			}.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -609,9 +615,8 @@ public class Common {
 	 *            đối tượng UserInfor
 	 * @return đối tượng TblDetailUserJapan được tạo ra với các thông tin chính
 	 *         từ đối tượng UserInfor
-	 * @throws Exception
 	 */
-	public static TblDetailUserJapan creatTblDetailUserJapanFromUserInfor(UserInfor userInfor) throws ParseException {
+	public static TblDetailUserJapan creatTblDetailUserJapanFromUserInfor(UserInfor userInfor) {
 		// Tạo đối tượng TblDetailUserJapan
 		TblDetailUserJapan tblDetailUserJapan = new TblDetailUserJapan();
 		// Gán giá trị userId cho đối tượng TblDetailUserJapan
