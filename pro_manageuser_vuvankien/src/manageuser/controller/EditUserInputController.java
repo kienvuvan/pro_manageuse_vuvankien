@@ -62,7 +62,7 @@ public class EditUserInputController extends HttpServlet {
 				// Set các giá trị selectBox cho màn hình ADM003.jsp
 				setDataLogicADM003(request, response);
 				// Lấy ra đối tượng UserInfor
-				UserInfor userInfor = getDefaultValue(request, response);
+				UserInfor userInfor = getDefaultValue(request);
 				// Truyền đối tượng UserInfor và kiểu hiển thị màn hình
 				// ADM003.jsp lên request
 				request.setAttribute("userInfor", userInfor);
@@ -77,10 +77,11 @@ public class EditUserInputController extends HttpServlet {
 			}
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("EditUserInputController : doGet - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
-			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			response.sendRedirect(Constant.ERROR_URL);
 		}
 	}
 
@@ -101,7 +102,7 @@ public class EditUserInputController extends HttpServlet {
 			// Kiểm tra nếu User đó tồn tại trong CSDL
 			if (tblUserLogicImpl.checkExistedUser(userId)) {
 				// Lấy ra đối tượng UserInfor
-				UserInfor userInfor = getDefaultValue(request, response);
+				UserInfor userInfor = getDefaultValue(request);
 				// Tạo đối tượng UserValidate
 				UserValidate userValidate = new UserValidate();
 				// Kiểm tra để xem trả về danh sách lỗi
@@ -110,7 +111,7 @@ public class EditUserInputController extends HttpServlet {
 				if (!messages.isEmpty()) {
 					// Set giá trị các trường selectBox
 					setDataLogicADM003(request, response);
-					userInfor = getDefaultValue(request, response);
+					userInfor = getDefaultValue(request);
 					// Set giá trị UserInfor lên request
 					request.setAttribute("userInfor", userInfor);
 					// Set kiểu hiển thị màn hình ADM003.jsp là add_user
@@ -141,10 +142,11 @@ public class EditUserInputController extends HttpServlet {
 			// Nếu có lỗi
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("EditUserInputController : doPost - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
-			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			response.sendRedirect(Constant.ERROR_URL);
 		}
 	}
 
@@ -188,7 +190,8 @@ public class EditUserInputController extends HttpServlet {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("EditUserInputController : setDataLogicADM003 - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -198,14 +201,12 @@ public class EditUserInputController extends HttpServlet {
 	 * Phương thức lấy ra đối tượng UserInfor
 	 * 
 	 * @param request
-	 * @param response
 	 * @return UserInfor đối tượng chứa các thông tin lấy từ request
 	 * @throws ParseException
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	private UserInfor getDefaultValue(HttpServletRequest request, HttpServletResponse response)
-			throws ClassNotFoundException, SQLException {
+	private UserInfor getDefaultValue(HttpServletRequest request) throws ClassNotFoundException, SQLException {
 		// Khởi tạo đối tượng UserInfor
 		UserInfor userInfor = new UserInfor();
 		try {
@@ -292,7 +293,8 @@ public class EditUserInputController extends HttpServlet {
 			}
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("EditUserInputController : getDefaultValue - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}

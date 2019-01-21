@@ -66,7 +66,8 @@ public class UserValidate {
 			}
 		} catch (NoSuchAlgorithmException | ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("UserValidate : validateLogin - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -106,32 +107,11 @@ public class UserValidate {
 			} else if (!Common.checkFormatLoginName(loginName)) {
 				// Thêm thông báo lỗi tài khoản sai định dạng
 				message.add(MessageErrorProperties.getData("ER019_USERNAME"));
-				// Nếu tài khoản đã tồn tại
-			} else {
-				// Lấy ra giá trị userId của loginName đó
-				int userIdOfLoginName = tblUserLogicImpl.checkExitsUsername(loginName);
-				// Nếu là trường hợp addUser
-				if (userId == Constant.ID_ADD_USER) {
-					// Nếu loginName đó tồn tại
-					if (userIdOfLoginName != Constant.ID_NOT_EXISTED_LOGIN_NAME) {
-						// Thêm thông báo lỗi tài khoản đã tồn tại
-						message.add(MessageErrorProperties.getData("ER003_USERNAME"));
-					}
-					// Ngược lại thì kiểm tra nếu loginName đó khác so với
-					// loginName cũ
-					// thì kiểm tra tồn tại, nếu không thay đổi thì không kiểm
-					// tra
-					// tồn tại
-				} else {
-					// Nếu loginName đó tồn tại và userId của loginName trong
-					// CSDL không
-					// phải của người đó
-					if (userIdOfLoginName != userInfor.getUserId()
-							&& userIdOfLoginName != Constant.ID_NOT_EXISTED_LOGIN_NAME) {
-						// Thêm thông báo lỗi loginName đã tồn tại
-						message.add(MessageErrorProperties.getData("ER003_USERNAME"));
-					}
-				}
+				// Nếu tài khoản đã tồn tại trong trường hợp thêm
+			} else if (userId == Constant.ID_ADD_USER
+					&& tblUserLogicImpl.checkExitsUsername(loginName) != Constant.ID_NOT_EXISTED_LOGIN_NAME) {
+				// Thêm thông báo lỗi tài khoản đã tồn tại
+				message.add(MessageErrorProperties.getData("ER003_USERNAME"));
 			}
 
 			MstGroupLogic mstGroupLogicImpl = new MstGroupLogicImpl();
@@ -197,28 +177,10 @@ public class UserValidate {
 			} else if (!Common.checkFormatEmail(email)) {
 				// Thêm thông báo lỗi sai định dạng email
 				message.add(MessageErrorProperties.getData("ER005_EMAIL"));
-			} else {
-				// Lấy ra giá trị userId từ email trong CSDL
-				int userIdOfEmail = tblUserLogicImpl.checkExitsEmail(email);
-				// Nếu là trường hợp addUser thì kiểm tra email tồn tại
-				if (userId == Constant.ID_ADD_USER) {
-					// Nếu email tồn tại
-					if (userIdOfEmail != Constant.ID_NOT_EXISTED_EMAIL) {
-						// Thêm thông báo lỗi email đã tồn tại
-						message.add(MessageErrorProperties.getData("ER003_EMAIL"));
-					}
-					// Ngược lại thì kiểm tra nếu email đó khác so với email cũ
-					// thì kiểm tra tồn tại, nếu không thay đổi thì không kiểm
-					// tra
-					// tồn tại
-				} else {
-					// Nếu email đó tồn tại và userId của email trong CSDL không
-					// phải của người đó
-					if (userIdOfEmail != userInfor.getUserId() && userIdOfEmail != Constant.ID_NOT_EXISTED_EMAIL) {
-						// Thêm thông báo lỗi email đã tồn tại
-						message.add(MessageErrorProperties.getData("ER003_EMAIL"));
-					}
-				}
+				// Nếu email tồn tại trong CSDL
+			} else if (tblUserLogicImpl.checkExitsEmail(email, userId)) {
+				// Thêm thông báo lỗi email đã tồn tại
+				message.add(MessageErrorProperties.getData("ER003_EMAIL"));
 			}
 
 			// Check phone
@@ -244,31 +206,18 @@ public class UserValidate {
 				// Check password
 				// Lấy giá trị password
 				String password = userInfor.getPassword();
-				// Nếu password trống
-				if (Common.isEmpty(password)) {
-					// Thêm thông báo lỗi password trống
-					message.add(MessageErrorProperties.getData("ER001_PASSWORD"));
-					// Nếu độ dài không nằm trong khoảng từ 8-15
-				} else if (!Common.checkLengthLimit(Constant.MIN_PASSWORD_LENGTH, Constant.MAX_PASSWORD_LENGTH,
-						password)) {
-					// Thêm thông báo lỗi về độ dài
-					message.add(MessageErrorProperties.getData("ER007_PASSWORD"));
-					// Nếu password không đúng định dạng halfSize
-				} else if (!Common.checkHalfSize(password)) {
-					// Thêm thông báo lỗi định dạng
-					message.add(MessageErrorProperties.getData("ER008_PASSWORD"));
-				}
-
-				// Check passwordAgain
 				// Lấy giá trị passwordAgain
 				String passwordAgain = userInfor.getPasswordAgain();
-				// Nếu passwordAgain không trùng với password
-				if (!password.equals(passwordAgain)) {
-					// Thêm thông báo lỗi mật khẩu xác nhận không đúng
-					message.add(MessageErrorProperties.getData("ER017"));
+				// Lấy ra mảng lỗi kiểm tra trường password và passwordAgain
+				ArrayList<String> messageCheckPasses = validatePassword(password, passwordAgain);
+				// Duyệt mảng lỗi check pass
+				for (String messageCheckPass : messageCheckPasses) {
+					// Thêm vào mảng lỗi
+					message.add(messageCheckPass);
 				}
 			}
 
+			// Tạo đối tượng MstJapanLogicImpl
 			MstJapanLogic mstJapanLogicImpl = new MstJapanLogicImpl();
 			// Check trình độ tiếng Nhật
 			// Lấy giá trị codeLevel
@@ -324,10 +273,11 @@ public class UserValidate {
 					message.add(MessageErrorProperties.getData("ER018_TOTAL_SCORE"));
 				}
 			}
-		// Nếu có lỗi
+			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("UserValidate : validateUserInfor - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -360,14 +310,69 @@ public class UserValidate {
 		} else if (!Common.checkHalfSize(password)) {
 			// Thêm thông báo lỗi định dạng
 			message.add(MessageErrorProperties.getData("ER008_PASSWORD"));
-		}
-
-		// Check passwordAgain
-		// Nếu passwordAgain không trùng với password
-		if (!password.equals(passwordAgain)) {
+		// Nếu password nhập đúng thì bắt đầu kiểm tra passwordAgain
+		// Nếu passwordAgain không trùng password
+		} else if (!password.equals(passwordAgain)) {
 			// Thêm thông báo lỗi mật khẩu xác nhận không đúng
 			message.add(MessageErrorProperties.getData("ER017"));
 		}
 		return message;
+	}
+
+	/**
+	 * Phương thức kiểm tra đối tượng UserInfor trước khi cập nhật vào CSDL
+	 * trong trường hợp sửa
+	 * 
+	 * @param userInfor
+	 *            đối tượng UserInfor cần kiểm tra
+	 * @return true nếu đối tượng thỏa mãn và ngược lại nếu loginName tồn
+	 *         tại(trong trường hợp thêm) hoặc loginName không đúng với tài
+	 *         khoản (Trường hợp sửa) hoặc nhóm không tồn tại hoặc email tồn tại
+	 *         hoặc trình độ tiếng Nhật không tồn tại
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 */
+	public boolean validateConfirmUserInfor(UserInfor userInfor) throws ClassNotFoundException, SQLException {
+		try {
+			// Tạo đối tượng TblUserLogicImpl
+			TblUserLogic tblUserLogicImpl = new TblUserLogicImpl();
+			// Tạo đối tượng MstGroupLogicImpl
+			MstGroupLogic mstGroupLogicImpl = new MstGroupLogicImpl();
+			// Tạo đối tượng MstJapanLogicImpl
+			MstJapanLogic mstJapanLogicImpl = new MstJapanLogicImpl();
+			// Get giá trị userId
+			int userId = userInfor.getUserId();
+			// Nếu nhóm không tồn tại trongCSDL hoặc email không tồn tại trong
+			// CSDL hoặc trình độ tiếng Nhật không tồn tại
+			if (Common.isEmpty(mstGroupLogicImpl.getGroupNameById(userInfor.getGroupId()))
+					|| !tblUserLogicImpl.checkExitsEmail(userInfor.getEmail(), userId)
+					|| Common.isEmpty(mstJapanLogicImpl.getNameLevelById(userInfor.getCodeLevel()))) {
+				// Nếu là trường hợp thêm người dùng
+				if (userId == Constant.ID_ADD_USER) {
+					// Nếu tài khoản tồn tại trong CSDL
+					if (tblUserLogicImpl
+							.checkExitsUsername(userInfor.getLoginName()) != Constant.ID_NOT_EXISTED_LOGIN_NAME) {
+						// Trả về false
+						return false;
+					}
+					// Nếu là trường hợp sửa thông tin chi tiết
+				} else {
+					// Nếu userId của loginName không đúng với userId của người
+					// đó
+					if (tblUserLogicImpl.checkExitsUsername(userInfor.getLoginName()) != userId) {
+						// Trả về false
+						return false;
+					}
+				}
+			}
+		} catch (ClassNotFoundException | SQLException e) {
+			// In ra lỗi
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
+			// Ném ra 1 lỗi
+			throw e;
+		}
+		// Trả về true
+		return true;
 	}
 }

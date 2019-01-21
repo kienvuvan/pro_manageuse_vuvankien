@@ -13,6 +13,7 @@ import manageuser.entities.UserInfor;
 
 /**
  * Interface TblUserDao
+ * 
  * @author kien vu
  *
  */
@@ -79,7 +80,7 @@ public interface TblUserDao extends BaseDao {
 	 * 
 	 * @param userName
 	 *            chuỗi tài khoản cần kiểm tra
-	 * @return int trả về giá trị userId của email đó nếu tồn tại và ngược lại trả về -1
+	 * @return int userId của người dùng có email đó và ngược lại là -1
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
@@ -90,58 +91,75 @@ public interface TblUserDao extends BaseDao {
 	 * 
 	 * @param email
 	 *            chuỗi email cần kiểm tra
-	 * @return trả về giá trị userId của email đó và ngược lại trả về -1 nếu không tồn tại
+	 * @param userId
+	 *            giá trị userId của người dùng
+	 * @return true nếu email tồn tại trong CSDL (nếu là trường hợp thêm thì
+	 *         email trùng với email của đối tượng khác userId truyền vào) và
+	 *         ngược lại
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
-	public int checkExitsEmail(String email) throws ClassNotFoundException, SQLException;
-	
+	public boolean checkExitsEmail(String email, int userId) throws ClassNotFoundException, SQLException;
+
 	/**
 	 * Phương thức thực hiện thêm 1 đối tượng TblUser vào trong CSDL
-	 * @param tblUser đối tượng tblUser cần thêm vào CSDL
-	 * @return -1 nếu thêm bị lỗi và ngược lại trả về giá trị id của trường user_id trong CSDL
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
+	 * 
+	 * @param tblUser
+	 *            đối tượng tblUser cần thêm vào CSDL
+	 * @return -1 nếu thêm bị lỗi và ngược lại trả về giá trị id của trường
+	 *         user_id trong CSDL
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
 	 */
 	public int insertUser(TblUser tblUser) throws SQLException;
-	
+
 	/**
 	 * Phương thức thực hiện sửa thông tin người dùng trong CSDL
-	 * @param tblUser thông tin mới cần được sửa
+	 * 
+	 * @param tblUser
+	 *            thông tin mới cần được sửa
 	 * @return true nếu sửa thành công và ngược lại
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	public boolean editUser(TblUser tblUser) throws SQLException;
-	
+
 	/**
 	 * Phương thức thực hiện chức năng xóa người dùng trong CSDL
-	 * @param userId giá trị id của người dùng cần xóa
+	 * 
+	 * @param userId
+	 *            giá trị id của người dùng cần xóa
 	 * @return true nếu xóa thành công và ngược lại
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	public boolean deleteUser(int userId) throws SQLException;
-	
+
 	/**
 	 * Phương thức thực hiện chức năng thay đổi mật khẩu người dùng
-	 * @param tblUser đối tượng TblUser
+	 * 
+	 * @param tblUser
+	 *            đối tượng TblUser
 	 * @return true nếu thay đổi thành công và ngược lại
 	 * @throws ClassNotFoundException
 	 * @throws SQLException
 	 */
 	public boolean changePassword(TblUser tblUser) throws ClassNotFoundException, SQLException;
-	
+
 	/**
 	 * Phương thức kiểm tra xem người dùng có tồn tại hay không trong CSDL
-	 * @param userId id của người dùng cần kiểm tra
+	 * 
+	 * @param userId
+	 *            id của người dùng cần kiểm tra
 	 * @return true nếu người dùng có userId tồn tại trong CSDL và ngược lại
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
+	 * @throws SQLException
+	 * @throws ClassNotFoundException
 	 */
 	public boolean checkExistedUser(int userId) throws ClassNotFoundException, SQLException;
-	
+
 	/**
 	 * Phương thức lấy ra thông tin người dùng
-	 * @param userId giá trị Id của người dùng trong CSDL
+	 * 
+	 * @param userId
+	 *            giá trị Id của người dùng trong CSDL
 	 * @return UserInfor thông tin người dùng
 	 * @throws ClassNotFoundException
 	 * @throws SQLException

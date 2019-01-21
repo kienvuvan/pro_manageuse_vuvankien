@@ -70,10 +70,11 @@ public class ViewDetailUserController extends HttpServlet {
 			// Nếu có lỗi
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("ViewDetailUserController : doGet - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
-			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			response.sendRedirect(Constant.ERROR_URL);
 		}
 	}
 

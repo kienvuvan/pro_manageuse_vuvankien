@@ -67,10 +67,11 @@ public class LoginController extends HttpServlet {
 			// Nếu có lỗi
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("LoginController : doPost - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
-			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			response.sendRedirect(Constant.ERROR_URL);
 		}
 	}
 
@@ -88,10 +89,11 @@ public class LoginController extends HttpServlet {
 			request.getRequestDispatcher(Constant.VIEW_ADM001).forward(request, response);
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("LoginController : doGet - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
-			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			response.sendRedirect(Constant.ERROR_URL);
 		}
 	}
 }

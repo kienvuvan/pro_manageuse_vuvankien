@@ -60,7 +60,8 @@ public class MstGroupDaoImpl extends BaseDaoImpl implements MstGroupDao {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("MstGroupDaoImpl : getAllGroups - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối
@@ -99,7 +100,8 @@ public class MstGroupDaoImpl extends BaseDaoImpl implements MstGroupDao {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("MstGroupDaoImpl : getGroupNameById - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 			// Đóng kết nối

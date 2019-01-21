@@ -4,13 +4,12 @@
  */
 package manageuser.dao.impl;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-
-import com.mysql.jdbc.Connection;
 
 import manageuser.dao.BaseDao;
 import manageuser.utils.DatabaseProperties;
@@ -56,11 +55,12 @@ public class BaseDaoImpl implements BaseDao {
 			password = DatabaseProperties.getData("password");
 			Class.forName(driver);
 			// Kết nối database
-			connection = (Connection) DriverManager.getConnection(url + database, username, password);
+			connection = DriverManager.getConnection(url + database, username, password);
 			// Nếu lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("BaseDaoImpl : connectDatabase - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			throw e;
 		}
 		// Trả về connection vừa kết nối
@@ -103,7 +103,8 @@ public class BaseDaoImpl implements BaseDao {
 			// Nếu có lỗi trong quá trình đóng kết nối
 		} catch (SQLException e) {
 			// In ra lỗi
-			System.out.println("BaseDaoImpl : closeConnection - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			throw e;
 		}
 
@@ -125,7 +126,8 @@ public class BaseDaoImpl implements BaseDao {
 			// Nếu lỗi
 		} catch (SQLException e) {
 			// In ra lỗi
-			System.out.println("BaseDaoImpl : setAutoCommit - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			throw e;
 		}
 	}
@@ -145,7 +147,8 @@ public class BaseDaoImpl implements BaseDao {
 			// Nếu lỗi
 		} catch (SQLException e) {
 			// In ra lỗi
-			System.out.println("BaseDaoImpl : setAutoCommit - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			throw e;
 		}
 	}
@@ -165,7 +168,8 @@ public class BaseDaoImpl implements BaseDao {
 			// Nếu lỗi
 		} catch (SQLException e) {
 			// In ra lỗi
-			System.out.println("BaseDaoImpl : rollBack - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			throw e;
 		}
 	}
@@ -213,7 +217,8 @@ public class BaseDaoImpl implements BaseDao {
 			// Nếu có lỗi
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("BaseDaoImpl : getColumnSort - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			throw e;
 		}
 		// Trả về HashMap chứa tên cột

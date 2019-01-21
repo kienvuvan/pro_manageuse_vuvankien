@@ -99,10 +99,11 @@ public class EditUserConfirmController extends HttpServlet {
 			// Nếu có lỗi
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("EditUserConfirmController : doGet - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
-			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			response.sendRedirect(Constant.ERROR_URL);
 		}
 	}
 
@@ -132,8 +133,8 @@ public class EditUserConfirmController extends HttpServlet {
 			if (tblUserLogicImpl.checkExistedUser(userId)) {
 				// Tạo đối tượng UserValidate để kiểm tra các trường dữ liệu
 				UserValidate userValidate = new UserValidate();
-				// Nếu userInfor không lỗi thì tiến hành thêm vào CSDL
-				if (userValidate.validateUserInfor(userInfor).isEmpty()) {
+				// Nếu userInfor không lỗi thì tiến hành cập nhật vào CSDL
+				if (userValidate.validateConfirmUserInfor(userInfor)) {
 					// Khởi tạo đối tượng TblDetailUserJapanLogicImpl
 					TblDetailUserJapanLogic tblDetailUserJapanLogicImpl = new TblDetailUserJapanLogicImpl();
 					// Kiểm tra thông tin chi tiết của người dùng có tồn tại
@@ -141,8 +142,7 @@ public class EditUserConfirmController extends HttpServlet {
 					boolean existedDetailUserJapan = tblDetailUserJapanLogicImpl.checkExistedDetailUserJapan(userId);
 					// Nếu cập nhật thông tin người dùng thành công
 					if (tblUserLogicImpl.updateUser(userInfor, existedDetailUserJapan)) {
-						// Set giá trị trạng thái chuyển sang màn hình ADM006 là
-						// OK
+						// Set trạng thái chuyển sang màn hình ADM006 là OK
 						session.setAttribute("from", Constant.ACCEPT);
 						// Thêm kiểu thực hiện thành công lên session
 						session.setAttribute("success", Constant.SUCCESS);
@@ -150,20 +150,25 @@ public class EditUserConfirmController extends HttpServlet {
 						// ADM006.jsp
 						response.sendRedirect(Constant.SUCCESS_URL + "?type=" + Constant.EDIT_USER_SUCCESS);
 					}
+					// Nếu kiểm tra có lỗi
+				} else {
+					// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ
+					// thống đang lỗi
+					response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
 				}
-				// Nếu người dùng không tồn tại trong CSDL
 			} else {
-				// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ
-				// thống đang lỗi
+				// Chuyển đến màn hình lỗi System_Error.jsp với thông báo người
+				// dùng không tồn tại
 				response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.NOT_EXISTED_USER);
 			}
 			// Nếu có lỗi
 		} catch (Exception e) {
 			// In ra lỗi
-			System.out.println("EditUserConfirmController : doPost - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : " + new Object() {
+			}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Chuyển đến màn hình lỗi System_Error.jsp với thông báo hệ thống
 			// đang lỗi
-			response.sendRedirect(Constant.ERROR_URL + "?typeError=" + Constant.SYSTEM_ERROR);
+			response.sendRedirect(Constant.ERROR_URL);
 		}
 	}
 }

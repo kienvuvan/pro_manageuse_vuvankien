@@ -34,7 +34,8 @@ public class MstJapanLogicImpl implements MstJapanLogic {
 			return mstJapanDaoImpl.getAllMstJapan();
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("MstJapanLogicImpl : getAllMstJapn - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
@@ -54,7 +55,8 @@ public class MstJapanLogicImpl implements MstJapanLogic {
 			return mstJapanDaoImpl.getNameLevelById(codeLevel);
 		} catch (ClassNotFoundException | SQLException e) {
 			// In ra lỗi
-			System.out.println("MstJapanLogicImpl : getNameLevelById - " + e.getMessage());
+			System.out.println(this.getClass().getSimpleName() + " : "
+					+ new Object(){}.getClass().getEnclosingMethod().getName() + " - " + e.getMessage());
 			// Ném ra 1 lỗi
 			throw e;
 		}
